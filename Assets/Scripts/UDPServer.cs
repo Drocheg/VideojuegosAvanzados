@@ -20,6 +20,7 @@ public class UDPServer : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		messages = new Queue<string>();
 		udpClient = new UdpClient(Port_client);
 		RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, Port_client);
 		theUDPServer = new Thread(new ThreadStart(serverThread));
@@ -43,10 +44,8 @@ public class UDPServer : MonoBehaviour
 	{
 		try
 		{
-			int i = 0;
 			while (true)
 			{
-				i += 1;
 				Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
 //				int receiveBytes = udpClient.Client.ReceiveFrom(byteArray, ref RemoteIpEndPoint);
 				string returnData = Encoding.ASCII.GetString(receiveBytes);
