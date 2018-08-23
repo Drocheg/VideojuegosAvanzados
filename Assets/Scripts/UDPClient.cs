@@ -8,13 +8,13 @@ using UnityEngine;
 
 public class UDPClient : MonoBehaviour
 {
-	public string Ip_raies;
-	public int Port_raies;
+	public string Ip_server;
+	public int Port_server;
     private UdpClient udpClient;
 
 	void Start () {
 	    udpClient = new UdpClient();
-        udpClient.Connect(Ip_raies, Port_raies);
+        udpClient.Connect(Ip_server, Port_server);
 	}
 	
 	// Update is called once per frame
@@ -30,10 +30,5 @@ public class UDPClient : MonoBehaviour
 	private void OnDisable()
 	{
 		udpClient.Close();
-	}
-	
-	private void OnApplicationQuit()
-	{
-//		udpClient.Close();
 	}
 }
