@@ -324,8 +324,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70f9101446fe07a488be405866fa79f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Ip_raies: 10.2.66.115
-  Port_raies: 33333
+  Ip_raies: 10.17.70.1
+  Port_raies: 3333
 --- !u!4 &2021769906
 Transform:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ public class UDPServer : MonoBehaviour
 	private Queue<String> messages;
 	private UdpClient udpClient;
 	private IPEndPoint RemoteIpEndPoint;
+	private EndPoint RemoteEndPoint;
 	private Thread theUDPServer;
 
 	private byte[] byteArray;
@@ -23,6 +24,8 @@ public class UDPServer : MonoBehaviour
 		messages = new Queue<string>();
 		udpClient = new UdpClient(Port_client);
 		RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, Port_client);
+		RemoteEndPoint = (EndPoint)RemoteIpEndPoint;
+		byteArray = new byte[1000];
 		theUDPServer = new Thread(new ThreadStart(serverThread));
 		theUDPServer.Start();
 	}
@@ -46,9 +49,15 @@ public class UDPServer : MonoBehaviour
 		{
 			while (true)
 			{
-				Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-//				int receiveBytes = udpClient.Client.ReceiveFrom(byteArray, ref RemoteIpEndPoint);
-				string returnData = Encoding.ASCII.GetString(receiveBytes);
+		//		Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+		//		int receiveBytes = udpClient.Client.ReceiveFrom(byteArray, ref RemoteIpEndPoint);
+		//		string returnData = Encoding.ASCII.GetString(receiveBytes);
+				
+				int receiveBytes = udpClient.Client.ReceiveFrom(byteArray, ref RemoteEndPoint);
+				string returnData = Encoding.ASCII.GetString(byteArray);
+				
+				Debug.Log("Before enqueueing msg");
+				
 				lock (messages)
 				{
 					messages.Enqueue(returnData);
