@@ -68,7 +68,12 @@ public class UDPServer : MonoBehaviour
 		{
 			lock (messages)
 			{
-				Debug.Log(messages.Dequeue());
+                if (messages.Count == 0) {
+                    Debug.Log("No messages");
+                } else {
+                    Debug.Log(messages.Dequeue());
+                }
+				
 			}
 		}
 	}
