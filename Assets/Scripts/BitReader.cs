@@ -14,22 +14,32 @@ public class BitReader {
         this.memoryStream = memoryStream;
     }
 
+    private bool ReadByteOrFail()
+    {
+        long a = memoryStream.ReadByte();
+        if (a < 0)
+        {
+            return false;
+        }
+        bits |= a << (bitCount);
+        bitCount += 8;
+        return true;
+    }
+
     private void ReadIfNecessary()
     {
-        if (bitCount > 32)
+        if (bitCount >= 32)
         {
             return;
         }
-        long a = memoryStream.ReadByte();
-        long b = memoryStream.ReadByte();
-        long c = memoryStream.ReadByte();
-        long d = memoryStream.ReadByte();
-        
-        bits |= a << (bitCount + 24);
-        bits |= b << (bitCount + 16);
-        bits |= c << (bitCount + 8);
-        bits |= d << (bitCount);
-        bitCount += 32;
+        for (int i = 0; i < 4; i++)
+        {
+            if (!ReadByteOrFail())
+            {
+                //throw new Exception("Tried to read but there was nothing");
+                return;
+            }
+        }
     }
 
     public bool ReadBit()
@@ -67,5 +77,14 @@ public class BitReader {
         return ret;
     }
 
+    public MemoryStream GetBuffer()
+    {
+        return memoryStream;
+    }
 
+    public void ResetBuffer()
+    {
+        memoryStream = new MemoryStream();
+        return;
+    }
 }

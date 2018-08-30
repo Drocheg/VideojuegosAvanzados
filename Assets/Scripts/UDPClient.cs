@@ -16,16 +16,15 @@ public class UDPClient : MonoBehaviour
 
 	private BitWriter bitWriter;
 	private BitReader bitReader;
+    private bool reading;
 	
 	//private BitWriter bitReader;
 
 	void Start()
 	{
-		udpClient = new UdpClient();
-		udpClient.Connect(Ip_server, Port_server);
-		ms = new MemoryStream();
-		bitWriter = new BitWriter(ms);		
-		bitReader = new BitReader(ms);
+		//udpClient = new UdpClient();
+		//udpClient.Connect(Ip_server, Port_server);
+		bitWriter = new BitWriter(1000);
 	}
 
 	// Update is called once per frame
@@ -33,24 +32,39 @@ public class UDPClient : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.S))
 		{
-			for (var i = 0; i < 32; i++)
+            if (reading)
+            {
+                reading = false;
+                ms.Flush();
+                ms.Position = 0;
+            }
+			for (var i = 0; i < 8; i++)
 			{
 				bitWriter.WriteBit(i % 2 == 0);
 			}
-			//bitWriter.Flush();
-			Debug.Log(ms.Length);
-			// udpClient.Send(ms.GetBuffer(), (int) ms.Length);
+            bitWriter.GetBuffer();
 			Debug.Log("Sent!");
 		}
 
 		if (Input.GetKeyDown(KeyCode.R))
 		{
-			Debug.Log(bitReader.ReadBit());
+            bitWriter.Flush();
+            var ms = bitWriter.GetBuffer();
+            int position = (int) ms.Position;
+            var buffer = new byte[position];
+            ms.Position = 0;
+            ms.Read(buffer, 0, position);
+            bitReader = new BitReader(new MemoryStream(buffer));
+			for (var i = 0; i < 8; i++)
+            {
+                Debug.Log(bitReader.ReadBit());
+            }
+            bitWriter.ResetBuffer();
 		}
 	}
 	
 	private void OnDisable()
 	{
-		udpClient.Close();
+		//udpClient.Close();
 	}
 }

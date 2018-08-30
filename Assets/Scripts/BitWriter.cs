@@ -3,13 +3,15 @@ using System;
 
 public class BitWriter
 {
+    byte[] buffer;
     MemoryStream memoryStream;
     long bits;
     int bitCount;
 
-    public BitWriter(MemoryStream memoryStream)
+    public BitWriter(int capacity)
     {
-        this.memoryStream = memoryStream;
+        this.buffer = new byte[capacity];
+        this.memoryStream = new MemoryStream(buffer);
     }
 
     public void WriteBit(bool value)
@@ -85,5 +87,16 @@ public class BitWriter
             memoryStream.WriteByte(bytes[i]);
         }
         bits = 0; bitCount = 0;
+    }
+
+    public MemoryStream GetBuffer()
+    {
+        return memoryStream;
+    }
+
+    public void ResetBuffer()
+    {
+        memoryStream = new MemoryStream(buffer);
+        return;
     }
 }
