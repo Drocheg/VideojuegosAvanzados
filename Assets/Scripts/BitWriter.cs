@@ -52,22 +52,30 @@ public class BitWriter
         WriteBits(longVal, floatBits);
     }
 
+    public void WriteString(string value) 
+    {
+        
+    }
+
     private void WriteIfNecessary()
     {
         if (bitCount < 32)
         {
             return;
         }
-        int val = (int)bits;
-        byte a = (byte) val;
-        byte b = (byte)(val >> 8);
-        byte c = (byte)(val >> 16);
-        byte d = (byte)(val >> 24);
-        memoryStream.WriteByte(d);
-        memoryStream.WriteByte(c);
-        memoryStream.WriteByte(b);
-        memoryStream.WriteByte(a);
-        memoryStream.Flush();
+        {
+            // Big endian format.
+            int val = (int) bits;
+            byte a = (byte) val;
+            byte b = (byte)(val >> 8);
+            byte c = (byte)(val >> 16);
+            byte d = (byte)(val >> 24);
+            memoryStream.WriteByte(d);
+            memoryStream.WriteByte(c);
+            memoryStream.WriteByte(b);
+            memoryStream.WriteByte(a);
+        }
+        
         bits >>= 32;
         bitCount -= 32;
     }
@@ -86,6 +94,8 @@ public class BitWriter
         {
             memoryStream.WriteByte(bytes[i]);
         }
+        memoryStream.Flush();
+        memoryStream.Position = 0;
         bits = 0; bitCount = 0;
     }
 
