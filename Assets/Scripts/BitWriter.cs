@@ -63,37 +63,28 @@ public class BitWriter
         {
             return;
         }
-        {
-            // Big endian format.
-            int val = (int) bits;
-            byte a = (byte) val;
-            byte b = (byte)(val >> 8);
-            byte c = (byte)(val >> 16);
-            byte d = (byte)(val >> 24);
-            memoryStream.WriteByte(d);
-            memoryStream.WriteByte(c);
-            memoryStream.WriteByte(b);
-            memoryStream.WriteByte(a);
-        }
-        
+
+        Write64bits();
         bits >>= 32;
         bitCount -= 32;
     }
 
+    private void Write64bits()
+    {
+        int val = (int) bits;
+        byte a = (byte) val;
+        byte b = (byte)(val >> 8);
+        byte c = (byte)(val >> 16);
+        byte d = (byte)(val >> 24);
+        memoryStream.WriteByte(a);
+        memoryStream.WriteByte(b);
+        memoryStream.WriteByte(c);
+        memoryStream.WriteByte(d);
+    }
+
     public void Flush()
     {
-        int val = (int)bits;
-        byte[] bytes = new byte[8];
-        int i = 0;
-        for (; i <= (bitCount - 1) / 8; i++)
-        {
-            bytes[i] = (byte)(bits << i * 8);
-        }
-        i--;
-        for (; i >= 0; i--)
-        {
-            memoryStream.WriteByte(bytes[i]);
-        }
+        Write64bits();
         memoryStream.Flush();
         memoryStream.Position = 0;
         bits = 0; bitCount = 0;

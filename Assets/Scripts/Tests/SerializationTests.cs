@@ -9,7 +9,6 @@ public class SerializationTests {
     public void SerializationTestsSimplePasses() {
         // Use the Assert class to test conditions.
         var writer = new BitWriter(1000);
-
         for (int i = 0; i < 16; i++)
         {
             writer.WriteBit(true);
@@ -18,7 +17,7 @@ public class SerializationTests {
         writer.WriteBit(false);
         writer.WriteInt(500, 0, 700);
         writer.WriteBit(true);
-        writer.Flush();
+        writer.Flush(); 
 
         var reader = new BitReader(writer.GetBuffer());
         for (int i = 0; i < 16; i++) {
@@ -27,6 +26,16 @@ public class SerializationTests {
         Assert.AreEqual(15, reader.ReadInt(0, 32));
         Assert.False(reader.ReadBit());
         Assert.AreEqual(500, reader.ReadInt(0, 32));
+        Assert.True(reader.ReadBit());
+    }
+    
+    [Test]
+    public void SerializationTestSingleBitTrue() {
+        // Use the Assert class to test conditions.
+        var writer = new BitWriter(1000);
+        writer.WriteBit(true);
+        writer.Flush();
+        var reader = new BitReader(writer.GetBuffer());
         Assert.True(reader.ReadBit());
     }
 

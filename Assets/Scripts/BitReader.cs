@@ -21,21 +21,17 @@ public class BitReader {
 
     private void FillUpTemporaryBitBuffer(int from)
     {
-        var tempBuffer = new byte[8 - from];
+        var tempBuffer = new byte[4];
         int readBytes = memoryStream.Read(tempBuffer, 0, tempBuffer.Length);
         if (readBytes < 0) {
             return;
         }
-        for (int i = 0; i < readBytes / 4; i++) {
-            for (int j = 3; j >= 0; j--) {
-                ulong t = tempBuffer[i * 4 + j];
-                bits |=  t << ((i*4+ (3-j)) * 8);
-            }
+
+        for (int i = 0; i < readBytes; i++){
+            ulong t = tempBuffer[i];
+            bits |=  t << (i * 8); 
         }
-        for (int j = readBytes % 4; j > 0; j--) {
-            ulong t = tempBuffer[readBytes / 4 + j];
-            bits |=  t << (readBytes / 4 + readBytes % 4 - j) * 8;
-        }
+        
     }
 
     private void ReadIfNecessary()
