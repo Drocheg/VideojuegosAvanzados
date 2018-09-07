@@ -5,7 +5,7 @@ public class BitWriter
 {
     byte[] buffer;
     MemoryStream memoryStream;
-    long bits;
+    ulong bits;
     int bitCount;
 
     public BitWriter(int capacity)
@@ -16,29 +16,30 @@ public class BitWriter
 
     public void WriteBit(bool value)
     {
-        bits |= (value ? 1L : 0L) << bitCount++;
+        bits |= (value ? 1UL : 0UL) << bitCount++;
         WriteIfNecessary();
     }
 
-    void WriteBits(long value, int count)
+    void WriteBits(ulong value, int count)
     {
         if (count > 32)
         {
             throw new Exception("Max count value supported is 32");
         }
-        value &= (0xFFFFFFFF >> (64 - count));
+        value = value & (ulong.MaxValue >> (64 - count));
         bits |= value << bitCount;
         bitCount += count;
         WriteIfNecessary();
     }
 
-    public void WriteInt(long value, int min, int max)
+    public void WriteInt(ulong value, uint min, uint max)
     {
         if (value < min || value > max)
         {
             throw new Exception("Value not in a valid range.");
         }
-        WriteBits(value, 32);
+        WriteBits(value, (int) Math.Log((double) (max - min), 2.0) + 1);
+		// WriteBits(value, 32);
     }
 
     public void WriteFloat(float value, float min, float max, float step)
@@ -48,13 +49,13 @@ public class BitWriter
             throw new Exception("Value not in a valid range.");
         }
         int floatBits = (int)((max - min) / step);
-        long longVal = (long)((value - min) / step);
+        ulong longVal = (ulong)((value - min) / step);
         WriteBits(longVal, floatBits);
     }
 
-    public void WriteString(string value) 
+    public void WriteString(string value)
     {
-        
+
     }
 
     private void WriteIfNecessary()

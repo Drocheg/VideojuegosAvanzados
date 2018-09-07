@@ -23,7 +23,7 @@ public class BitReader {
 
     private void FillUpTemporaryBitBuffer(int from, int bytes)
     {
-		
+
         var tempBuffer = new byte[bytes];
         int readBytes = memoryStream.Read(tempBuffer, 0, tempBuffer.Length);
         if (readBytes < 0) {
@@ -74,7 +74,8 @@ public class BitReader {
 
     public int ReadInt(int min, int max)
     {
-        return (int) ReadBits(32);
+		// 
+        return (int) ReadBits((int) Math.Log((double) (max - min), 2.0) + 1);
     }
 
     float ReadFloat(float min, float max, float step)
