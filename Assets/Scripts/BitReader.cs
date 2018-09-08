@@ -78,16 +78,27 @@ public class BitReader {
         return (int) ReadBits((int) Math.Log((double) (max - min), 2.0) + 1);
     }
 
-    float ReadFloat(float min, float max, float step)
+    public float ReadFloat(float min, float max, float step)
     {
         int floatBits = (int)((max - min) / step);
         ulong longVal = ReadBits(floatBits);
-        float ret = (longVal + min) * step;
+        float ret = longVal * step + min;
         if (ret < min || ret > max)
         {
             throw new Exception("Read a float not in between min and max.");
         }
         return ret;
+    }
+
+    public string ReadString(int lenght)
+    {
+        char[] chars = new char[lenght];
+        for (int i = 0; i < lenght; i++)
+        {
+            chars[i] = (char) ReadBits(8);
+        }
+
+        return new string(chars);
     }
 
     public MemoryStream GetBuffer()

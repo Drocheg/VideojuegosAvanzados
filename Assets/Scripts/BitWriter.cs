@@ -44,7 +44,7 @@ public class BitWriter
 
     public void WriteFloat(float value, float min, float max, float step)
     {
-        if (value < min || value >= max)
+        if (value < min || value > max)
         {
             throw new Exception("Value not in a valid range.");
         }
@@ -55,7 +55,10 @@ public class BitWriter
 
     public void WriteString(string value)
     {
-
+        foreach (char c in value)
+        {
+            WriteBits(c, 8);
+        }
     }
 
     private void WriteIfNecessary()
