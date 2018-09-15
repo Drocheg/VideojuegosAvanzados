@@ -11,12 +11,16 @@ public class UDPClient : MonoBehaviour
 {
 	public string Ip_server;
 	public int Port_server;
+	PacketReceiver packetReceiver;
+	
 	private UdpClient udpClient;
 	private MemoryStream ms;
 
 	private BitWriter bitWriter;
 	private BitReader bitReader;
     private bool reading;
+
+	
 	
 	//private BitWriter bitReader;
 
@@ -25,11 +29,15 @@ public class UDPClient : MonoBehaviour
 		//udpClient = new UdpClient();
 		//udpClient.Connect(Ip_server, Port_server);
 		bitWriter = new BitWriter(1000);
+		packetReceiver = GetComponent<PacketReceiver>();
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
+		
+	
+		
 		if (Input.GetKeyDown(KeyCode.S))
 		{
             if (reading)
@@ -60,6 +68,19 @@ public class UDPClient : MonoBehaviour
                 Debug.Log(bitReader.ReadBit());
             }
             bitWriter.ResetBuffer();
+		}
+
+
+		if (Input.GetKeyDown(KeyCode.N))
+		{
+			// send snapshot
+			
+		}
+		
+		if (Input.GetKeyDown(KeyCode.E))
+		{
+			
+			
 		}
 	}
 	
