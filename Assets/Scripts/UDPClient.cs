@@ -29,7 +29,7 @@ public class UDPClient : MonoBehaviour
 		//udpClient = new UdpClient();
 		//udpClient.Connect(Ip_server, Port_server);
 		bitWriter = new BitWriter(1000);
-		packetReceiver = GetComponent<PacketReceiver>();
+		// packetReceiver = GetComponent<PacketReceiver>();
 	}
 
 	// Update is called once per frame

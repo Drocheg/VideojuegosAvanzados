@@ -11,7 +11,13 @@ public class BitWriter
     public BitWriter(int capacity)
     {
         this.buffer = new byte[capacity];
-        this.memoryStream = new MemoryStream(buffer);
+        this.memoryStream = new MemoryStream(capacity);
+    }
+
+    public BitWriter(MemoryStream memoryStream)
+    {
+        // this.buffer = memoryStream.GetBuffer();
+        this.memoryStream = memoryStream;
     }
 
     public void WriteBit(bool value)
@@ -50,7 +56,7 @@ public class BitWriter
         }
         int floatBits = (int)((max - min) / step);
         ulong longVal = (ulong)((value - min) / step);
-        WriteBits(longVal, floatBits);
+        WriteBits(longVal, (int) Math.Log((double) floatBits, 2.0) + 1);
     }
 
     public void WriteString(string value)
@@ -68,12 +74,12 @@ public class BitWriter
             return;
         }
 
-        Write64bits();
+        Write32bits();
         bits >>= 32;
         bitCount -= 32;
     }
 
-    private void Write64bits()
+    private void Write32bits()
     {
         int val = (int) bits;
         byte a = (byte) val;
@@ -88,10 +94,14 @@ public class BitWriter
 
     public void Flush()
     {
-        Write64bits();
+        Write32bits();
         memoryStream.Flush();
-        memoryStream.Position = 0;
         bits = 0; bitCount = 0;
+    }
+
+    public void Reset()
+    {
+        memoryStream.Position = 0;
     }
 
     public MemoryStream GetBuffer()

@@ -5,27 +5,28 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.IO;
 using UnityEngine;
 
 public class UDPServer : MonoBehaviour
 {
 
 	public int Port_client;
-	private Queue<String> messages;
+	public string IpClient;
 	private UdpClient udpClient;
 	private IPEndPoint RemoteIpEndPoint;
 	private EndPoint RemoteEndPoint;
 	private Thread theUDPServer;
+	private SnapshotSerializer serializer;
 
 	private byte[] byteArray;
 	// Use this for initialization
 	void Start()
 	{
-		messages = new Queue<string>();
 		udpClient = new UdpClient(Port_client);
-		RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, Port_client);
+		RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(IpClient), Port_client);
 		RemoteEndPoint = (EndPoint)RemoteIpEndPoint;
-		byteArray = new byte[1000];
+		serializer = SnapshotSerializer.GetInstance();
 		theUDPServer = new Thread(new ThreadStart(serverThread));
 		theUDPServer.Start();
 	}
@@ -49,19 +50,10 @@ public class UDPServer : MonoBehaviour
 		{
 			while (true)
 			{
-		//		Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-		//		int receiveBytes = udpClient.Client.ReceiveFrom(byteArray, ref RemoteIpEndPoint);
-		//		string returnData = Encoding.ASCII.GetString(receiveBytes);
-				
-				int receiveBytes = udpClient.Client.ReceiveFrom(byteArray, ref RemoteEndPoint);
-				string returnData = Encoding.ASCII.GetString(byteArray);
-				
-				Debug.Log("Before enqueueing msg");
-				
-				lock (messages)
-				{
-					messages.Enqueue(returnData);
-				}
+				var packet = serializer.Serialize();
+				int bytes = udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, RemoteEndPoint);
+				Debug.Log("Bytes sent: " + bytes);
+				System.Threading.Thread.Sleep(15);
 			}
 		}
 		catch (Exception e)
@@ -73,17 +65,5 @@ public class UDPServer : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.R))
-		{
-			lock (messages)
-			{
-                if (messages.Count == 0) {
-                    Debug.Log("No messages");
-                } else {
-                    Debug.Log(messages.Dequeue());
-                }
-				
-			}
-		}
 	}
 }

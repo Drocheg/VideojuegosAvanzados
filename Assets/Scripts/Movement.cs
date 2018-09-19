@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+	public float speed = 10;
 	private Transform t;
 	
 	// Use this for initialization
@@ -17,19 +18,19 @@ public class Movement : MonoBehaviour
 		
 		if (Input.GetKey(KeyCode.UpArrow))
 		{
-			transform.Translate(Vector3.up * Time.deltaTime);
+			transform.Translate(Vector3.up * Time.deltaTime * speed);
 		}
 		if (Input.GetKey(KeyCode.RightArrow))
 		{
-			transform.Translate(Vector3.right * Time.deltaTime);
+			transform.Translate(Vector3.right * Time.deltaTime * speed);
 		}
 		if (Input.GetKey(KeyCode.LeftArrow))
 		{
-			transform.Translate(Vector3.left * Time.deltaTime);
+			transform.Translate(Vector3.left * Time.deltaTime * speed);
 		}
 		if (Input.GetKey(KeyCode.DownArrow))
 		{
-			transform.Translate(Vector3.down * Time.deltaTime);
+			transform.Translate(Vector3.down * Time.deltaTime * speed);
 		}
 	}
 }

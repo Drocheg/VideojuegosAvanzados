@@ -1,5 +1,4 @@
 ﻿
-using DefaultNamespace;
 using UnityEngine;
 
 public class CubePacketWriter : PacketWriter
@@ -15,8 +14,8 @@ public class CubePacketWriter : PacketWriter
 
     public void writeSnapshot()
     {
-        Packet newPacket = new CubeSnapshotPacket(cube.position.x, cube.position.y, cube.position.z);
-        writeNonReliable(newPacket);
+        // Packet newPacket = new CubeSnapshotPacket(cube.position.x, cube.position.y, cube.position.z);
+        // writeNonReliable(newPacket);
     }
     
 }

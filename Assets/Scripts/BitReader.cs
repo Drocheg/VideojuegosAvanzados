@@ -106,6 +106,11 @@ public class BitReader {
         return memoryStream;
     }
 
+    public bool HasNext()
+    {
+        return memoryStream.Position < memoryStream.Length;
+    }
+
     public void ResetBuffer()
     {
         memoryStream = new MemoryStream();
