@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class SnapshotSerializer
 {
@@ -38,11 +39,11 @@ public class SnapshotSerializer
 		return packet;
 	}
 
-	public void Deserialize(Packet packet)
+	public void Deserialize(Packet packet, BitReader reader)
 	{
-		var reader = new BitReader(packet.buffer);
 		foreach(var entity in entities) {
 			var changed = reader.ReadBit();
+			Debug.Log(changed);
 			if (changed && entity != null) {
 				entity.Deserialize(reader);
 			}

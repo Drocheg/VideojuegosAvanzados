@@ -6,86 +6,51 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 using System.IO;
+using System.Threading;
 
 public class UDPClient : MonoBehaviour
 {
-	public string Ip_server;
-	public int Port_server;
-	PacketReceiver packetReceiver;
-	
 	private UdpClient udpClient;
-	private MemoryStream ms;
-
-	private BitWriter bitWriter;
-	private BitReader bitReader;
-    private bool reading;
-
+	public int Port_server;
 	
-	
-	//private BitWriter bitReader;
+	private Thread theUDPClient;
+	private SnapshotSerializer serializer;
+
 
 	void Start()
 	{
-		//udpClient = new UdpClient();
-		//udpClient.Connect(Ip_server, Port_server);
-		bitWriter = new BitWriter(1000);
-		// packetReceiver = GetComponent<PacketReceiver>();
-	}
-
-	// Update is called once per frame
-	void Update()
-	{
-		
-	
-		
-		if (Input.GetKeyDown(KeyCode.S))
-		{
-            if (reading)
-            {
-                reading = false;
-                ms.Flush();
-                ms.Position = 0;
-            }
-			for (var i = 0; i < 8; i++)
-			{
-				bitWriter.WriteBit(i % 2 == 0);
-			}
-            bitWriter.GetBuffer();
-			Debug.Log("Sent!");
-		}
-
-		if (Input.GetKeyDown(KeyCode.R))
-		{
-            bitWriter.Flush();
-            var ms = bitWriter.GetBuffer();
-            int position = (int) ms.Position;
-            var buffer = new byte[position];
-            ms.Position = 0;
-            ms.Read(buffer, 0, position);
-            bitReader = new BitReader(new MemoryStream(buffer));
-			for (var i = 0; i < 8; i++)
-            {
-                Debug.Log(bitReader.ReadBit());
-            }
-            bitWriter.ResetBuffer();
-		}
-
-
-		if (Input.GetKeyDown(KeyCode.N))
-		{
-			// send snapshot
-			
-		}
-		
-		if (Input.GetKeyDown(KeyCode.E))
-		{
-			
-			
-		}
+		udpClient = new UdpClient(Port_server);
+		serializer = SnapshotSerializer.GetInstance();
+		theUDPClient = new Thread(new ThreadStart(clientThread));
+		theUDPClient.Start();
 	}
 	
 	private void OnDisable()
 	{
-		//udpClient.Close();
+		theUDPClient.Abort();
+		udpClient.Close();
 	}
+	
+	public void clientThread()
+	{
+		try
+		{
+			while (true)
+			{
+				EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+				byte[] buffer = new byte[1000];
+				int bytes = udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
+				var bitReader = new BitReader(new MemoryStream(buffer));
+				var packet = Packet.ReadPacket(bitReader);
+				serializer.Deserialize(packet, bitReader);
+				Debug.Log("Bytes read: " + bytes);
+			}
+		}
+		catch (Exception e)
+		{
+			print(e);
+		}
+		
+	}
+	
 }

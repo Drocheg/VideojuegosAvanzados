@@ -37,13 +37,6 @@ public class UDPServer : MonoBehaviour
 		udpClient.Close();
 	}
 
-//	private void OnApplicationQuit()
-//	{
-//		theUDPServer.Abort();	
-//		udpClient.Close();
-//	}
-
-
 	public void serverThread()
 	{
 		try
