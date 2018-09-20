@@ -15,16 +15,13 @@ public class Packet
 
     private Packet(){}
 
-    public static Packet WritePacket(PacketType packetType)
+    public static Packet WritePacket(PacketType packetType, BitWriter writer)
     {
         var packet = new Packet();
         packet.packetType = (uint) packetType;
         packet.SeqNumber = SEQ_NUMBER++;
-        var writer = new BitWriter(1000);
         writer.WriteInt((ulong) packetType, 0, (uint) Enum.GetNames(typeof(PacketType)).Length);
         writer.WriteInt((ulong) packet.SeqNumber, 0, Int32.MaxValue);
-        writer.Flush();
-
         packet.buffer = writer.GetBuffer();
         return packet;
     }

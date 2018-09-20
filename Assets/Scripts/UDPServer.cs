@@ -39,7 +39,7 @@ public class UDPServer : MonoBehaviour
 
 //	private void OnApplicationQuit()
 //	{
-//		theUDPServer.Abort();	
+//		theUDPServer.Abort();
 //		udpClient.Close();
 //	}
 
@@ -52,6 +52,7 @@ public class UDPServer : MonoBehaviour
 			{
 				var packet = serializer.Serialize();
 				int bytes = udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, RemoteEndPoint);
+				Debug.Log(packet.buffer.GetBuffer());
 				Debug.Log("Bytes sent: " + bytes);
 				System.Threading.Thread.Sleep(15);
 			}
@@ -60,7 +61,7 @@ public class UDPServer : MonoBehaviour
 		{
 			print(e);
 		}
-		
+
 	}
 
 	private void Update()
