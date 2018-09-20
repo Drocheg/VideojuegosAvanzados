@@ -14,7 +14,7 @@ public class SnapshotSerializer
 	}
 	public static int ENTITY_NUMBER = 2;
 	private ISerial[] entities;
-	private SnapshotSerializer() 
+	private SnapshotSerializer()
 	{
 		entities = new ISerial[ENTITY_NUMBER];
 	}
@@ -24,8 +24,8 @@ public class SnapshotSerializer
 	}
 	public Packet Serialize()
 	{
-		var packet = Packet.WritePacket(Packet.PacketType.SNAPSHOT);
-		var writer = new BitWriter(packet.buffer);
+		var writer = new BitWriter(1000);
+		var packet = Packet.WritePacket(Packet.PacketType.SNAPSHOT, writer);
 		foreach(var entity in entities) {
 			if (entity != null) {
 				writer.WriteBit(true);
