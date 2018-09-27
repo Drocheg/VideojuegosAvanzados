@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SnapshotSerializer
+public class SnapshotSerializer : INetworkEventFactory
 {
 	private static SnapshotSerializer instance;
 
@@ -22,9 +22,8 @@ public class SnapshotSerializer
 	{
 		entities[id] = entity;
 	}
-	public Packet Serialize()
+	public void Serialize(BitWriter writer)
 	{
-		var writer = new BitWriter(1000);
 		var packet = Packet.WritePacket(Packet.PacketType.SNAPSHOT, writer);
 		foreach(var entity in entities) {
 			if (entity != null) {
@@ -39,7 +38,7 @@ public class SnapshotSerializer
 		return packet;
 	}
 
-	public void Deserialize(Packet packet, BitReader reader)
+	public void Deserialize(BitReader reader)
 	{
 		foreach(var entity in entities) {
 			var changed = reader.ReadBit();

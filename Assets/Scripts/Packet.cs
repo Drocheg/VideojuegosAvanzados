@@ -4,36 +4,21 @@ using System.IO;
 
 public class Packet
 {
-    public enum PacketType: uint
-    {
-        SNAPSHOT = 1,
-    }
-    public static Int32 SEQ_NUMBER;
-    public Int32 SeqNumber;
-    public uint packetType;
-    public MemoryStream buffer;
+	public uint channel;
+	public ulong seq;
 
-    private Packet(){}
-
-    public static Packet WritePacket(PacketType packetType, BitWriter writer)
+    public static Packet WritePacket(uint channel, BitWriter writer, uint channels)
     {
         var packet = new Packet();
-        packet.packetType = (uint) packetType;
-        packet.SeqNumber = SEQ_NUMBER++;
-        writer.WriteInt((ulong) packetType, 0, (uint) Enum.GetNames(typeof(PacketType)).Length);
-        writer.WriteInt((ulong) packet.SeqNumber, 0, Int32.MaxValue);
-        packet.buffer = writer.GetBuffer();
+        writer.WriteInt((ulong) channel, 0, channels);
         return packet;
     }
 
-    public static Packet ReadPacket(BitReader reader)
+    public static Packet ReadPacket(BitReader reader, int channels, int maxSeq)
     {
         var packet = new Packet();
-        packet.packetType = (uint) reader.ReadInt(0, Enum.GetNames(typeof(PacketType)).Length);
-        packet.SeqNumber = reader.ReadInt(0, Int32.MaxValue);
-        packet.buffer = reader.GetBuffer();
-
+        packet.channel = (uint) reader.ReadInt(0, channels);
+		packet.seq = (uint) reader.ReadInt(0, maxSeq);
         return packet;
     }
-
 }

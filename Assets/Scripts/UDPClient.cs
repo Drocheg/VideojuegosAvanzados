@@ -12,7 +12,7 @@ public class UDPClient : MonoBehaviour
 {
 	private UdpClient udpClient;
 	public int Port_server;
-	
+	private IChannelHandler[] channels;
 	private Thread theUDPClient;
 	private SnapshotSerializer serializer;
 
@@ -24,13 +24,13 @@ public class UDPClient : MonoBehaviour
 		theUDPClient = new Thread(new ThreadStart(clientThread));
 		theUDPClient.Start();
 	}
-	
+
 	private void OnDisable()
 	{
 		theUDPClient.Abort();
 		udpClient.Close();
 	}
-	
+
 	public void clientThread()
 	{
 		try
@@ -41,8 +41,11 @@ public class UDPClient : MonoBehaviour
 				byte[] buffer = new byte[1000];
 				int bytes = udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
 				var bitReader = new BitReader(new MemoryStream(buffer));
-				var packet = Packet.ReadPacket(bitReader);
-				serializer.Deserialize(packet, bitReader);
+				var packet = Packet.ReadPacket(bitReader, channels.Length, 1000);
+
+				if (packet.channel < channels.Length && packet.channel >= 0) {
+					channels[packet.channel].Deserialize(bitReader);
+				}
 				Debug.Log("Bytes read: " + bytes);
 			}
 		}
@@ -50,7 +53,7 @@ public class UDPClient : MonoBehaviour
 		{
 			print(e);
 		}
-		
+
 	}
-	
+
 }
