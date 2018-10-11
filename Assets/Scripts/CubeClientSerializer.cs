@@ -5,7 +5,7 @@ using System.Text;
 
 using UnityEngine;
 
-class CubeClientSerializer: MonoBehaviour
+class CubeClientSerializer: MonoBehaviour, ISerial
 {
     public float Min, Max, Step;
     private float _min, _max, _step;
@@ -17,6 +17,9 @@ class CubeClientSerializer: MonoBehaviour
     public float NextTime;
     private Queue<Vector3DeltaTime> QueuedPositions;
     public float CurrentTime;
+
+    public float MaxTime;
+    private float _maxTime;
 
 
     class Vector3DeltaTime
@@ -101,15 +104,11 @@ class CubeClientSerializer: MonoBehaviour
     public void Deserialize(BitReader reader)
     {
         Vector3 vector;
-        Debug.Log(_min);
-        Debug.Log(_max);
-        Debug.Log(_step);
         vector.x = reader.ReadFloat(_min, _max, _step);
         vector.y = reader.ReadFloat(_min, _max, _step);
         vector.z = reader.ReadFloat(_min, _max, _step);
-        PositionCopy = vector;
-        PositionChanged = true;
-        Debug.Log(vector);
+        float time = reader.ReadFloat(0, _maxTime, _step);
+        QueuedPositions.Enqueue(new Vector3DeltaTime() { pos = vector, time = time });
         return;
     }
 }

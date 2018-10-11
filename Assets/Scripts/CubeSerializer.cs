@@ -7,6 +7,9 @@ public class CubeSerializer : MonoBehaviour, ISerial
     private float _min, _max, _step;
     private bool PositionChanged;
     private Vector3 PositionCopy;
+    private float timestamp;
+    public float MaxTime;
+    private float _maxTime;
 
     public void Start()
     {
@@ -14,10 +17,12 @@ public class CubeSerializer : MonoBehaviour, ISerial
         _min = Min;
         _max = Max;
         _step = Step;
+        _maxTime = MaxTime;
     }
 
     public void Update() 
     {
+        timestamp += Time.deltaTime;
         if (PositionChanged)
         {
             PositionChanged = false;
@@ -34,6 +39,7 @@ public class CubeSerializer : MonoBehaviour, ISerial
         writer.WriteFloat(PositionCopy.x, _min, _max, _step);
         writer.WriteFloat(PositionCopy.y, _min, _max, _step);
         writer.WriteFloat(PositionCopy.z, _min, _max, _step);
+        writer.WriteFloat(timestamp, 0, _maxTime, 0.001f);
         return;
     }
 
