@@ -108,6 +108,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
         vector.y = reader.ReadFloat(_min, _max, _step);
         vector.z = reader.ReadFloat(_min, _max, _step);
         float time = reader.ReadFloat(0, _maxTime, _step);
+        
         QueuedPositions.Enqueue(new Vector3DeltaTime() { pos = vector, time = time });
         return;
     }

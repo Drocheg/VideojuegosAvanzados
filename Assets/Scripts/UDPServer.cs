@@ -47,7 +47,7 @@ public class UDPServer : MonoBehaviour
 				int bytes = udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, RemoteEndPoint);
 				Debug.Log(packet.buffer.GetBuffer());
 				Debug.Log("Bytes sent: " + bytes);
-				System.Threading.Thread.Sleep(15);
+				System.Threading.Thread.Sleep(30);
 			}
 		}
 		catch (Exception e)
