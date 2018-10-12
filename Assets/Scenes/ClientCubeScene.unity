@@ -309,6 +309,7 @@ GameObject:
   - component: {fileID: 1989362149}
   - component: {fileID: 1989362148}
   - component: {fileID: 1989362147}
+  - component: {fileID: 1989362152}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -322,7 +323,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1989362146}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 186972174b6503147b0cea9f819e246b, type: 3}
   m_Name: 
@@ -330,6 +331,7 @@ MonoBehaviour:
   Min: -2000
   Max: 2000
   Step: 0.1
+  MaxTime: 0
 --- !u!65 &1989362148
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -397,3 +399,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1989362152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1989362146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62c859e082a0a354a9dd0deb5a30bccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Min: -2000
+  Max: 2000
+  Step: 0.1
+  PreviousTime: 0
+  NextTime: 0
+  CurrentTime: 0
+  MaxTime: 10000
+  DELTA_TIME: 0
