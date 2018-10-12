@@ -20,6 +20,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
 
     public float MaxTime;
     private float _maxTime;
+    public float DELTA_TIME;
 
 
     class Vector3DeltaTime
@@ -32,9 +33,11 @@ class CubeClientSerializer: MonoBehaviour, ISerial
     public void Start()
     {
         SnapshotSerializer.GetInstance().AddReference(0, this);
+        QueuedPositions = new Queue<Vector3DeltaTime>();
         _min = Min;
         _max = Max;
         _step = Step;
+        _maxTime = MaxTime;
     }
 
     private void DequeNextPosition()
@@ -56,8 +59,11 @@ class CubeClientSerializer: MonoBehaviour, ISerial
     {
         if (PreviousPosition != null)
         {
-            CurrentTime += Time.deltaTime;
-
+            if (NextPosition != null)
+            {
+                CurrentTime += Time.deltaTime;
+            }
+            
             if (NextPosition == null)
             {
                 DequeNextPosition();
@@ -73,24 +79,29 @@ class CubeClientSerializer: MonoBehaviour, ISerial
                 {
                     transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, 1);
                     PreviousPosition = NextPosition;
+                    PreviousTime = NextTime;
                     DequeNextPosition();
                 }
             }
-        }
-        if (PositionChanged)
-        {
-            PositionChanged = false;
-            transform.position = PositionCopy;
-        }
-        else
-        {
-            PositionCopy = transform.position;
         }
     }
 
     public void QueueNextPosition(Vector3 nextPos, float nextTime)
     {
-        QueuedPositions.Enqueue(new Vector3DeltaTime() { pos = nextPos, time = nextTime });
+        if (PreviousPosition == null)
+        {
+            PreviousPosition = nextPos;
+            PreviousTime = nextTime;
+            CurrentTime = -1;
+        }
+        else
+        {
+            if (CurrentTime <= 0)
+            {
+                CurrentTime = PreviousTime;
+            }
+            QueuedPositions.Enqueue(new Vector3DeltaTime() { pos = nextPos, time = nextTime });
+        }
     }
 
     public void Serialize(BitWriter writer)
@@ -107,8 +118,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
         vector.x = reader.ReadFloat(_min, _max, _step);
         vector.y = reader.ReadFloat(_min, _max, _step);
         vector.z = reader.ReadFloat(_min, _max, _step);
-        float time = reader.ReadFloat(0, _maxTime, _step);
-        QueuedPositions.Enqueue(new Vector3DeltaTime() { pos = vector, time = time });
-        return;
+        float time = reader.ReadFloat(0, _maxTime, 0.001f);
+        QueueNextPosition(vector, time);
     }
 }

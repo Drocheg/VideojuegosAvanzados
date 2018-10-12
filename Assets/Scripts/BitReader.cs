@@ -83,7 +83,7 @@ public class BitReader {
         int floatBits = (int) (Math.Log((_max - _min) / _step, 2.0) + 1);
         ulong longVal = ReadBits(floatBits);
         float ret = longVal * _step + _min;
-        Debug.Log("min: " + _min + "max: " + _max + "step: " + _step + "bits: " + floatBits + "logVall: " + longVal + "ret: " + ret);
+//        Debug.Log("min: " + _min + "max: " + _max + "step: " + _step + "bits: " + floatBits + "logVall: " + longVal + "ret: " + ret);
         if (ret < _min || ret > _max)
         {
             throw new Exception("Read a float not in between min and max.");
