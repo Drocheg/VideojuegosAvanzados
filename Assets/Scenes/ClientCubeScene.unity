@@ -415,7 +415,7 @@ MonoBehaviour:
   Step: 0.1
   CurrentState: 0
   MaxQueuedPositions: 10
-  MinQueuedPositions: 1
+  MinQueuedPositions: 2
   PreviousTime: 0
   NextTime: 0
   CurrentTime: 0

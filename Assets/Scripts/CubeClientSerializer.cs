@@ -65,7 +65,9 @@ class CubeClientSerializer: MonoBehaviour, ISerial
         switch(CurrentState) {
             case NetworkState.INITIAL: {
                 // Initial position arrived but not enough info to interpolate.
-                Debug.Assert(PreviousPosition == null); Debug.Assert(NextPosition == null); Debug.Assert(CurrentTime == 0);
+                Debug.Assert(PreviousPosition == null); 
+                Debug.Assert(NextPosition == null); 
+                Debug.Assert(CurrentTime == 0);
                 if (QueuedPositions.Count >= MinQueuedPositions) {
                     Debug.Assert(QueuedPositions.Count >= 2);
                     DequeNextPosition(out PreviousPosition, out PreviousTime);
