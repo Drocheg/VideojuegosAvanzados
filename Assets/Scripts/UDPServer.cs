@@ -45,9 +45,6 @@ public class UDPServer : MonoBehaviour
 
 	public void serverThread()
 	{
-		long time = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, prevTime;
-		
-		System.Threading.Thread.Sleep(2000);
 		var stopwatch = new System.Diagnostics.Stopwatch();
 		try
 		{
@@ -61,7 +58,6 @@ public class UDPServer : MonoBehaviour
 				} else {
 					var packet = serializer.Serialize();
 					int bytes = udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, RemoteEndPoint);
-					time =  DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 					Debug.Log("Time elapsed: " + stopwatch.ElapsedMilliseconds);
 					stopwatch.Reset();
 					stopwatch.Start();
