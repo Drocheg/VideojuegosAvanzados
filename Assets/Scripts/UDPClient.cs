@@ -43,7 +43,6 @@ public class UDPClient : MonoBehaviour
 				var bitReader = new BitReader(new MemoryStream(buffer));
 				var packet = Packet.ReadPacket(bitReader);
 				serializer.Deserialize(packet, bitReader);
-				Debug.Log("Bytes read: " + bytes);
 			}
 		}
 		catch (Exception e)

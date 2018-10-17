@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using UnityEngine;
 
 class CubeClientSerializer: MonoBehaviour, ISerial
 {
     public float Min, Max, Step;
+    public NetworkState CurrentState;
+    public int MaxQueuedPositions;
+    public int MinQueuedPositions;
     private float _min, _max, _step;
     private bool PositionChanged;
     private Vector3 PositionCopy;
@@ -33,75 +35,75 @@ class CubeClientSerializer: MonoBehaviour, ISerial
     public void Start()
     {
         SnapshotSerializer.GetInstance().AddReference(0, this);
-        QueuedPositions = new Queue<Vector3DeltaTime>();
+        QueuedPositions = new Queue<Vector3DeltaTime>(3);
         _min = Min;
         _max = Max;
         _step = Step;
         _maxTime = MaxTime;
     }
 
-    private void DequeNextPosition()
+    public enum NetworkState {
+        INITIAL,
+        NORMAL,
+        NETWORK_PROBLEMS,
+    }
+    private bool DequeNextPosition(out Vector3? deqPosition, out float deqTime)
     {
-        if (QueuedPositions.Count > 0)
-        {
+        if (QueuedPositions.Count > 0){
             var wrapper = QueuedPositions.Dequeue();
-            NextPosition = wrapper.pos;
-            NextTime = wrapper.time;
+            deqPosition = wrapper.pos;
+            deqTime = wrapper.time;
+            return true;
         }
-        else
-        {
-            NextPosition = null;
-            NextTime = 0;
-        }
+        deqPosition = null;
+        deqTime = 0;
+        return false;
     }
 
     public void Update()
     {
-        if (PreviousPosition != null)
-        {
-            if (NextPosition != null)
-            {
+        switch(CurrentState) {
+            case NetworkState.INITIAL: {
+                // Initial position arrived but not enough info to interpolate.
+                Debug.Assert(PreviousPosition == null); Debug.Assert(NextPosition == null); Debug.Assert(CurrentTime == 0);
+                if (QueuedPositions.Count >= MinQueuedPositions) {
+                    Debug.Assert(QueuedPositions.Count >= 2);
+                    DequeNextPosition(out PreviousPosition, out PreviousTime);
+                    DequeNextPosition(out NextPosition, out NextTime);
+                    CurrentTime = PreviousTime;
+                    // Enough info to interpolate now.
+                    transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, 0);
+                    CurrentState = NetworkState.NORMAL;
+                }
+                break;
+            }
+            case NetworkState.NORMAL: {
                 CurrentTime += Time.deltaTime;
-            }
-            
-            if (NextPosition == null)
-            {
-                DequeNextPosition();
-            }
-            if (NextPosition != null)
-            {
-                PositionChanged = true;
-                if (CurrentTime < NextTime)
-                {
-                    transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, (CurrentTime - PreviousTime) / (NextTime - PreviousTime));
+                if (CurrentTime > NextTime) {
+                    // Deque next position
+                    Vector3? auxPos;
+                    float auxTime;
+                    if (DequeNextPosition(out auxPos, out auxTime)) {
+                        PreviousPosition = NextPosition;
+                        PreviousTime = NextTime;
+                        NextPosition = auxPos;
+                        NextTime = auxTime;
+                    } else {
+                        // There is no more info to interpolate. Network problems state
+                        transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, 1);
+                        break;
+                    }
                 }
-                else
-                {
-                    transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, 1);
-                    PreviousPosition = NextPosition;
-                    PreviousTime = NextTime;
-                    DequeNextPosition();
-                }
+                transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, (CurrentTime - PreviousTime) / (NextTime - PreviousTime));
+                break;
             }
-        }
+        } 
+        Debug.Log(QueuedPositions.Count);
     }
 
     public void QueueNextPosition(Vector3 nextPos, float nextTime)
     {
-        if (PreviousPosition == null)
-        {
-            PreviousPosition = nextPos;
-            PreviousTime = nextTime;
-            CurrentTime = -1;
-        }
-        else
-        {
-            if (CurrentTime <= 0)
-            {
-                CurrentTime = PreviousTime;
-            }
-            QueuedPositions.Enqueue(new Vector3DeltaTime() { pos = nextPos, time = nextTime });
-        }
+        QueuedPositions.Enqueue(new Vector3DeltaTime() { pos = nextPos, time = nextTime });
     }
 
     public void Serialize(BitWriter writer)
