@@ -43,7 +43,6 @@ public class SnapshotSerializer
 	{
 		foreach(var entity in entities) {
 			var changed = reader.ReadBit();
-			Debug.Log(changed);
 			if (changed && entity != null) {
 				entity.Deserialize(reader);
 			}
