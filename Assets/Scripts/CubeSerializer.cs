@@ -10,7 +10,7 @@ public class CubeSerializer : MonoBehaviour, ISerial
     private float timestamp;
     public float MaxTime;
     private float _maxTime;
-
+    private bool UpdatePending;
     public void Start()
     {
         SnapshotSerializer.GetInstance().AddReference(0, this);
@@ -23,6 +23,7 @@ public class CubeSerializer : MonoBehaviour, ISerial
     public void Update() 
     {
         timestamp += Time.deltaTime;
+        UpdatePending = true;
         if (PositionChanged)
         {
             PositionChanged = false;

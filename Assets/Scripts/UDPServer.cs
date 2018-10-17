@@ -11,8 +11,13 @@ using UnityEngine;
 public class UDPServer : MonoBehaviour
 {
 
-	public int Port_client;
-	public string IpClient;
+	public int LocalPort;
+	public int RemotePort;
+	public string RemoteIp;
+	public int TickRate;
+	public double SpinLockMargin; 
+	public int SpinLockSleepTime;
+	private double TickTime;
 	private UdpClient udpClient;
 	private IPEndPoint RemoteIpEndPoint;
 	private EndPoint RemoteEndPoint;
@@ -23,8 +28,9 @@ public class UDPServer : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		udpClient = new UdpClient(Port_client);
-		RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(IpClient), Port_client);
+		TickTime = 1000.0 / TickRate;
+		udpClient = new UdpClient(LocalPort);
+		RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(RemoteIp), RemotePort);
 		RemoteEndPoint = (EndPoint)RemoteIpEndPoint;
 		serializer = SnapshotSerializer.GetInstance();
 		theUDPServer = new Thread(new ThreadStart(serverThread));
@@ -39,15 +45,27 @@ public class UDPServer : MonoBehaviour
 
 	public void serverThread()
 	{
+		long time = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond, prevTime;
+		
+		System.Threading.Thread.Sleep(2000);
+		var stopwatch = new System.Diagnostics.Stopwatch();
 		try
 		{
+			stopwatch.Start();
 			while (true)
 			{
-				var packet = serializer.Serialize();
-				int bytes = udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, RemoteEndPoint);
-				Debug.Log(packet.buffer.GetBuffer());
-				Debug.Log("Bytes sent: " + bytes);
-				System.Threading.Thread.Sleep(30);
+				if (stopwatch.Elapsed.TotalMilliseconds < TickTime) {
+					if (stopwatch.Elapsed.TotalMilliseconds + SpinLockMargin < TickTime) {
+						System.Threading.Thread.Sleep(SpinLockSleepTime);
+					}
+				} else {
+					var packet = serializer.Serialize();
+					int bytes = udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, RemoteEndPoint);
+					time =  DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+					Debug.Log("Time elapsed: " + stopwatch.ElapsedMilliseconds);
+					stopwatch.Reset();
+					stopwatch.Start();
+				}
 			}
 		}
 		catch (Exception e)
