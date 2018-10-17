@@ -108,8 +108,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
         QueuedPositions.Enqueue(new Vector3DeltaTime() { pos = nextPos, time = nextTime });
     }
 
-    public void Serialize(BitWriter writer)
-    {
+    public void Serialize(BitWriter writer) {
         writer.WriteFloat(PositionCopy.x, _min, _max, _step);
         writer.WriteFloat(PositionCopy.y, _min, _max, _step);
         writer.WriteFloat(PositionCopy.z, _min, _max, _step);

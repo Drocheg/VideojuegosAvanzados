@@ -45,6 +45,9 @@ public class UDPServer : MonoBehaviour
 
 	public void serverThread()
 	{
+		
+		// Random wait because first sent packets are repeated otherwise for some reason. Investigate further.
+		System.Threading.Thread.Sleep(1000);
 		var stopwatch = new System.Diagnostics.Stopwatch();
 		try
 		{
