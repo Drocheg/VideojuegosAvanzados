@@ -93,7 +93,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
                         NextPosition = auxPos;
                         NextTime = auxTime;
                     } else {
-                        // There is no more info to interpolate. Network problems state
+                        // There is no more info to interpolate. Network problems state.
                         transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, 1);
                         break;
                     }
@@ -105,9 +105,11 @@ class CubeClientSerializer: MonoBehaviour, ISerial
                 transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, (CurrentTime - PreviousTime) / (NextTime - PreviousTime));
                 break;
             }
+			case NetworkState.NETWORK_PROBLEMS: {
+				break;
+			}
         }
-        Debug.Log("QueueSize: " + QueuedPositions.Count);
-
+        Debug.Log(QueuedPositions.Count);
     }
 
     public void QueueNextPosition(Vector3 nextPos, float nextTime)
