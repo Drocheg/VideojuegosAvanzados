@@ -24,7 +24,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
     private float _maxTime;
     public float DELTA_TIME;
 
-
+	private Animator _animator;
     class Vector3DeltaTime
     {
         public Vector3 pos;
@@ -40,6 +40,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
         _max = Max;
         _step = Step;
         _maxTime = MaxTime;
+		_animator = GetComponent<Animator>();
     }
 
     public enum NetworkState {
@@ -65,8 +66,8 @@ class CubeClientSerializer: MonoBehaviour, ISerial
         switch(CurrentState) {
             case NetworkState.INITIAL: {
                 // Initial position arrived but not enough info to interpolate.
-                Debug.Assert(PreviousPosition == null); 
-                Debug.Assert(NextPosition == null); 
+                Debug.Assert(PreviousPosition == null);
+                Debug.Assert(NextPosition == null);
                 Debug.Assert(CurrentTime == 0);
                 if (QueuedPositions.Count >= MinQueuedPositions) {
                     Debug.Assert(QueuedPositions.Count >= 2);
@@ -80,6 +81,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
                 break;
             }
             case NetworkState.NORMAL: {
+
                 CurrentTime += Time.deltaTime;
                 if (CurrentTime > NextTime) {
                     // Deque next position
@@ -96,11 +98,16 @@ class CubeClientSerializer: MonoBehaviour, ISerial
                         break;
                     }
                 }
+				var movement = (NextPosition.Value - PreviousPosition.Value).normalized;
+				_animator.SetFloat("Strafe", movement.x);
+				_animator.SetFloat("Speed", movement.y);
+				Debug.Log("Movement: " + movement);
                 transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, (CurrentTime - PreviousTime) / (NextTime - PreviousTime));
                 break;
             }
-        } 
-        Debug.Log(QueuedPositions.Count);
+        }
+        Debug.Log("QueueSize: " + QueuedPositions.Count);
+
     }
 
     public void QueueNextPosition(Vector3 nextPos, float nextTime)

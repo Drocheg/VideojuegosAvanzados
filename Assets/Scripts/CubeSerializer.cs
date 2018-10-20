@@ -20,7 +20,7 @@ public class CubeSerializer : MonoBehaviour, ISerial
         _maxTime = MaxTime;
     }
 
-    public void Update() 
+    public void Update()
     {
         timestamp += Time.deltaTime;
         UpdatePending = true;
@@ -35,7 +35,7 @@ public class CubeSerializer : MonoBehaviour, ISerial
         }
     }
 
-    public void Serialize(BitWriter writer) 
+    public void Serialize(BitWriter writer)
     {
         writer.WriteFloat(PositionCopy.x, _min, _max, _step);
         writer.WriteFloat(PositionCopy.y, _min, _max, _step);
@@ -56,6 +56,6 @@ public class CubeSerializer : MonoBehaviour, ISerial
         PositionCopy = vector;
         PositionChanged = true;
         Debug.Log(vector);
-        return;        
+        return;
     }
 }
