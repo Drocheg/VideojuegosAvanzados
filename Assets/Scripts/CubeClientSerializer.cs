@@ -65,8 +65,8 @@ class CubeClientSerializer: MonoBehaviour, ISerial
         switch(CurrentState) {
             case NetworkState.INITIAL: {
                 // Initial position arrived but not enough info to interpolate.
-                Debug.Assert(PreviousPosition == null); 
-                Debug.Assert(NextPosition == null); 
+                Debug.Assert(PreviousPosition == null);
+                Debug.Assert(NextPosition == null);
                 Debug.Assert(CurrentTime == 0);
                 if (QueuedPositions.Count >= MinQueuedPositions) {
                     Debug.Assert(QueuedPositions.Count >= 2);
@@ -80,6 +80,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
                 break;
             }
             case NetworkState.NORMAL: {
+				
                 CurrentTime += Time.deltaTime;
                 if (CurrentTime > NextTime) {
                     // Deque next position
@@ -91,7 +92,7 @@ class CubeClientSerializer: MonoBehaviour, ISerial
                         NextPosition = auxPos;
                         NextTime = auxTime;
                     } else {
-                        // There is no more info to interpolate. Network problems state
+                        // There is no more info to interpolate. Network problems state.
                         transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, 1);
                         break;
                     }
@@ -99,7 +100,10 @@ class CubeClientSerializer: MonoBehaviour, ISerial
                 transform.position = Vector3.Lerp(PreviousPosition.Value, NextPosition.Value, (CurrentTime - PreviousTime) / (NextTime - PreviousTime));
                 break;
             }
-        } 
+			case NetworkState.NETWORK_PROBLEMS: {
+				break;
+			}
+        }
         Debug.Log(QueuedPositions.Count);
     }
 
