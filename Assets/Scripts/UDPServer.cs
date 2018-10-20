@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.IO;
+
 using UnityEngine;
 
 public class UDPServer : MonoBehaviour
@@ -15,19 +15,21 @@ public class UDPServer : MonoBehaviour
 	public int RemotePort;
 	public string RemoteIp;
 	public int TickRate;
-	public double SpinLockMargin; 
+	public double SpinLockMargin;
 	public int SpinLockSleepTime;
+	public double PacketLossProbability;
 	private double TickTime;
 	private UdpClient udpClient;
 	private IPEndPoint RemoteIpEndPoint;
 	private EndPoint RemoteEndPoint;
 	private Thread theUDPServer;
 	private SnapshotSerializer serializer;
-
 	private byte[] byteArray;
+	private System.Random random;
 	// Use this for initialization
 	void Start()
 	{
+		random = new System.Random();
 		TickTime = 1000.0 / TickRate;
 		udpClient = new UdpClient(LocalPort);
 		RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(RemoteIp), RemotePort);
@@ -45,7 +47,7 @@ public class UDPServer : MonoBehaviour
 
 	public void serverThread()
 	{
-		
+
 		// Random wait because first sent packets are repeated otherwise for some reason. Investigate further.
 		System.Threading.Thread.Sleep(1000);
 		var stopwatch = new System.Diagnostics.Stopwatch();
@@ -59,15 +61,17 @@ public class UDPServer : MonoBehaviour
 						System.Threading.Thread.Sleep(SpinLockSleepTime);
 					}
 				} else {
-					var packet = serializer.Serialize();
-					int bytes = udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, RemoteEndPoint);
+					if(random.NextDouble() >= PacketLossProbability) {
+						var packet = serializer.Serialize();
+						int bytes = udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, RemoteEndPoint);
+					}
 					Debug.Log("Time elapsed: " + stopwatch.ElapsedMilliseconds);
 					stopwatch.Reset();
 					stopwatch.Start();
 				}
 			}
 		}
-		catch (Exception e)
+		catch (System.Exception e)
 		{
 			print(e);
 		}
