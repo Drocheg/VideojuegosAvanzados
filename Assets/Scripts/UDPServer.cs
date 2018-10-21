@@ -49,7 +49,7 @@ public class UDPServer : MonoBehaviour
 	{
 
 		// Random wait because first sent packets are repeated otherwise for some reason. Investigate further.
-		System.Threading.Thread.Sleep(1000);
+		// System.Threading.Thread.Sleep(1000);
 		var stopwatch = new System.Diagnostics.Stopwatch();
 		try
 		{
@@ -65,7 +65,6 @@ public class UDPServer : MonoBehaviour
 						var packet = serializer.Serialize();
 						int bytes = udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, RemoteEndPoint);
 					}
-					Debug.Log("Time elapsed: " + stopwatch.ElapsedMilliseconds);
 					stopwatch.Reset();
 					stopwatch.Start();
 				}
