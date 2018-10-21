@@ -12,7 +12,7 @@ class CharacterDeserializer: MonoBehaviour, ISerial
     public float RotationSerialStep;
     public float AnimationSerialStep;
     public float TimeSerialStep, TimeSerialMax;
-    public int MinQueuedPositions, MaxQueuedPositions;
+    public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
     private NetworkState _currentState;
     private Vector3? _previousPosition, _nextPosition;
     private float _previousTime, _nextTime, _currentTime;
@@ -87,10 +87,10 @@ class CharacterDeserializer: MonoBehaviour, ISerial
                 break;
             }
             case NetworkState.NORMAL: {
-                // var timeMultiplier = _queuedPositions.Count < MinQueuedPositions ? 0.9f: _queuedPositions.Count > MaxQueuedPositions ? 1.1f : 1;
+                var timeMultiplier = _queuedPositions.Count > TargetQueuedPositions ? 1.1f : 1;
                 // Debug.Log("TimeM: " + timeMultiplier);
                 Debug.Log("Q: " + _queuedPositions.Count);
-                _currentTime += Time.deltaTime ;
+                _currentTime += Time.deltaTime * timeMultiplier ;
                 if (_currentTime > _nextTime) {
                     // Deque next position
                     Vector3? auxPos;

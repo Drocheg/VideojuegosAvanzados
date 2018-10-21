@@ -2441,23 +2441,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1261460628916354}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62c859e082a0a354a9dd0deb5a30bccd, type: 3}
+  m_Script: {fileID: 11500000, guid: 4532b2d4953064e49bdf880f1bd030e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PositionSerialMin: -2000
   PositionSerialMax: 2000
-  PositionSerialStep: 0.1
+  PositionSerialStep: 0.01
   RotationSerialStep: 0.01
   AnimationSerialStep: 0.1
   TimeSerialStep: 0.001
-  CurrentState: 0
-  MaxQueuedPositions: 4
+  TimeSerialMax: 10000
   MinQueuedPositions: 2
-  PreviousTime: 0
-  NextTime: 0
-  CurrentTime: 0
-  MaxTime: 10000
-  DELTA_TIME: 0
+  MaxQueuedPositions: 4
+  TargetQueuedPositions: 1
 --- !u!137 &137353437259039098
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
