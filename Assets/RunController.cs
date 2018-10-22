@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerInputController : MonoBehaviour {
+public class RunController : MonoBehaviour {
 	private Animator _playerAnimator;
-	private Transform _rightShoulder;
-	private Transform _leftShoulder;
 	private Transform _chest;
-
-	public Camera Camera;
 	// Use this for initialization
 	void Start () {
 		_playerAnimator = GetComponent<Animator>();
@@ -22,7 +18,5 @@ public class PlayerInputController : MonoBehaviour {
 		_playerAnimator.SetFloat("Speed", speed);
 		_playerAnimator.SetFloat("Strafe", strafe);
 		_chest = _playerAnimator.GetBoneTransform(HumanBodyBones.Chest);
-		
-		
 	}
 }
