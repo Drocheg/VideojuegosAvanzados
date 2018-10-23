@@ -13,11 +13,17 @@ public class ShootController : MonoBehaviour {
 	public float _timeSinceLastShot;
 	public float ShootingTimeout;
 	public ParticleSystem MuzzleFlash;
-	private ParticlePool _particlePool;
+
+	private ParticlePool _sparklesPool;
+	private ParticlePool _bloodPool;
+	private LineRenderer _lineRenderer;
 	// Use this for initialization
 	void Start () {
 		_playerAnimator = GetComponent<Animator>();
-		_particlePool = GetComponent<ParticlePool>();
+		var particlePools = GetComponents<ParticlePool>();
+		_sparklesPool = particlePools[0];
+		_bloodPool = particlePools[1];
+		_lineRenderer = GetComponent<LineRenderer>();
 	}
 	
 
@@ -28,12 +34,22 @@ public class ShootController : MonoBehaviour {
 		if (_timeSinceLastShot >= ShootingTimeout) {
 		 if (Input.GetMouseButton(0)) {
 				Shoot();
-				
 			}
 		}
 			if (Input.GetMouseButtonUp(0)) {
 				_playerAnimator.SetBool("Shooting", false);
 			}
+	}
+
+	private IEnumerator DrawLineTrail(Vector3 opos, Vector3 dpos)
+	{
+		_lineRenderer.enabled = true;
+		_lineRenderer.SetPosition(0, opos);
+		_lineRenderer.SetPosition(1, dpos);
+		// wait two frames
+		yield return null;
+		yield return null;
+		_lineRenderer.enabled = false;
 	}
 
 	private void Shoot() 
@@ -46,10 +62,23 @@ public class ShootController : MonoBehaviour {
 		// Draw a raycast and collision effect
 		RaycastHit hit;
 		if (Physics.Raycast(Camera.transform.position, Camera.transform.forward, out hit, 1000)) {
-			var particleSystem = _particlePool.GetParticleSystem();
+			ParticlePool particlePool;
+			// Check if another player was hit;
+			if (hit.collider.tag == "CharacterCollider") {
+				// Make other player take damage
+				var limbController = hit.collider.GetComponent<LimbController>();
+				limbController.TakeDamage();
+				particlePool = _bloodPool;
+			} else {
+				particlePool = _sparklesPool;
+			}
+			var particleSystem = particlePool.GetParticleSystem();
 			particleSystem.transform.SetPositionAndRotation(hit.point, Quaternion.LookRotation(hit.normal));
 			particleSystem.Play();
-			_particlePool.ReleaseParticleSystem(particleSystem);
+			particlePool.ReleaseParticleSystem(particleSystem);
+			StartCoroutine(DrawLineTrail(Camera.transform.position, hit.point));
+		} else {
+			StartCoroutine(DrawLineTrail(Camera.transform.position, Camera.transform.TransformPoint(Vector3.forward * 1000)));
 		}
 	}
 }
