@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent (typeof(AimManager))]
 public class ShootManager : IGenericWeaponManager {
-	private Animator _playerAnimator;
+	protected Animator _playerAnimator;
 	public AudioClip WeaponFire;
 	public AudioClip ClipEmpty;
 	public Camera Camera;
@@ -13,15 +13,15 @@ public class ShootManager : IGenericWeaponManager {
 	public float ShootingTimeout;
 	public ParticleSystem MuzzleFlash;
 	public PlayerManager PlayerManager;
-	private ParticlePool _sparklesPool;
-	private ParticlePool _bloodPool;
-	private AimManager _aimManager;
-	private WeaponManager _weaponManager;
-	private ReloadManager _reloadManager;
+	protected ParticlePool _sparklesPool;
+	protected ParticlePool _bloodPool;
+	protected AimManager _aimManager;
+	protected WeaponManager _weaponManager;
+	protected ReloadManager _reloadManager;
 	private LayerMask _mask;
 	public int AnimationLayer;
 	public Vector3 GunCameraAdjustment;
-	private AudioSource _audioSource;
+	protected AudioSource _audioSource;
 	public float DamageMultiplier;
 	// Use this for initialization
 	void Start () {
@@ -52,7 +52,7 @@ public class ShootManager : IGenericWeaponManager {
 	}
 
 
-	private void Shoot() 
+	protected virtual void Shoot() 
 	{
 		if (!_weaponManager.ShootIfAble()) {
 			if (!_audioSource.isPlaying) {
@@ -88,7 +88,7 @@ public class ShootManager : IGenericWeaponManager {
 
 	public float RecoilAmount;
 	public float RecoilSmoothness;
-	private IEnumerator Recoil()
+	protected IEnumerator Recoil()
 	{
 		Camera.transform.Rotate(Vector3.left * RecoilAmount * RecoilSmoothness);
 		for (int i = 1; i <= RecoilAmount; i++) {
@@ -108,7 +108,7 @@ public class ShootManager : IGenericWeaponManager {
 		GunCamera.fieldOfView = FOVAdjustment;
 	}
 
-	void Play(AudioClip clip) 
+	protected void Play(AudioClip clip) 
 	{
 		_audioSource.clip = clip;
 		_audioSource.Play();
