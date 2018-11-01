@@ -7,7 +7,6 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Animator))]
 public class EnemyManager : MonoBehaviour {
 	private Animator _animator;
-	public Transform Player;
 	private Collider _hitCollider;
 
 	private AudioSource _HitSound;
@@ -20,13 +19,8 @@ public class EnemyManager : MonoBehaviour {
 		_HitSound = GetComponent<AudioSource>();
 		_healthManager = GetComponent<HealthManager>();
 	}
-	
-	// Update is called once per frame
-	void Update () 
-	{
-	}
-
 	public void Die() {
+		_HitSound.Play();
 		_healthManager.enabled = false;
 		foreach(var collider in Limbs) {
 			collider.enabled = false;
