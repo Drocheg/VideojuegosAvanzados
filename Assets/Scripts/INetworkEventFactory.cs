@@ -1,4 +1,4 @@
 public interface INetworkEventFactory {
-	INetworkEvent Serialize(BitWriter writer);
+	void Serialize(BitWriter writer);
 	INetworkEvent Deserialize(BitReader reader);
 }
