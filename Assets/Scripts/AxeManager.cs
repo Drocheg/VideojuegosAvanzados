@@ -54,7 +54,7 @@ public class AxeManager : IGenericWeaponManager {
 		if (Physics.Raycast(Camera.transform.position, Camera.transform.forward, out hit, Range, _mask)) {
 			ParticlePool particlePool;
 			// Check if another player was hit;
-			if (hit.collider.tag == "CharacterCollision") {
+			if (hit.collider.tag == "CharacterCollider") {
 				// Make other player take damage
 				var limbController = hit.collider.GetComponent<LimbManager>();
 				_audioSource.clip = BodyHitSound;

@@ -4,12 +4,18 @@ using UnityEngine;
 using TMPro;
 
 public class PickUpManager : MonoBehaviour {
+
+	public enum WeaponAmmo : int{
+		PISTOL_CLIP = 0,
+		SHOTGUN_SHELLS,
+		GRENADE_LAUNCHER,
+	}
+	public WeaponManager[] weaponManagers;
 	public Transform WorldCamera;
 	public float PickUpDistance;
 	public TextMeshProUGUI PickUpPrompt, PickUpItemName;
 	private LayerMask mask;
 	public AudioSource PickUpSound;
-	public WeaponManager WeaponManager;
 	// Use this for initialization
 	void Start () {
 		mask = LayerMask.GetMask("Default");

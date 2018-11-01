@@ -29,10 +29,10 @@ public class AimManager : MonoBehaviour {
 	
 	private bool CheckIfAimingInput()
 	{
-		return Input.GetButton("Aim") || Input.GetButton("Shoot");
+		return Input.GetButton("Aim");
 	}
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 		if (_reloadManager.IsReloading()) {
 			_increment = +FrameIncrement;
 			Crosshairs.enabled = false;

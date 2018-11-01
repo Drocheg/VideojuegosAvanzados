@@ -22,5 +22,7 @@ public class ProjectileManager : ShootManager {
 		var go = Instantiate(Projectile);
 		go.transform.position = ProjectilePositionOrigin.position;
 		go.AddForce(Camera.transform.forward * ExplosionMagnitude, ForceMode.Impulse);
+
+		StartCoroutine(Recoil());
 	}
 }

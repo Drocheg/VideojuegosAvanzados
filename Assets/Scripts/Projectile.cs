@@ -10,9 +10,11 @@ public class Projectile : MonoBehaviour {
 	public float DestroyDelay;
 	public float Damage;
 	private Rigidbody _rb;
+	private Renderer _renderer;
 	// Use this for initialization
 	void Start () {
 		_rb = GetComponent<Rigidbody>();
+		_renderer = GetComponent<Renderer>();
 	}
 	
 	// Update is called once per frame
@@ -26,6 +28,7 @@ public class Projectile : MonoBehaviour {
 			ExplosionParticles.Play();
 			ExplosionRadius.Explode(Damage);
 			_rb.isKinematic = true;
+			_renderer.enabled = false;
 			StartCoroutine(WaitAndDestroy());
 		}
 	}

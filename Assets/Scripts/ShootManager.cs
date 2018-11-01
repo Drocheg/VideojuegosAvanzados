@@ -41,8 +41,8 @@ public class ShootManager : IGenericWeaponManager {
 	void LateUpdate () {
 		_timeSinceLastShot += Time.deltaTime;
 		_aimManager.UpdateAim();
-		if (Input.GetButton("Shoot")) {
-			if (_timeSinceLastShot >= ShootingTimeout && _aimManager.IsAiming()) {
+		if (Input.GetButton("Shoot") && !_reloadManager.IsReloading()) {
+			if (_timeSinceLastShot >= ShootingTimeout) {
 				Shoot();
 			}
 		} 

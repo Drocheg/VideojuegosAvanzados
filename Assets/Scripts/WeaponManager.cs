@@ -11,6 +11,13 @@ public class WeaponManager : MonoBehaviour {
 	private int _bulletsLoaded;
 	private int _bulletsRemaining;
 
+	public enum WeaponAmmo {
+		PistolClip,
+		SHOTGUN_SHELLS,
+		AK_CLIP,
+		GRENADE_LAUNCHER,
+	}
+	
 	// Use this for initialization
 	void Start () {
 		_bulletsLoaded = BulletClipSize;
