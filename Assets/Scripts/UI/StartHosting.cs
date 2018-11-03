@@ -58,7 +58,7 @@ public class StartHosting : MonoBehaviour {
 				if (_gameStarted) {
 					_button.interactable = false;
 					_button.GetComponentInChildren<Text>().text = "Started";
-					SceneManager.LoadScene("SampleScene");
+					SceneManager.LoadScene("ServerCube");
 				}
 				break;
 			}

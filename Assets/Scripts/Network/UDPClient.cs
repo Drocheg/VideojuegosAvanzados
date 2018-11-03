@@ -42,12 +42,12 @@ public class UDPClient : MonoBehaviour
 				int bytes = udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
 				var bitReader = new BitReader(new MemoryStream(buffer));
 				//var packet = Packet.ReadPacket(bitReader, channels.Length, 1000);
-
 				//if (packet.channel < channels.Length && packet.channel >= 0) {
 				//	channels[packet.channel].Deserialize(bitReader);
 				//}
 				//Debug.Log("Bytes read: " + bytes);
 				var packet = Packet.ReadPacket(bitReader, 0, 1000);
+
 				serializer.Deserialize(bitReader);
 			}
 		}
