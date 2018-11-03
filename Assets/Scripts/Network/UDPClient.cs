@@ -21,8 +21,8 @@ public class UDPClient : MonoBehaviour
 	{
 		udpClient = new UdpClient(Port_server);
 		serializer = SnapshotSerializer.GetInstance();
-		theUDPClient = new Thread(new ThreadStart(clientThread));
-		theUDPClient.Start();
+		// theUDPClient = new Thread(new ThreadStart(clientThread));
+		// theUDPClient.Start();
 	}
 
 	private void OnDisable()
@@ -31,31 +31,30 @@ public class UDPClient : MonoBehaviour
 		udpClient.Close();
 	}
 
-	public void clientThread()
-	{
-		try
-		{
-			while (true)
-			{
-				EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-				byte[] buffer = new byte[1000];
-				int bytes = udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
-				var bitReader = new BitReader(new MemoryStream(buffer));
-				//var packet = Packet.ReadPacket(bitReader, channels.Length, 1000);
-				//if (packet.channel < channels.Length && packet.channel >= 0) {
-				//	channels[packet.channel].Deserialize(bitReader);
-				//}
-				//Debug.Log("Bytes read: " + bytes);
-				var packet = Packet.ReadPacket(bitReader, 0, 1000);
+	// public void clientThread()
+	// {
+	// 	try
+	// 	{
+	// 		while (true)
+	// 		{
+	// 			EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+	// 			byte[] buffer = new byte[1000];
+	// 			int bytes = udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
+	// 			var bitReader = new BitReader(new MemoryStream(buffer));
+	// 			//var packet = Packet.ReadPacket(bitReader, channels.Length, 1000);
+	// 			//if (packet.channel < channels.Length && packet.channel >= 0) {
+	// 			//	channels[packet.channel].Deserialize(bitReader);
+	// 			//}
+	// 			//Debug.Log("Bytes read: " + bytes);
+	// 			var packet = Packet.ReadPacket(bitReader, 0, 1000);
+	// 			serializer.Deserialize(bitReader);
+	// 		}
+	// 	}
+	// 	catch (Exception e)
+	// 	{
+	// 		print(e);
+	// 	}
 
-				serializer.Deserialize(bitReader);
-			}
-		}
-		catch (Exception e)
-		{
-			print(e);
-		}
-
-	}
+	// }
 
 }

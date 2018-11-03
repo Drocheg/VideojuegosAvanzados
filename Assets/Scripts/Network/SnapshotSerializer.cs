@@ -24,7 +24,6 @@ public class SnapshotSerializer : INetworkEventFactory
 	}
 	public void Serialize(BitWriter writer)
 	{
-		var packet = Packet.WritePacket(0, writer, 1);
 		foreach(var entity in entities) {
 			if (entity != null) {
 				writer.WriteBit(true);

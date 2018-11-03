@@ -62,7 +62,7 @@ public class UDPServer : MonoBehaviour
 					}
 				} else {
 					if(random.NextDouble() >= PacketLossProbability) {
-                        BitWriter bitWriter = new BitWriter(1000);
+            BitWriter bitWriter = new BitWriter(1000);
 						serializer.Serialize(bitWriter);
 						int bytes = udpClient.Client.SendTo(bitWriter.GetBuffer().GetBuffer(), (int) bitWriter.GetBuffer().Length, SocketFlags.None, RemoteEndPoint);
 					}
