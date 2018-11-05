@@ -13,7 +13,7 @@ public class UDPClient : MonoBehaviour
 	private UdpClient udpClient;
 	public int Port_server;
 	//private IChannelHandler[] channels;
-	private Thread theUDPClient;
+//	private Thread theUDPClient;
 	private SnapshotSerializer serializer;
 
 
@@ -27,7 +27,7 @@ public class UDPClient : MonoBehaviour
 
 	private void OnDisable()
 	{
-		theUDPClient.Abort();
+//		theUDPClient.Abort();
 		udpClient.Close();
 	}
 

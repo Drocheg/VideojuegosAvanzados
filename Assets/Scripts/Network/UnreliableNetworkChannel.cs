@@ -1,44 +1,25 @@
 using System.Collections.Generic;
 using System.Net;
 
-public class UnreliableNetworkChannel : INetworkChannel{
+public class UnreliableNetworkChannel : NetworkChannel{
+
 	
-	ChanelType type;
-	public uint id;
-	public EndPoint EndPoint;
-	Queue<Packet> sendQueue;
-	Queue<Packet> recvQueue;
-
-	ulong maxSendSeq;
 	ulong maxRecvSeq;
-	ulong maxSeqPossible;
-	uint totalChannels;
 
-	public UnreliableNetworkChannel(uint id, ChanelType type, EndPoint endPoint, uint totalChannels, ulong maxSeqPossible) {
-		this.id = id;
-		this.type = type;
-		this.EndPoint = endPoint;
-		this.totalChannels = totalChannels;
-		this.maxSeqPossible = maxSeqPossible;
+	public UnreliableNetworkChannel(uint id, ChanelType type, EndPoint endPoint, uint totalChannels, ulong maxSeqPossible) : base(id, type, endPoint, totalChannels, maxSeqPossible)
+	{
+		maxRecvSeq = 0;
 	}
 
-	public void Send(ISerial serializable) {
-		
-		var packet = Packet.WritePacket(id, maxSendSeq++, serializable, 3, 10000, EndPoint);
-		sendQueue.Enqueue(packet);
+	public override List<Packet> GetPacketsToSend()
+	{
+		var ret = new List<Packet>(sendQueue);
+		sendQueue.Clear();
+		return ret;
 	}
 
-	public void EnqueRecvPacket(Packet packet) {
-		recvQueue.Enqueue(packet);
-	}
-
-	private static ulong mod(ulong x, ulong m) {
-    return (x%m + m)%m;
-	}
-	private static ulong MapToModule(ulong a, ulong maxRecvSeq, ulong maxSeqPossible) {
-		return mod((a+ maxSeqPossible / 2 - maxRecvSeq), maxSeqPossible);
-	}
-	public List<Packet> Receive() 
+	
+	public override List<Packet> ReceivePackets() 
 	{
 		var ret = new List<Packet>(recvQueue);
 		recvQueue.Clear();
@@ -50,4 +31,12 @@ public class UnreliableNetworkChannel : INetworkChannel{
 		}
 		return ret.GetRange(i+1, ret.Count - (i + 1));
 	}	
+	
+	public override void SendPacket(ISerial serializable) {
+		sendQueue.Enqueue(Packet.WritePacket(id, maxSendSeq++, serializable, totalChannels, (uint)maxSeqPossible, EndPoint, PacketType.DATA));
+	}
+	
+	public override void EnqueRecvPacket(Packet packet) {
+		recvQueue.Enqueue(packet);
+	}
 }

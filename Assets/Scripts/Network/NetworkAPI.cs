@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 public class NetworkAPI {
 	private static NetworkAPI _instance;
@@ -18,10 +19,10 @@ public class NetworkAPI {
 	private NetworkAPI(){
 		_udpClient = new UdpClient(localPort);
 	}
+	
 	private Queue<Packet> readQueue;
 	private Queue<Packet> sendQueue;
-
-	private List<UnreliableNetworkChannel> channels;
+	private Dictionary<EndPoint, Dictionary<uint, NetworkChannel>> channelsMap; //TODO check if two EndPoint are equals
 	
 	int _spinLockSleepTime;
 	uint _totalChannels;
@@ -31,17 +32,94 @@ public class NetworkAPI {
 		_spinLockSleepTime = spinLockTime;
 		_totalChannels = totalChannels;
 		_maxSeqPossible = maxSeqPossible;
+		readQueue = new Queue<Packet>();
+		sendQueue = new Queue<Packet>();
+		channelsMap = new Dictionary<EndPoint, Dictionary<uint, NetworkChannel>>();
 	}
 
-	public int AddChannel(uint id, ChanelType type, EndPoint endpoint) 
+	public void Close()
 	{
-		channels.Add(new UnreliableNetworkChannel(id, type, endpoint, _totalChannels, _maxSeqPossible));
-		return channels.Count - 1;
+		_udpClient.Close();
 	}
 
-	public void Send(int channel, ISerial serial) 
+	public bool AddUnreliableChannel(uint id, EndPoint endpoint)
 	{
-		channels[channel].Send(serial);
+		return AddChannel(id, ChanelType.UNRELIABLE, endpoint, 0);
+	}
+
+	public bool AddNoTimeoutReliableChannel(uint id, EndPoint endpoint)
+	{
+		return AddChannel(id, ChanelType.RELIABLE, endpoint, 0);
+	}
+
+	public bool AddTimeoutReliableChannel(uint id, EndPoint endpoint, uint timeout)
+	{
+		return AddChannel(id, ChanelType.TIMED, endpoint, timeout);
+	}
+
+	private bool AddChannel(uint id, ChanelType type, EndPoint endpoint, uint timeout) 
+	{
+		if (!channelsMap.ContainsKey(endpoint))
+		{
+			channelsMap.Add(endpoint, new Dictionary<uint, NetworkChannel>());
+		}
+
+		Dictionary<uint, NetworkChannel> channels;
+		channelsMap.TryGetValue(endpoint, out channels);
+
+		if (!channels.ContainsKey(id))
+		{
+			switch (type)
+			{
+				case ChanelType.UNRELIABLE:
+					channels.Add(id, new UnreliableNetworkChannel(id, type, endpoint, _totalChannels, _maxSeqPossible));
+					break;
+				case ChanelType.RELIABLE:
+				case ChanelType.TIMED:
+					channels.Add(id, new ReliableNetworkChannel(id, type, endpoint, _totalChannels, _maxSeqPossible, timeout));
+					break;
+			}
+			
+			return true;
+		}
+		return false;
+	}
+
+	public bool Send(uint channel, EndPoint enpPoint, ISerial serial) 
+	{
+		NetworkChannel networkChannel;
+		if (!getChannel(channel, enpPoint, out networkChannel)) return false;
+		networkChannel.SendPacket(serial);
+		return true;
+	}
+
+	public bool getChannel(uint channel, EndPoint enpPoint, out NetworkChannel networkChannel) // TODO only public for tests
+	{
+		networkChannel = null;
+		Dictionary<uint, NetworkChannel> channels;
+		if (!channelsMap.TryGetValue(enpPoint, out channels)) return false;
+		if (!channels.TryGetValue(channel, out networkChannel)) return false;
+		return true;
+	}
+
+	public void UpdateSendQueues()
+	{
+		var packetList = new List<Packet>();
+		foreach (var channels in channelsMap.Values)
+		{
+			foreach (var channel in channels.Values)
+			{
+				packetList.AddRange(channel.GetPacketsToSend());
+			}
+		}
+	
+		lock (sendQueue)
+		{
+			foreach (var packet in packetList)
+			{
+				sendQueue.Enqueue(packet);
+			}
+		}
 	}
 
 	public List<Packet> Receive(out List<Packet> channelLessPacketList) {
@@ -49,23 +127,24 @@ public class NetworkAPI {
 		lock(readQueue) {
 			while (readQueue.Count > 0) {
 				var packet = readQueue.Dequeue();
-				UnreliableNetworkChannel pChannel = null;
-				foreach(var c in channels) {
-					if (c.EndPoint == packet.endPoint && c.id == packet.channelId) {
-						pChannel = c;
-						break;
-					}
-				}
-				if (pChannel != null) {
-					pChannel.EnqueRecvPacket(packet);
-				} else {
+				NetworkChannel channel;
+				if (!getChannel(packet.channelId, packet.endPoint, out channel))
+				{
 					channelLessPacketList.Add(packet);
+				}
+				else
+				{
+					channel.EnqueRecvPacket(packet);
 				}
 			}
 		}
 		var packetList = new List<Packet>();
-		foreach(var c in channels) {
-			packetList.AddRange(c.Receive());
+		foreach (var channels in channelsMap.Values)
+		{
+			foreach (var channel in channels.Values)
+			{
+				packetList.AddRange(channel.ReceivePackets());
+			}
 		}
 		return packetList;
 	}
@@ -87,9 +166,16 @@ public class NetworkAPI {
 
 	public void SendThread()
 	{
-		while(true) {
-			if (sendQueue.Count >= 0) {
-				var packet = sendQueue.Dequeue();
+		while(true)
+		{
+			Packet packet = null;
+			lock (sendQueue){
+				if (sendQueue.Count >= 0)
+				{
+					packet = sendQueue.Dequeue();
+				}
+			}
+			if(packet!=null){
 				_udpClient.Client.SendTo(packet.buffer, packet.buffer.Length, SocketFlags.None, packet.endPoint);
 			} else {
 				System.Threading.Thread.Sleep(_spinLockSleepTime);
