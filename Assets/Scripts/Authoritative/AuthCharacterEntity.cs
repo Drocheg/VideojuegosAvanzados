@@ -8,8 +8,13 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 	private Animator _animator;
 	// Use this for initialization
 	void Start () {
-		GameObject.FindObjectOfType<AuthWorld>().AddReference(Id, this);
+		StartCoroutine(DelayedAddReference());
 		_animator = GetComponent<Animator>();
+	}
+
+	IEnumerator DelayedAddReference() {
+		yield return new WaitForEndOfFrame();
+		GameObject.FindObjectOfType<AuthWorld>().AddReference(Id, this);
 	}
 	
 	// Update is called once per frame
@@ -20,8 +25,8 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 		writer.WriteFloat(transform.position.x, MinPosX, MaxPosX, Step);
 		writer.WriteFloat(transform.position.y, MinPosY, MaxPosY, Step);
 		writer.WriteFloat(transform.position.z, MinPosZ, MaxPosZ, Step);
-		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, 0.1f);
-		writer.WriteFloat(_animator.GetFloat("Speed"), -1, 1, 0.1f);
+		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, AnimationStep);
+		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, AnimationStep);
 		writer.WriteFloat(transform.rotation.w, -1, 1, RotationStep);
 		writer.WriteFloat(transform.rotation.y, -1, 1, RotationStep);
 	}

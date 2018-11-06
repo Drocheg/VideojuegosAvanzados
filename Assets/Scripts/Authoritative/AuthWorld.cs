@@ -16,8 +16,8 @@ public class AuthWorld : MonoBehaviour {
 	
 
 	// Update is called once per frame
-	void Update () {
-		_timestamp += Time.deltaTime;
+	void FixedUpdate () {
+		_timestamp += Time.fixedDeltaTime;
 		NetworkManager.SendAuthEventUnreliable(TakeSnapshot);
 	}
 
@@ -37,7 +37,5 @@ public class AuthWorld : MonoBehaviour {
 				writer.WriteBit(false);
 			}
 		}
-		writer.Flush();
-		writer.Reset();
 	}
 }

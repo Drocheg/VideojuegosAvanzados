@@ -28,14 +28,15 @@ public class NetworkAPI {
 	private Dictionary<EndPoint, Dictionary<uint, NetworkChannel>> channelsMap; //TODO check if two EndPoint are equals
 	
 	int _spinLockSleepTime;
-	uint _totalChannels;
+	// uint _totalChannels;
 	ulong _maxSeqPossible;
 	Thread _sendThread, _recvThread;
+	uint _channelsPerHost;
 
-	public void Init(int localPort, int spinLockTime, uint totalChannels, ulong maxSeqPossible) {
-		_udpClient = new UdpClient(localPort);	
+	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible) {
+		_udpClient = new UdpClient(localPort);
 		_spinLockSleepTime = spinLockTime;
-		_totalChannels = totalChannels;
+		_channelsPerHost = channelsPerHost;
 		_maxSeqPossible = maxSeqPossible;
 		readQueue = new Queue<Packet>();
 		sendQueue = new Queue<Packet>();
@@ -83,11 +84,11 @@ public class NetworkAPI {
 			switch (type)
 			{
 				case ChanelType.UNRELIABLE:
-					channels.Add(id, new UnreliableNetworkChannel(id, type, endpoint, _totalChannels, _maxSeqPossible));
+					channels.Add(id, new UnreliableNetworkChannel(id, type, endpoint, _channelsPerHost, _maxSeqPossible));
 					break;
 				case ChanelType.RELIABLE:
 				case ChanelType.TIMED:
-					channels.Add(id, new ReliableNetworkChannel(id, type, endpoint, _totalChannels, _maxSeqPossible, timeout));
+					channels.Add(id, new ReliableNetworkChannel(id, type, endpoint, _channelsPerHost, _maxSeqPossible, timeout));
 					break;
 			}
 			
@@ -138,9 +139,6 @@ public class NetworkAPI {
 		lock(readQueue) {
 			while (readQueue.Count > 0) {
 				var packet = readQueue.Dequeue();
-				Debug.Log("PacketC: " + packet.channelId);
-				Debug.Log("PacketS: " + packet.seq);
-				Debug.Log("Packet: " + packet.packetType);
 				NetworkChannel channel;
 				if (!getChannel(packet.channelId, packet.endPoint, out channel))
 				{
@@ -170,8 +168,7 @@ public class NetworkAPI {
 			EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
 			byte[] buffer = new byte[1000];
 			int bytes = _udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
-			var bitReader = new BitReader(new MemoryStream(buffer));
-			var packet = Packet.ReadPacket(buffer, 3, 10000, remoteEndPoint);
+			var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, 10000, remoteEndPoint);
 			Debug.Log("Recv. Pakcet");
 			lock(readQueue) {
 				readQueue.Enqueue(packet);
@@ -185,13 +182,13 @@ public class NetworkAPI {
 		{
 			Packet packet = null;
 			lock (sendQueue){
-				if (sendQueue.Count >= 0)
+				if (sendQueue.Count > 0)
 				{
 					packet = sendQueue.Dequeue();
 				}
 			}
 			if(packet!=null){
-				_udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
+				var sent = _udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
 			} else {
 				System.Threading.Thread.Sleep(_spinLockSleepTime);
 			}
