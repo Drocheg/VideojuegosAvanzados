@@ -41,7 +41,6 @@ public class Packet
         bitWriter.WriteInt((ulong)packetType, 0, (uint)Enum.GetNames(typeof(PacketType)).Length);
 		payload(bitWriter);
 		bitWriter.Flush();
-        bitWriter.Reset();
         return new Packet(channel, seq, bitWriter.GetBuffer(), endPoint, packetType);
     }
 

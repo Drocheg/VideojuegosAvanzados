@@ -34,7 +34,7 @@ public class NetworkAPI {
 	Thread _sendThread, _recvThread;
 
 	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible) {
-		_udpClient = new UdpClient(localPort);	
+		_udpClient = new UdpClient(localPort);
 		_spinLockSleepTime = spinLockTime;
 		_channelsPerHost = channelsPerHost;
 		_maxSeqPossible = maxSeqPossible;
@@ -169,7 +169,7 @@ public class NetworkAPI {
 			byte[] buffer = new byte[1000];
 			int bytes = _udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
 			if (bytes > 0) {
-				var packet = Packet.ReadPacket(buffer, (int) 3, (int) _maxSeqPossible, remoteEndPoint);
+				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
 				lock(readQueue) {
 					readQueue.Enqueue(packet);
 				}
@@ -183,13 +183,13 @@ public class NetworkAPI {
 		{
 			Packet packet = null;
 			lock (sendQueue){
-				if (sendQueue.Count >= 0)
+				if (sendQueue.Count > 0)
 				{
 					packet = sendQueue.Dequeue();
 				}
 			}
 			if(packet!=null){
-				_udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
+				var sent = _udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
 			} else {
 				System.Threading.Thread.Sleep(_spinLockSleepTime);
 			}

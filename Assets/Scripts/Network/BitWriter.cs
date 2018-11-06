@@ -3,20 +3,17 @@ using System;
 
 public class BitWriter
 {
-    byte[] buffer;
     MemoryStream memoryStream;
     ulong bits;
     int bitCount;
 
     public BitWriter(int capacity)
     {
-        this.buffer = new byte[capacity];
         this.memoryStream = new MemoryStream(capacity);
     }
 
     public BitWriter(MemoryStream memoryStream)
     {
-        // this.buffer = memoryStream.GetBuffer();
         this.memoryStream = memoryStream;
     }
 
@@ -111,7 +108,7 @@ public class BitWriter
 
     public void ResetBuffer()
     {
-        memoryStream = new MemoryStream(buffer);
+        memoryStream = new MemoryStream(memoryStream.Capacity);
         return;
     }
 }
