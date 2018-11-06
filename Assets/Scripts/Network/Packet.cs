@@ -15,9 +15,9 @@ public class Packet
     public uint channelId;
     public EndPoint endPoint;
 	public ulong seq;
-    public byte[] buffer;
+    public MemoryStream buffer;
     public PacketType packetType;
-    private Packet(uint channelId, ulong seq, byte[] buffer, EndPoint endPoint, PacketType packetType) {
+    private Packet(uint channelId, ulong seq, MemoryStream buffer, EndPoint endPoint, PacketType packetType) {
         this.channelId = channelId;
         this.seq = seq;
         this.buffer = buffer;
@@ -33,7 +33,8 @@ public class Packet
         bitWriter.WriteInt((ulong)packetType, 0, (uint)Enum.GetNames(typeof(PacketType)).Length);
 		payload(bitWriter);
 		bitWriter.Flush();
-        return new Packet(channel, seq, bitWriter.GetBuffer().GetBuffer(), endPoint, packetType);
+        bitWriter.Reset();
+        return new Packet(channel, seq, bitWriter.GetBuffer(), endPoint, packetType);
     }
 
     public static Packet WriteACKPacket(uint channel, ulong seq, uint channels, uint maxSeq,
@@ -44,16 +45,19 @@ public class Packet
         bitWriter.WriteInt(channel, 0, channels);
         bitWriter.WriteInt((ulong)PacketType.ACK, 0, (uint)Enum.GetNames(typeof(PacketType)).Length);
         bitWriter.Flush();
-        return new Packet(channel, seq, bitWriter.GetBuffer().GetBuffer(), endPoint, PacketType.ACK);
+        bitWriter.Reset();
+        return new Packet(channel, seq, bitWriter.GetBuffer(), endPoint, PacketType.ACK);
     }
 
     public static Packet ReadPacket(byte[] buffer, int channels, int maxSeq, EndPoint endPoint)
     {
-        var reader = new BitReader(new MemoryStream(buffer));
-        var channel = (uint) reader.ReadInt(0, channels);
+        var ms = new MemoryStream(buffer);
+        var reader = new BitReader(ms);
 		var seq = (uint) reader.ReadInt(0, maxSeq);
+        var channel = (uint) reader.ReadInt(0, channels);
         var packetType = (PacketType) reader.ReadInt(0, Enum.GetNames(typeof(PacketType)).Length);
-        return new Packet(channel, seq, buffer, endPoint, packetType);
+        
+        return new Packet(channel, seq, reader.GetBuffer(), endPoint, packetType);
     }
 
     protected bool Equals(Packet other)

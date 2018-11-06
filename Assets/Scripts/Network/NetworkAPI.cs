@@ -42,6 +42,8 @@ public class NetworkAPI {
 		channelsMap = new Dictionary<EndPoint, Dictionary<uint, NetworkChannel>>();
 		_sendThread = new Thread(new ThreadStart(SendThread));
 		_recvThread = new Thread(new ThreadStart(RecvThread));
+		_sendThread.Start();
+		_recvThread.Start();
 	}
 
 	public void Close()
@@ -136,6 +138,9 @@ public class NetworkAPI {
 		lock(readQueue) {
 			while (readQueue.Count > 0) {
 				var packet = readQueue.Dequeue();
+				Debug.Log("PacketC: " + packet.channelId);
+				Debug.Log("PacketS: " + packet.seq);
+				Debug.Log("Packet: " + packet.packetType);
 				NetworkChannel channel;
 				if (!getChannel(packet.channelId, packet.endPoint, out channel))
 				{
@@ -167,6 +172,7 @@ public class NetworkAPI {
 			int bytes = _udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
 			var bitReader = new BitReader(new MemoryStream(buffer));
 			var packet = Packet.ReadPacket(buffer, 3, 10000, remoteEndPoint);
+			Debug.Log("Recv. Pakcet");
 			lock(readQueue) {
 				readQueue.Enqueue(packet);
 			}
@@ -185,7 +191,7 @@ public class NetworkAPI {
 				}
 			}
 			if(packet!=null){
-				_udpClient.Client.SendTo(packet.buffer, packet.buffer.Length, SocketFlags.None, packet.endPoint);
+				_udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
 			} else {
 				System.Threading.Thread.Sleep(_spinLockSleepTime);
 			}

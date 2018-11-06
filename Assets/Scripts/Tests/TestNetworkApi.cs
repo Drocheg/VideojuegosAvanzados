@@ -180,7 +180,9 @@ public class TestNetworkApi
         nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
         nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
         List<Packet> packets = nc.ReceivePackets();   
-        
+        Debug.Log("bufferC:" + packets[0].buffer.Capacity);
+        Debug.Log("bufferL:" + packets[0].buffer.Length);
+        Debug.Log("bufferP:" + packets[0].buffer.Position);
         Assert.AreEqual(2, packets.Count);
         Assert.AreEqual(o, readPacket(packets[0]));
         Assert.AreEqual(o2, readPacket(packets[1]));
@@ -258,12 +260,13 @@ public class TestNetworkApi
 
     private SerialObject readPacket(Packet p)
     {
-        BitReader reader = new BitReader(new MemoryStream(p.buffer));
+        BitReader reader = new BitReader(p.buffer);
         var channel = (uint) reader.ReadInt(0, (int)MAX_CHANNELS);
         var seq = (uint) reader.ReadInt(0, (int)MAX_SEQ);
         var packetType = (PacketType) reader.ReadInt(0, Enum.GetNames(typeof(PacketType)).Length);
         SerialObject o2 = new SerialObject(0, "", false);
         o2.Deserialize(reader);
+        p.buffer.Position = 0;
         return o2;
     }
 
