@@ -19,6 +19,8 @@ public class ReliableNetworkChannel : NetworkChannel {
 	{
 		this.timeout = timeout;
 		auxReceiveQueue = new Queue<Packet>();
+		maxACK = maxSeqPossible-1;
+		maxReturnedSeq = maxSeqPossible-1;
 	}
 
 	public override List<Packet> GetPacketsToSend()
@@ -29,8 +31,8 @@ public class ReliableNetworkChannel : NetworkChannel {
 			lastTime = Time.realtimeSinceStartup;
 			foreach (var packet in sendQueue)
 			{
-				if (packet.seq > maxACK)
-				{
+				if (packet.packetType == PacketType.ACK || isBiggerThan(packet.seq, maxACK, maxSeqPossible))
+				{   
 					newQueue.Enqueue(packet);
 				}				
 			}
@@ -43,23 +45,27 @@ public class ReliableNetworkChannel : NetworkChannel {
 	
 	public override List<Packet> ReceivePackets()
 	{
-
-		if (auxReceiveQueue.Count == 0) return new List<Packet>();
+		bool receiveNonACK = false;
 		foreach (Packet newPacket in auxReceiveQueue)
 		{
 			if (newPacket.packetType == PacketType.ACK)
 			{
-				maxACK = Math.Max(maxACK, newPacket.seq);
+				if (isBiggerThan(newPacket.seq, maxACK, maxSeqPossible))
+				{
+					maxACK = newPacket.seq;	
+				}
+				
 			}
 			else
 			{
-				if (MapToModule(newPacket.seq, maxReturnedSeq, maxSeqPossible) > maxReturnedSeq / 2 && !recvQueue.Contains(newPacket))  //TODO do not do it in O(N^2)?
+				receiveNonACK = true;
+				if (isBiggerThan(newPacket.seq, maxReturnedSeq, maxSeqPossible) && !recvQueue.Contains(newPacket))  //TODO do not do it in O(N^2)?
 				{
 					recvQueue.Enqueue(newPacket);			
 				}
 			}
 		}
-		
+		if(!receiveNonACK) return new List<Packet>();
 		var sortedPackets = new List<Packet>(recvQueue); //TODO do not sort this everytime
 		sortedPackets.Sort((a, b) => (int) (MapToModule(a.seq, maxReturnedSeq, maxSeqPossible) - MapToModule(b.seq, maxReturnedSeq, maxSeqPossible)));
 
@@ -88,8 +94,7 @@ public class ReliableNetworkChannel : NetworkChannel {
 	}
 	
 	public override void SendPacket(ISerial serializable) {
-		sendQueue.Enqueue(Packet.WritePacket(id, maxSendSeq++, serializable, totalChannels, (uint)maxSeqPossible, EndPoint, PacketType.DATA));
+		sendQueue.Enqueue(Packet.WritePacket(id, incSeq(), serializable, totalChannels, (uint)maxSeqPossible, EndPoint, PacketType.DATA));
 	}
-
 
 }

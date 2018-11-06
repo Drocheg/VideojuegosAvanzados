@@ -22,6 +22,7 @@ public class Packet
         this.seq = seq;
         this.buffer = buffer;
         this.endPoint = endPoint;
+        this.packetType = packetType;
     }
 
     public static Packet WritePacket(uint channel, ulong seq, ISerial payload, uint channels, uint maxSeq, EndPoint endPoint, PacketType packetType)

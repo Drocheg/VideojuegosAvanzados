@@ -82,7 +82,7 @@ public class TestNetworkApi
     }
     
     [Test]
-    public void SendSingleMessage()
+    public void SendSingleMessageUnreliable()
     {
         networkApi.AddUnreliableChannel(channelId0, endPoint0);
         SerialObject o = new SerialObject(10, "hola", true);
@@ -91,14 +91,86 @@ public class TestNetworkApi
         networkApi.getChannel(channelId0, endPoint0, out nc);
         List<Packet> packets = nc.GetPacketsToSend();
         Assert.AreEqual(packets.Count, 1);
-        Packet p = packets[0];
+        Assert.AreEqual(o, readPacket(packets[0]));
+        
+        packets = nc.GetPacketsToSend();
+        Assert.AreEqual(0, packets.Count);
+    }
+    
+    [Test]
+    public void SendSingleMessageReliableT0()
+    {
+        networkApi.AddNoTimeoutReliableChannel(channelId0, endPoint0);
+        SerialObject o = new SerialObject(10, "hola", true);
+        networkApi.Send(channelId0, endPoint0, o);
+        NetworkChannel nc;
+        networkApi.getChannel(channelId0, endPoint0, out nc);
+        List<Packet> packets = nc.GetPacketsToSend();
+        Assert.AreEqual(1, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+        
+        packets = nc.GetPacketsToSend();
+        Assert.AreEqual(1, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+    }
+    
+    
+    [Test]
+    public void SendTwoMessageReliableT0()
+    {
+        networkApi.AddNoTimeoutReliableChannel(channelId0, endPoint0);
+        SerialObject o = new SerialObject(10, "hola", true);
+        networkApi.Send(channelId0, endPoint0, o);
+        networkApi.Send(channelId0, endPoint0, o);
+        NetworkChannel nc;
+        networkApi.getChannel(channelId0, endPoint0, out nc);
+        List<Packet> packets = nc.GetPacketsToSend();
+              
+        Assert.AreEqual(2, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+        
+        packets = nc.GetPacketsToSend();
+        Assert.AreEqual(2, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+    }
+    
+    [Test]
+    public void SendMessageReliableT0WithACK()
+    {
+        networkApi.AddNoTimeoutReliableChannel(channelId0, endPoint0);
+        SerialObject o = new SerialObject(10, "hola", true);
+        networkApi.Send(channelId0, endPoint0, o);
+        networkApi.Send(channelId0, endPoint0, o);
+        networkApi.Send(channelId0, endPoint0, o);
+        NetworkChannel nc;
+        networkApi.getChannel(channelId0, endPoint0, out nc);
+        List<Packet> packets = nc.GetPacketsToSend();   
+        
+        Assert.AreEqual(3, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+        
+        nc.EnqueRecvPacket(Packet.WriteACKPacket(channelId0, 0, 4, 10000, endPoint0));
+        nc.ReceivePackets();
+        packets = nc.GetPacketsToSend();
+        Assert.AreEqual(2, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+        Assert.AreEqual(o, readPacket(packets[1]));
+        
+        nc.EnqueRecvPacket(Packet.WriteACKPacket(channelId0, 2, 4, 10000, endPoint0));
+        nc.ReceivePackets();
+        packets = nc.GetPacketsToSend();
+        Assert.AreEqual(0, packets.Count);
+    }
+
+    private SerialObject readPacket(Packet p)
+    {
         BitReader reader = new BitReader(new MemoryStream(p.buffer));
         var channel = (uint) reader.ReadInt(0, 4);
         var seq = (uint) reader.ReadInt(0, 10000);
         var packetType = (PacketType) reader.ReadInt(0, Enum.GetNames(typeof(PacketType)).Length);
         SerialObject o2 = new SerialObject(0, "", false);
         o2.Deserialize(reader);
-        Assert.AreEqual(o2, o);
+        return o2;
     }
 
     private class SerialObject : ISerial

@@ -11,7 +11,7 @@ public abstract class NetworkChannel : INetworkChannel {
 	protected Queue<Packet> sendQueue;
 	protected Queue<Packet> recvQueue;
 	
-	protected ulong maxSendSeq;
+	private ulong maxSendSeq;
 	protected readonly ulong maxSeqPossible;
 	protected readonly uint totalChannels;
 
@@ -47,6 +47,18 @@ public abstract class NetworkChannel : INetworkChannel {
 	protected void SendACK(ulong seq)
 	{
 		sendQueue.Enqueue(Packet.WriteACKPacket(id, seq, totalChannels, (uint)maxSeqPossible, EndPoint));
+	}
+	
+	protected bool isBiggerThan(ulong first, ulong second, ulong max)
+	{
+		return MapToModule(first, second, max) > max / 2;
+	}
+
+	protected ulong incSeq()
+	{
+		var oldSeq = maxSendSeq;
+		maxSendSeq = (maxSendSeq + 1) % maxSeqPossible;
+		return oldSeq;
 	}
 
 	
