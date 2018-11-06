@@ -72,17 +72,19 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 
 	public void Deserialize(BitReader reader) {
 		Vector3 pos;
-		pos.x = reader.ReadFloat(MinPosX, MinPosX, Step);
-		pos.y = reader.ReadFloat(MinPosY, MinPosY, Step);
-		pos.z = reader.ReadFloat(MinPosZ, MinPosZ, Step);
+		pos.x = reader.ReadFloat(MinPosX, MaxPosX, Step);
+		pos.y = reader.ReadFloat(MinPosY, MaxPosY, Step);
+		pos.z = reader.ReadFloat(MinPosZ, MaxPosZ, Step);
 		Vector2 anim;
-		anim.x = reader.ReadFloat(-1, 1, AnimationStep);
-		anim.y = 0;
+		anim.x = reader.ReadFloat( -1, 1, AnimationStep);
+		anim.y = reader.ReadFloat( -1, 1, AnimationStep);
 		Quaternion rot;
 		rot.w = reader.ReadFloat(-1, 1, RotationStep);
 		rot.x = 0;
-		rot.y = reader.ReadFloat(-1, 1, AnimationStep);
+		rot.y = reader.ReadFloat(-1, 1, RotationStep);
 		rot.z = 0;
+		Debug.Log(pos);
+		Debug.Log(rot);
 		QueueNextPosition(pos, anim, rot);
 	} 
 }

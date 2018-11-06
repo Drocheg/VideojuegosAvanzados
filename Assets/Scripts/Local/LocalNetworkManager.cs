@@ -27,17 +27,11 @@ public class LocalNetworkManager : MonoBehaviour {
 		var packets = _networkAPI.Receive(out channelLess);
 
 		foreach (var packet in packets) {
-			Debug.Log("Packet" + Time.frameCount);
 			switch(packet.channelId) {
 				case 0: {
 					// Unreliable channel
-					var reader = new BitReader(packet.buffer);
-					// Read packet header and discard info
-					reader.ReadInt(0, (int) MaxSeqPossible);
-					reader.ReadInt(0, (int) TotalChannels);
-        	reader.ReadInt(0, Enum.GetNames(typeof(PacketType)).Length);
 					// Add snapshot to local world queue
-					_localWorld.NewSnapshot(reader);
+					_localWorld.NewSnapshot(packet.bitReader);
 					break;
 				}
 			}

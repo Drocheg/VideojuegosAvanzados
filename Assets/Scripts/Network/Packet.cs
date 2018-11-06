@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-
+using UnityEngine;
 
 public enum PacketType{
     ACK,
@@ -17,10 +17,18 @@ public class Packet
 	public ulong seq;
     public MemoryStream buffer;
     public PacketType packetType;
+    public BitReader bitReader;
     private Packet(uint channelId, ulong seq, MemoryStream buffer, EndPoint endPoint, PacketType packetType) {
         this.channelId = channelId;
         this.seq = seq;
         this.buffer = buffer;
+        this.endPoint = endPoint;
+        this.packetType = packetType;
+    }
+    private Packet(uint channelId, ulong seq, BitReader bitReader, EndPoint endPoint, PacketType packetType) {
+        this.channelId = channelId;
+        this.seq = seq;
+        this.bitReader = bitReader;
         this.endPoint = endPoint;
         this.packetType = packetType;
     }
@@ -55,9 +63,8 @@ public class Packet
         var reader = new BitReader(ms);
 		var seq = (uint) reader.ReadInt(0, maxSeq);
         var channel = (uint) reader.ReadInt(0, channels);
-        var packetType = (PacketType) reader.ReadInt(0, Enum.GetNames(typeof(PacketType)).Length);
-        
-        return new Packet(channel, seq, reader.GetBuffer(), endPoint, packetType);
+        var packetType = (PacketType) reader.ReadInt(0, Enum.GetNames(typeof(PacketType)).Length);        
+        return new Packet(channel, seq, reader, endPoint, packetType);
     }
 
     protected bool Equals(Packet other)

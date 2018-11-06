@@ -93,13 +93,16 @@ public class LocalWorld : MonoBehaviour {
 	}
 
 	public void NewSnapshot(BitReader reader) {
-		_queuedTimes.Enqueue( reader.ReadFloat(0,MaxTime, TimePrecision));
+		_queuedTimes.Enqueue( reader.ReadFloat(0, MaxTime, TimePrecision));
 		foreach(var e in entities) {
-			if (reader.ReadBit()) {
+			var b = reader.ReadBit();
+			// Debug.Log("b:" + b);
+			if (b) {
 				Debug.Assert(e != null);
 				e.Deserialize(reader);
 			} 
 		}
+		// Debug.Log("///////////////");
 	}
 
 	

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine.Analytics;
-
+using UnityEngine;
 public class UnreliableNetworkChannel : NetworkChannel{
 
 	
@@ -36,6 +36,7 @@ public class UnreliableNetworkChannel : NetworkChannel{
 	
 	
 	public override void SendPacket(Serialize serializable) {
+		Debug.Log("MaxSeq:" + maxSeqPossible);
 		sendQueue.Enqueue(Packet.WritePacket(id, incSeq(), serializable, totalChannels, (uint)maxSeqPossible, EndPoint, PacketType.DATA));
 	}
 	
