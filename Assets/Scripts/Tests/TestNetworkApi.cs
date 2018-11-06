@@ -72,7 +72,7 @@ public class TestNetworkApi
     {
         networkApi.AddUnreliableChannel(channelId0, endPoint0);
         SerialObject o = new SerialObject(10, "hola", true);
-        Assert.IsTrue(networkApi.Send(channelId0, endPoint0, o));
+        Assert.IsTrue(networkApi.Send(channelId0, endPoint0, o.Serialize));
     }
 
     [Test]
@@ -89,7 +89,7 @@ public class TestNetworkApi
     {
         networkApi.AddUnreliableChannel(channelId0, endPoint0);
         SerialObject o = new SerialObject(10, "hola", true);
-        networkApi.Send(channelId0, endPoint0, o);
+        networkApi.Send(channelId0, endPoint0, o.Serialize);
         NetworkChannel nc;
         networkApi.getChannel(channelId0, endPoint0, out nc);
         List<Packet> packets = nc.GetPacketsToSend();
@@ -105,7 +105,7 @@ public class TestNetworkApi
     {
         networkApi.AddNoTimeoutReliableChannel(channelId0, endPoint0);
         SerialObject o = new SerialObject(10, "hola", true);
-        networkApi.Send(channelId0, endPoint0, o);
+        networkApi.Send(channelId0, endPoint0, o.Serialize);
         NetworkChannel nc;
         networkApi.getChannel(channelId0, endPoint0, out nc);
         List<Packet> packets = nc.GetPacketsToSend();
@@ -123,8 +123,8 @@ public class TestNetworkApi
     {
         networkApi.AddNoTimeoutReliableChannel(channelId0, endPoint0);
         SerialObject o = new SerialObject(10, "hola", true);
-        networkApi.Send(channelId0, endPoint0, o);
-        networkApi.Send(channelId0, endPoint0, o);
+        networkApi.Send(channelId0, endPoint0, o.Serialize);
+        networkApi.Send(channelId0, endPoint0, o.Serialize);
         NetworkChannel nc;
         networkApi.getChannel(channelId0, endPoint0, out nc);
         List<Packet> packets = nc.GetPacketsToSend();
@@ -142,9 +142,9 @@ public class TestNetworkApi
     {
         networkApi.AddNoTimeoutReliableChannel(channelId0, endPoint0);
         SerialObject o = new SerialObject(10, "hola", true);
-        networkApi.Send(channelId0, endPoint0, o);
-        networkApi.Send(channelId0, endPoint0, o);
-        networkApi.Send(channelId0, endPoint0, o);
+        networkApi.Send(channelId0, endPoint0, o.Serialize);
+        networkApi.Send(channelId0, endPoint0, o.Serialize);
+        networkApi.Send(channelId0, endPoint0, o.Serialize);
         NetworkChannel nc;
         networkApi.getChannel(channelId0, endPoint0, out nc);
         List<Packet> packets = nc.GetPacketsToSend();   
@@ -177,8 +177,8 @@ public class TestNetworkApi
         NetworkChannel nc;
         networkApi.getChannel(channelId0, endPoint0, out nc);
         
-        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
-        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
         List<Packet> packets = nc.ReceivePackets();   
         
         Assert.AreEqual(2, packets.Count);
@@ -198,8 +198,8 @@ public class TestNetworkApi
         NetworkChannel nc;
         networkApi.getChannel(channelId0, endPoint0, out nc);
         
-        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
-        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
         List<Packet> packets = nc.ReceivePackets();   
         
         Assert.AreEqual(2, packets.Count);
@@ -222,8 +222,8 @@ public class TestNetworkApi
         NetworkChannel nc;
         networkApi.getChannel(channelId0, endPoint0, out nc);
         
-        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
-        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 3, o2, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 3, o2.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
       
         List<Packet> packets = nc.ReceivePackets();   
         Assert.AreEqual(0, packets.Count);
@@ -232,7 +232,7 @@ public class TestNetworkApi
         Assert.AreEqual(1, packetsToSend.Count);
         Assert.AreEqual(readPacket(Packet.WriteACKPacket(channelId0, MAX_SEQ-1, MAX_CHANNELS, MAX_SEQ, endPoint0)), readPacket(packetsToSend[0]));
         
-        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
         packets = nc.ReceivePackets();   
         Assert.AreEqual(2, packets.Count);
         Assert.AreEqual(o, readPacket(packets[0]));
@@ -242,7 +242,7 @@ public class TestNetworkApi
         Assert.AreEqual(1, packetsToSend.Count);
         Assert.AreEqual(readPacket(Packet.WriteACKPacket(channelId0, 1, MAX_CHANNELS, MAX_SEQ, endPoint0)), readPacket(packetsToSend[0]));
         
-        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 2, o, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 2, o.Serialize, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
         packets = nc.ReceivePackets();   
         Assert.AreEqual(2, packets.Count);
         Assert.AreEqual(o, readPacket(packets[0]));

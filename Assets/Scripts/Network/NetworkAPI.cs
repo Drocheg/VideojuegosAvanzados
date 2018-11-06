@@ -2,7 +2,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using UnityEngine;
+
+public delegate void Serialize(BitWriter writer);
 
 public class NetworkAPI {
 	private static NetworkAPI _instance;
@@ -27,6 +30,8 @@ public class NetworkAPI {
 	int _spinLockSleepTime;
 	uint _totalChannels;
 	ulong _maxSeqPossible;
+	Thread _sendThread, _recvThread;
+
 	public void Init(int localPort, int spinLockTime, uint totalChannels, ulong maxSeqPossible) {
 		_udpClient = new UdpClient(localPort);	
 		_spinLockSleepTime = spinLockTime;
@@ -35,11 +40,15 @@ public class NetworkAPI {
 		readQueue = new Queue<Packet>();
 		sendQueue = new Queue<Packet>();
 		channelsMap = new Dictionary<EndPoint, Dictionary<uint, NetworkChannel>>();
+		_sendThread = new Thread(new ThreadStart(SendThread));
+		_recvThread = new Thread(new ThreadStart(RecvThread));
 	}
 
 	public void Close()
 	{
 		_udpClient.Close();
+		_sendThread.Abort();
+		_recvThread.Abort();
 	}
 
 	public bool AddUnreliableChannel(uint id, EndPoint endpoint)
@@ -85,7 +94,7 @@ public class NetworkAPI {
 		return false;
 	}
 
-	public bool Send(uint channel, EndPoint enpPoint, ISerial serial) 
+	public bool Send(uint channel, EndPoint enpPoint, Serialize serial) 
 	{
 		NetworkChannel networkChannel;
 		if (!getChannel(channel, enpPoint, out networkChannel)) return false;

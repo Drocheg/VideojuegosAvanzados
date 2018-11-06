@@ -27,7 +27,7 @@ public abstract class NetworkChannel : INetworkChannel {
 		recvQueue = new Queue<Packet>();
 	}
 
-	public abstract void SendPacket(ISerial serializable);
+	public abstract void SendPacket(Serialize serializable);
 
 	public abstract void EnqueRecvPacket(Packet packet);
 	

@@ -35,7 +35,7 @@ public class UnreliableNetworkChannel : NetworkChannel{
 
 	
 	
-	public override void SendPacket(ISerial serializable) {
+	public override void SendPacket(Serialize serializable) {
 		sendQueue.Enqueue(Packet.WritePacket(id, incSeq(), serializable, totalChannels, (uint)maxSeqPossible, EndPoint, PacketType.DATA));
 	}
 	

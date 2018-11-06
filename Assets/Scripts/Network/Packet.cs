@@ -25,13 +25,13 @@ public class Packet
         this.packetType = packetType;
     }
 
-    public static Packet WritePacket(uint channel, ulong seq, ISerial payload, uint channels, uint maxSeq, EndPoint endPoint, PacketType packetType)
+    public static Packet WritePacket(uint channel, ulong seq, Serialize payload, uint channels, uint maxSeq, EndPoint endPoint, PacketType packetType)
     {
         var bitWriter = new BitWriter(1000);
 		bitWriter.WriteInt(seq, 0, maxSeq);
 		bitWriter.WriteInt(channel, 0, channels);
         bitWriter.WriteInt((ulong)packetType, 0, (uint)Enum.GetNames(typeof(PacketType)).Length);
-		payload.Serialize(bitWriter);
+		payload(bitWriter);
 		bitWriter.Flush();
         return new Packet(channel, seq, bitWriter.GetBuffer().GetBuffer(), endPoint, packetType);
     }

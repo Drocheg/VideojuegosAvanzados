@@ -31,7 +31,7 @@ public class SerializationTests {
 			}
 		}
 		writer.Flush();
-
+		writer.Reset();
         var reader = new BitReader(writer.GetBuffer());
         for (int i = 0; i < 13; i++) {
             Assert.True(reader.ReadBit());
@@ -61,6 +61,7 @@ public class SerializationTests {
 		var writer = new BitWriter(1000);
 		writer.WriteString("Hola");
 		writer.Flush();
+		writer.Reset();
 		var reader = new BitReader(writer.GetBuffer());
 		var read = reader.ReadString(4);
 		read.Equals("Hola");
@@ -73,6 +74,7 @@ public class SerializationTests {
         var writer = new BitWriter(1000);
         writer.WriteBit(true);
         writer.Flush();
+		writer.Reset();
         var reader = new BitReader(writer.GetBuffer());
         Assert.True(reader.ReadBit());
     }
@@ -83,6 +85,7 @@ public class SerializationTests {
 		var writer = new BitWriter(1000);
 		writer.WriteFloat(15.5f, 10.0f, 20.0f, 0.5f);
 		writer.Flush();
+		writer.Reset();
 		var reader = new BitReader(writer.GetBuffer());
 		var result = reader.ReadFloat(10.0f, 20.0f, 0.5f);
 		Assert.True(result < 15.50005 && result > 15.49995);
@@ -95,6 +98,7 @@ public class SerializationTests {
 		var writer = new BitWriter(1000);
 		writer.WriteFloat(20.0f, 10.0f, 20.3f, 0.5f);
 		writer.Flush();
+		writer.Reset();
 		var reader = new BitReader(writer.GetBuffer());
 		var result = reader.ReadFloat(10.0f, 20.3f, 0.5f);
 		Assert.True(result < 20.00005 && result > 19.99995);
