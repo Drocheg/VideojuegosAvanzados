@@ -53,6 +53,12 @@ public abstract class NetworkChannel : INetworkChannel {
 	{
 		return MapToModule(first, second, max) > max / 2;
 	}
+	
+	protected bool isEqualThan(ulong first, ulong second, ulong max)
+	{
+		return MapToModule(first, second, max) == max / 2;
+	}
+
 
 	protected ulong incSeq()
 	{

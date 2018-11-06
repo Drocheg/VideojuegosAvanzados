@@ -25,19 +25,29 @@ public class ReliableNetworkChannel : NetworkChannel {
 
 	public override List<Packet> GetPacketsToSend()
 	{
+		// We need to return the ACK and the Packets to sned but we need to eliminate ACK from the queue
 		var newQueue = new Queue<Packet>();
+		var retQueue = new Queue<Packet>();
 		if (Time.realtimeSinceStartup - lastTime >= timeout)
 		{
 			lastTime = Time.realtimeSinceStartup;
 			foreach (var packet in sendQueue)
 			{
-				if (packet.packetType == PacketType.ACK || isBiggerThan(packet.seq, maxACK, maxSeqPossible))
+				if (packet.packetType == PacketType.ACK)
 				{   
-					newQueue.Enqueue(packet);
-				}				
+					retQueue.Enqueue(packet);
+				}
+				else
+				{
+					if (isBiggerThan(packet.seq, maxACK, maxSeqPossible))
+					{
+						retQueue.Enqueue(packet);
+						newQueue.Enqueue(packet);
+					}
+				}					
 			}
 			sendQueue = newQueue;
-			return new List<Packet>(sendQueue);
+			return new List<Packet>(retQueue);
 		}
 		return new List<Packet>();
 	}
@@ -65,6 +75,7 @@ public class ReliableNetworkChannel : NetworkChannel {
 				}
 			}
 		}
+		auxReceiveQueue.Clear();
 		if(!receiveNonACK) return new List<Packet>();
 		var sortedPackets = new List<Packet>(recvQueue); //TODO do not sort this everytime
 		sortedPackets.Sort((a, b) => (int) (MapToModule(a.seq, maxReturnedSeq, maxSeqPossible) - MapToModule(b.seq, maxReturnedSeq, maxSeqPossible)));
@@ -73,16 +84,16 @@ public class ReliableNetworkChannel : NetworkChannel {
 		recvQueue.Clear();
 		foreach (var packet in sortedPackets)
 		{
-			if (packet.seq == maxReturnedSeq + 1)
+			if (isEqualThan(packet.seq, maxReturnedSeq + 1, maxSeqPossible))
 			{
-				maxReturnedSeq++;
+				maxReturnedSeq = (maxReturnedSeq + 1) % maxSeqPossible;
 				ret.Add(packet);
 			}
-			else if (packet.seq > maxReturnedSeq)
+			else if (isBiggerThan(packet.seq, maxReturnedSeq + 1, maxSeqPossible))
 			{
 				recvQueue.Enqueue(packet);
 			}else{
-				throw new Exception();
+				throw new Exception("Invalid State Exception");
 			}
 		}
 		SendACK(maxReturnedSeq);
@@ -96,5 +107,7 @@ public class ReliableNetworkChannel : NetworkChannel {
 	public override void SendPacket(ISerial serializable) {
 		sendQueue.Enqueue(Packet.WritePacket(id, incSeq(), serializable, totalChannels, (uint)maxSeqPossible, EndPoint, PacketType.DATA));
 	}
+	
+	
 
 }

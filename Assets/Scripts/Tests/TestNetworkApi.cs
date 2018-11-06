@@ -16,6 +16,9 @@ public class TestNetworkApi
     private uint channelId0;
     private int port;
 
+    private uint MAX_SEQ = 10000;
+    private uint MAX_CHANNELS = 4;
+
     [TestFixtureSetUp]
     public void Init()
     {
@@ -36,7 +39,7 @@ public class TestNetworkApi
     [SetUp]
     public void RunBeforeAnyTests()
     {
-        networkApi.Init(port, 10, 4, 10000);
+        networkApi.Init(port, 10, MAX_CHANNELS, MAX_SEQ);
     }
     
     [TearDown]
@@ -149,24 +152,115 @@ public class TestNetworkApi
         Assert.AreEqual(3, packets.Count);
         Assert.AreEqual(o, readPacket(packets[0]));
         
-        nc.EnqueRecvPacket(Packet.WriteACKPacket(channelId0, 0, 4, 10000, endPoint0));
+        nc.EnqueRecvPacket(Packet.WriteACKPacket(channelId0, 0, MAX_CHANNELS, MAX_SEQ, endPoint0));
         nc.ReceivePackets();
         packets = nc.GetPacketsToSend();
         Assert.AreEqual(2, packets.Count);
         Assert.AreEqual(o, readPacket(packets[0]));
         Assert.AreEqual(o, readPacket(packets[1]));
         
-        nc.EnqueRecvPacket(Packet.WriteACKPacket(channelId0, 2, 4, 10000, endPoint0));
+        nc.EnqueRecvPacket(Packet.WriteACKPacket(channelId0, 2, MAX_CHANNELS, MAX_SEQ, endPoint0));
         nc.ReceivePackets();
         packets = nc.GetPacketsToSend();
         Assert.AreEqual(0, packets.Count);
     }
+    
+    
+    
+    [Test]
+    public void ReceiveUnreliableMessage()
+    {
+        networkApi.AddUnreliableChannel(channelId0, endPoint0);
+        SerialObject o = new SerialObject(10, "hola", true);
+        SerialObject o2 = new SerialObject(20, "hola2", false);
+        
+        NetworkChannel nc;
+        networkApi.getChannel(channelId0, endPoint0, out nc);
+        
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        List<Packet> packets = nc.ReceivePackets();   
+        
+        Assert.AreEqual(2, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+        Assert.AreEqual(o2, readPacket(packets[1]));
+
+        
+    }
+    
+    [Test]
+    public void ReceiveReliableMessage()
+    {
+        networkApi.AddNoTimeoutReliableChannel(channelId0, endPoint0);
+        SerialObject o = new SerialObject(10, "hola", true);
+        SerialObject o2 = new SerialObject(20, "hola2", false);
+        
+        NetworkChannel nc;
+        networkApi.getChannel(channelId0, endPoint0, out nc);
+        
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        List<Packet> packets = nc.ReceivePackets();   
+        
+        Assert.AreEqual(2, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+        Assert.AreEqual(o2, readPacket(packets[1]));
+        
+        List<Packet> packetsToSend = nc.GetPacketsToSend();
+        Assert.AreEqual(1, packetsToSend.Count);
+        Assert.AreEqual(readPacket(Packet.WriteACKPacket(channelId0, 1, MAX_CHANNELS, MAX_SEQ, endPoint0)), readPacket(packetsToSend[0]));
+    }
+    
+    
+    [Test]
+    public void ReceiveReliableMessagesInDisorder()
+    {
+        networkApi.AddNoTimeoutReliableChannel(channelId0, endPoint0);
+        SerialObject o = new SerialObject(10, "hola", true);
+        SerialObject o2 = new SerialObject(20, "hola2", false);
+        
+        NetworkChannel nc;
+        networkApi.getChannel(channelId0, endPoint0, out nc);
+        
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 1, o2, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 3, o2, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+      
+        List<Packet> packets = nc.ReceivePackets();   
+        Assert.AreEqual(0, packets.Count);
+        
+        List<Packet> packetsToSend = nc.GetPacketsToSend();
+        Assert.AreEqual(1, packetsToSend.Count);
+        Assert.AreEqual(readPacket(Packet.WriteACKPacket(channelId0, MAX_SEQ-1, MAX_CHANNELS, MAX_SEQ, endPoint0)), readPacket(packetsToSend[0]));
+        
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 0, o, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        packets = nc.ReceivePackets();   
+        Assert.AreEqual(2, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+        Assert.AreEqual(o2, readPacket(packets[1]));
+       
+        packetsToSend = nc.GetPacketsToSend();
+        Assert.AreEqual(1, packetsToSend.Count);
+        Assert.AreEqual(readPacket(Packet.WriteACKPacket(channelId0, 1, MAX_CHANNELS, MAX_SEQ, endPoint0)), readPacket(packetsToSend[0]));
+        
+        nc.EnqueRecvPacket(Packet.WritePacket(channelId0, 2, o, MAX_CHANNELS, MAX_SEQ, endPoint0, PacketType.DATA));
+        packets = nc.ReceivePackets();   
+        Assert.AreEqual(2, packets.Count);
+        Assert.AreEqual(o, readPacket(packets[0]));
+        Assert.AreEqual(o2, readPacket(packets[1]));
+        
+        packetsToSend = nc.GetPacketsToSend();
+        Assert.AreEqual(1, packetsToSend.Count);
+        Assert.AreEqual(readPacket(Packet.WriteACKPacket(channelId0, 3, MAX_CHANNELS, MAX_SEQ, endPoint0)), readPacket(packetsToSend[0]));
+        
+       
+    }
+    
 
     private SerialObject readPacket(Packet p)
     {
         BitReader reader = new BitReader(new MemoryStream(p.buffer));
-        var channel = (uint) reader.ReadInt(0, 4);
-        var seq = (uint) reader.ReadInt(0, 10000);
+        var channel = (uint) reader.ReadInt(0, (int)MAX_CHANNELS);
+        var seq = (uint) reader.ReadInt(0, (int)MAX_SEQ);
         var packetType = (PacketType) reader.ReadInt(0, Enum.GetNames(typeof(PacketType)).Length);
         SerialObject o2 = new SerialObject(0, "", false);
         o2.Deserialize(reader);

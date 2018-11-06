@@ -28,7 +28,7 @@ public class Packet
     public static Packet WritePacket(uint channel, ulong seq, ISerial payload, uint channels, uint maxSeq, EndPoint endPoint, PacketType packetType)
     {
         var bitWriter = new BitWriter(1000);
-		bitWriter.WriteInt(1, 0, maxSeq);
+		bitWriter.WriteInt(seq, 0, maxSeq);
 		bitWriter.WriteInt(channel, 0, channels);
         bitWriter.WriteInt((ulong)packetType, 0, (uint)Enum.GetNames(typeof(PacketType)).Length);
 		payload.Serialize(bitWriter);
@@ -40,7 +40,7 @@ public class Packet
         EndPoint endPoint)
     {
         var bitWriter = new BitWriter(1000);
-        bitWriter.WriteInt(1, 0, maxSeq);
+        bitWriter.WriteInt(seq, 0, maxSeq);
         bitWriter.WriteInt(channel, 0, channels);
         bitWriter.WriteInt((ulong)PacketType.ACK, 0, (uint)Enum.GetNames(typeof(PacketType)).Length);
         bitWriter.Flush();
