@@ -462,7 +462,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxTime: 1000
   TimePrecision: 0.001
-  MovePrecision: 0.1
+  MovePrecision: 0.01
+  RotPrecision: 0.01
 --- !u!114 &512930497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -481,12 +482,15 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.1
+  Step: 0.01
   RotationStep: 0.01
   AnimationStep: 0.1
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
+  _previousRotation: 0
+  _nextRotation: 0
+  _currentRotation: 0
   IsLocalPlayer: 1
 --- !u!223 &685897263 stripped
 Canvas:
@@ -504,7 +508,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 795593238}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9d9d2f70833a7141adc7acc0c0eab51, type: 3}
   m_Name: 
@@ -522,6 +526,9 @@ MonoBehaviour:
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
+  _previousRotation: 0
+  _nextRotation: 0
+  _currentRotation: 0
   IsLocalPlayer: 0
 --- !u!1 &853822566
 GameObject:
@@ -1623,7 +1630,7 @@ MonoBehaviour:
   MaxEntities: 1
   MaxTime: 1000
   TimePrecision: 0.001
-  MaxAllowedDelay: 0.2
+  MaxAllowedDelay: 1
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
