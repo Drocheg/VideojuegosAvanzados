@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class LocalNetworkManager : MonoBehaviour {
 	public int LocalPort, SpinLockTime;
-	public uint TotalChannels, MaxSeqPossible;
+	public uint ChannelsPerHosts, MaxSeqPossible;
 	private NetworkAPI _networkAPI;
 	public string TestRemoteIp;
 	public int TestRemotePort;
@@ -16,10 +16,10 @@ public class LocalNetworkManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		_networkAPI = NetworkAPI.GetInstance();
-		_networkAPI.Init(LocalPort, SpinLockTime, TotalChannels, MaxSeqPossible);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible);
 		_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		_networkAPI.AddUnreliableChannel(0, _endpoint);
-		_networkAPI.AddNoTimeoutReliableChannel(1, _endpoint);
+		_networkAPI.AddTimeoutReliableChannel(1, _endpoint, 0.01f);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 	}
 	

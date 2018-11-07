@@ -904,8 +904,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LocalPort: 33333
   SpinLockTime: 10
-  TotalChannels: 10
-  MaxSeqPossible: 10000
+  ChannelsPerHosts: 3
+  MaxSeqPossible: 1000
   TestRemoteIp: 127.0.0.1
   TestRemotePort: 40000
 --- !u!114 &1214912809 stripped

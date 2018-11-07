@@ -10,12 +10,12 @@ public class ReliableNetworkChannel : NetworkChannel {
 
 	private ulong maxReturnedSeq;
 	private ulong maxACK;
-	private readonly ulong timeout;
+	private readonly float timeout;
 	private float lastTime;
 
 	private readonly Queue<Packet> auxReceiveQueue;
 
-	public ReliableNetworkChannel(uint id, ChanelType type, EndPoint endPoint, uint totalChannels, ulong maxSeqPossible, ulong timeout) : base(id, type, endPoint, totalChannels, maxSeqPossible)
+	public ReliableNetworkChannel(uint id, ChanelType type, EndPoint endPoint, uint totalChannels, ulong maxSeqPossible, float timeout) : base(id, type, endPoint, totalChannels, maxSeqPossible)
 	{
 		this.timeout = timeout;
 		auxReceiveQueue = new Queue<Packet>();
