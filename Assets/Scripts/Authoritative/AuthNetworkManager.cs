@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class AuthNetworkManager : MonoBehaviour {
 	public class RemoteHost {
-		public EndPoint EndPoint;
+		public EndPoint _receiving_endpoint;
+		public EndPoint _sending_endpoint;
 		public uint UnreliableChannel, ReliableChannel, TimedChannel;
 		public int Id;
 	}
@@ -23,10 +24,11 @@ public class AuthNetworkManager : MonoBehaviour {
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible);
-		var endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
-		_networkAPI.AddUnreliableChannel(0, endpoint);
-		_networkAPI.AddUnreliableChannel(1, endpoint);
-		hosts.Add(new RemoteHost(){EndPoint = endpoint,  UnreliableChannel = 0});
+		var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort+1);
+		var sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
+		_networkAPI.AddUnreliableChannel(0, sending_endpoint, receiving_endpoint);
+		_networkAPI.AddUnreliableChannel(1, sending_endpoint, receiving_endpoint);
+		hosts.Add(new RemoteHost(){_receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
 	}
 
@@ -58,7 +60,7 @@ public class AuthNetworkManager : MonoBehaviour {
 			case NetworkCommand.MOVE_COMMAND: {
 				int Id = -1;
 				foreach(var e in hosts) {
-					if (e.EndPoint.Equals(packet.endPoint)) {
+					if (e._receiving_endpoint.Equals(packet.endPoint)) {
 						Id = e.Id;
 						break;
 					}
@@ -76,7 +78,7 @@ public class AuthNetworkManager : MonoBehaviour {
 
 	public void SendAuthEventUnreliable(Serialize ev) {
 		foreach(var host in hosts) {
-			_networkAPI.Send(host.UnreliableChannel, host.EndPoint, ev);
+			_networkAPI.Send(host.UnreliableChannel, host._sending_endpoint, ev);
 		}
 		_networkAPI.UpdateSendQueues();
 		return;
