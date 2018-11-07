@@ -32,16 +32,8 @@ public class NetworkAPI {
 	Thread _sendThread, _recvThread;
 
 	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible) {
-		
-		var bindingAddress = new IPEndPoint(IPAddress.Any, localPort);
-		_udpClient = new UdpClient();
-		_udpClient.ExclusiveAddressUse = false;
-		_udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-		_udpClient.Client.Bind(bindingAddress);
-		_udpSendingClient = new UdpClient();
-		_udpSendingClient.ExclusiveAddressUse = false;
-		_udpSendingClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-		_udpSendingClient.Client.Bind(bindingAddress);
+		_udpClient = new UdpClient(localPort);
+		_udpSendingClient = new UdpClient(localPort + 1);
 		_spinLockSleepTime = spinLockTime;
 		_channelsPerHost = channelsPerHost;
 		_maxSeqPossible = maxSeqPossible;
@@ -184,7 +176,9 @@ public class NetworkAPI {
 		EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
 		byte[] buffer = new byte[1000];
 		while(true) {
+			Debug.Log("Receiving....");
 			int bytes = _udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
+			Debug.Log("Received " + bytes);
 			if (bytes > 0) {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
 				lock(readQueue) {
