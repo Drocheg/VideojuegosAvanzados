@@ -6,11 +6,13 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
 	public int Id;
 	private Animator _animator;
+	private CharacterController _characterController;
 	public float Speed;
 	// Use this for initialization
 	void Start () {
 		StartCoroutine(DelayedAddReference());
 		_animator = GetComponent<Animator>();
+		_characterController = GetComponent<CharacterController>();
 	}
 
 	IEnumerator DelayedAddReference() {
@@ -34,8 +36,6 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 		writer.WriteFloat(transform.position.z, MinPosZ, MaxPosZ, Step);
 		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, AnimationStep);
 		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, AnimationStep);
-		
-		
 		writer.WriteFloat(transform.eulerAngles.y, 0, 360, RotationStep);
 	}
 
@@ -44,8 +44,8 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 		var eulerAngles = transform.eulerAngles;
 		eulerAngles.y = command._rot;
 		transform.eulerAngles = eulerAngles;
-		transform.Translate(command._run * Speed * command._delta * transform.forward);
-		transform.Translate(command._strafe * Speed * command._delta * transform.right);
+		_characterController.Move(command._run * Speed * command._delta * transform.TransformDirection(Vector3.forward));
+		_characterController.Move(command._strafe * Speed * command._delta * transform.TransformDirection(Vector3.right));
 		
 	}
 }

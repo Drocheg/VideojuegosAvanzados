@@ -883,6 +883,7 @@ MonoBehaviour:
   MaxTime: 1000
   TimePrecision: 0.001
   NetworkManager: {fileID: 1175571462}
+  ExpectedEntities: 1
 --- !u!1 &1375455735
 GameObject:
   m_ObjectHideFlags: 0
@@ -1228,6 +1229,23 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1418206940595112, guid: a85e722557b66554ba80960de6a77585,
     type: 2}
   m_PrefabInternal: {fileID: 2039240387}
+--- !u!143 &1819491265
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1819491261}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.1
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.01
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &1819491268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1249,7 +1267,7 @@ MonoBehaviour:
   RotationStep: 0.01
   AnimationStep: 0.1
   Id: 0
-  Speed: 3
+  Speed: 6
   IsLocalPlayer: 0
 --- !u!1001 &1899862995
 Prefab:
