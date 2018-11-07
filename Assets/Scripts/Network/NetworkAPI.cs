@@ -18,8 +18,8 @@ public class NetworkAPI {
 	}
 
 	UdpClient _udpClient;
-	
 	private NetworkAPI(){}
+	
 
 	private Queue<Packet> readQueue;
 	private Queue<Packet> sendQueue;
@@ -27,9 +27,9 @@ public class NetworkAPI {
 	
 	int _spinLockSleepTime;
 	// uint _totalChannels;
+	uint _channelsPerHost;
 	ulong _maxSeqPossible;
 	Thread _sendThread, _recvThread;
-	uint _channelsPerHost;
 
 	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible) {
 		_udpClient = new UdpClient(localPort);
@@ -162,14 +162,15 @@ public class NetworkAPI {
 
 	public void RecvThread()
 	{
+		EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
 		while(true) {
-			EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
 			byte[] buffer = new byte[1000];
 			int bytes = _udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
-			var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, 10000, remoteEndPoint);
-			Debug.Log("Recv. Pakcet");
-			lock(readQueue) {
-				readQueue.Enqueue(packet);
+			if (bytes > 0) {
+				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
+				lock(readQueue) {
+					readQueue.Enqueue(packet);
+				}
 			}
 		}
 	}

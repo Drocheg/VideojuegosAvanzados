@@ -685,7 +685,8 @@ Prefab:
       propertyPath: HealthPacksUI
       value: 
       objectReference: {fileID: 1487902411}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114976578479007724, guid: 5390e2c96591e14438516341e9398524, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 5390e2c96591e14438516341e9398524, type: 2}
   m_IsPrefabAsset: 0
 --- !u!114 &1095808263 stripped
@@ -823,9 +824,9 @@ MonoBehaviour:
   TestRemoteIp: 127.0.0.1
   TestRemotePort: 33333
   LocalPort: 40000
-  SpinLockTime: 10
+  SpinLockTime: 50
   MaxHosts: 10
-  MaxSeqPossible: 10000
+  MaxSeqPossible: 1000
 --- !u!114 &1214912809 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114458277167615630, guid: 42640f15a6598de41b1d38e021f17f3a,
@@ -872,7 +873,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c077f21888199348a05df63b84cac61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxEntities: 10
+  MaxEntities: 1
   MaxTime: 1000
   TimePrecision: 0.001
   NetworkManager: {fileID: 1175571462}
@@ -985,7 +986,7 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.1
+  Step: 0.01
   RotationStep: 0.01
   AnimationStep: 0.1
   Id: 0
@@ -1242,6 +1243,32 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1899862995}
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+--- !u!1 &1819491261 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1418206940595112, guid: a85e722557b66554ba80960de6a77585,
+    type: 2}
+  m_PrefabInternal: {fileID: 2039240387}
+--- !u!114 &1819491268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1819491261}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 961388b112dd1ec47880d61cd846ae8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MinPosX: -1000
+  MaxPosX: 1000
+  MinPosY: -1000
+  MaxPosY: 1000
+  MinPosZ: -1000
+  MaxPosZ: 1000
+  Step: 0.01
+  RotationStep: 0.01
+  AnimationStep: 0.1
+  Id: 0
 --- !u!1001 &1899862995
 Prefab:
   m_ObjectHideFlags: 0
@@ -1604,6 +1631,11 @@ Prefab:
     - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
       propertyPath: m_RootOrder
       value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 114209656608527446, guid: a85e722557b66554ba80960de6a77585,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a85e722557b66554ba80960de6a77585, type: 2}

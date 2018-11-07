@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class LocalWorld : MonoBehaviour {
 	public int MaxEntities;
-	public float MaxTime, TimePrecision;
+	public float MaxTime, TimePrecision, MaxAllowedDelay;
 	private Queue<float> _queuedTimes;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	private float _previousTime, _nextTime, _currentTime;
 	private float _timestamp;
 	private NetworkState _currentState;
 	private LocalCharacterEntity[] entities;
-	
 
 	public enum NetworkState {
 		INITIAL,
 		NORMAL,
 		NETWORK_PROBLEMS,
 	}
-
+	int _entitiesCounter;
+	public int ExpectedEntities;
 	// Use this for initialization
 	void Start () {
 		entities = new LocalCharacterEntity[MaxEntities];
@@ -28,7 +28,9 @@ public class LocalWorld : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		// Read packets from NetworkAPI
-
+		if (_entitiesCounter < ExpectedEntities) {
+			return;
+		}
 		switch(_currentState) {
 			case NetworkState.INITIAL: {
 				// Initial position arrived but not enough info to interpolate.
@@ -36,6 +38,7 @@ public class LocalWorld : MonoBehaviour {
 					Debug.Assert(_queuedTimes.Count >= 2);
 					_previousTime = _queuedTimes.Dequeue();
 					_nextTime = _queuedTimes.Dequeue();
+					_currentTime = _previousTime;
 					foreach(var e in entities) {
 						if (e != null) {
 							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation);
@@ -43,13 +46,13 @@ public class LocalWorld : MonoBehaviour {
 							e.UpdateEntity(0);
 						}
 					}
+					_currentState = NetworkState.NORMAL;
 				}
 				break;
 			}
 			case NetworkState.NORMAL: {
-				var timeMultiplier = _queuedTimes.Count > TargetQueuedPositions ? 1.1f : 1;
+				var timeMultiplier = _queuedTimes.Count > TargetQueuedPositions ? 1.1f : 0.9f;
 				// Debug.Log("TimeM: " + timeMultiplier);
-				Debug.Log("Q: " + _queuedTimes.Count);
 				_currentTime += Time.deltaTime * timeMultiplier ;
 				if (_currentTime > _nextTime) {
 					if (_queuedTimes.Count > 0) {
@@ -62,6 +65,11 @@ public class LocalWorld : MonoBehaviour {
 								e._previousRotation = e._nextRotation;
 								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
 							}
+						}
+						if (_nextTime - _currentTime > MaxAllowedDelay) {
+							// Hard reset
+							_currentState = NetworkState.INITIAL;
+							break;
 						}
 					} else {
 						foreach(var e in entities) {
@@ -88,18 +96,28 @@ public class LocalWorld : MonoBehaviour {
 
 	public void AddReference(int id, LocalCharacterEntity local)
 	{
+		_entitiesCounter++;
 		entities[id] = local;
 	}
 
 	public void NewSnapshot(BitReader reader) {
-		_queuedTimes.Enqueue( reader.ReadFloat(0,MaxTime, TimePrecision));
+		if (_entitiesCounter < ExpectedEntities) return;
+		QueueNextSnapshot(reader.ReadFloat(0, MaxTime, TimePrecision));
 		foreach(var e in entities) {
-			if (reader.ReadBit()) {
+			var b = reader.ReadBit();
+			// Debug.Log("b:" + b);
+			if (b) {
 				Debug.Assert(e != null);
 				e.Deserialize(reader);
 			} 
 		}
+		// Debug.Log("///////////////");
 	}
 
-	
+	void QueueNextSnapshot(float timestamp) {
+		if (_queuedTimes.Count == MaxQueuedPositions) {
+			_queuedTimes.Dequeue();
+		}
+		_queuedTimes.Enqueue(timestamp);
+	}
 }
