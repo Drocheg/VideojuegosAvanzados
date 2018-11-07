@@ -13,7 +13,6 @@ public class LocalNetworkManager : MonoBehaviour {
 	private LocalWorld _localWorld;
 	private EndPoint _receiving_endpoint;
 	private EndPoint _sending_endpoint;
-	private EndPoint _endpoint;
 	
 	// Use this for initialization
 	void Start () {
@@ -47,7 +46,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	}
 
 	public void SendReliable(Serialize serial) {
-		_networkAPI.Send(1, _endpoint, serial);
+		_networkAPI.Send(1, _sending_endpoint, serial);
 	}
 
 	void OnDisable() 

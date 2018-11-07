@@ -487,6 +487,7 @@ MonoBehaviour:
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
+  IsLocalPlayer: 1
 --- !u!223 &685897263 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 223711648772397380, guid: 42640f15a6598de41b1d38e021f17f3a,
@@ -521,6 +522,7 @@ MonoBehaviour:
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
+  IsLocalPlayer: 0
 --- !u!1 &853822566
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,12 +762,12 @@ Prefab:
     - target: {fileID: 114983513303723358, guid: 5390e2c96591e14438516341e9398524,
         type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 143774574043348538, guid: 5390e2c96591e14438516341e9398524,
         type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5390e2c96591e14438516341e9398524, type: 2}
@@ -905,7 +907,7 @@ MonoBehaviour:
   LocalPort: 33333
   SpinLockTime: 10
   ChannelsPerHosts: 3
-  MaxSeqPossible: 1000
+  MaxSeqPossible: 2000
   TestRemoteIp: 127.0.0.1
   TestRemotePort: 40000
 --- !u!114 &1214912809 stripped
@@ -1618,10 +1620,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1640a529f64753046a8649cbb3607736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxEntities: 10
+  MaxEntities: 1
   MaxTime: 1000
   TimePrecision: 0.001
-  MaxAllowedDelay: 0
+  MaxAllowedDelay: 0.2
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
