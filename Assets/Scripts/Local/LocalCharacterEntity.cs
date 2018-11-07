@@ -58,7 +58,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	public void UpdateEntity(float lerp) {
 		transform.position = Vector3.Lerp(_previousPosition.Value, _nextPosition.Value, lerp);
 		LerpAnimation(_previousAnimation.Value, _nextAnimation.Value, lerp);
-		_currentRotation = Quaternion.Lerp(_previousRotation.Value, _nextRotation.Value, lerp);
+		transform.rotation = Quaternion.Lerp(_previousRotation.Value, _nextRotation.Value, lerp);
 	}
 
 	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, Quaternion rot)
@@ -83,7 +83,6 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		rot.x = 0;
 		rot.y = reader.ReadFloat(-1, 1, RotationStep);
 		rot.z = 0;
-		Debug.Log(pos);
 		Debug.Log(rot);
 		QueueNextPosition(pos, anim, rot);
 	} 

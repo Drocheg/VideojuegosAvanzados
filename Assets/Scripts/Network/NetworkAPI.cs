@@ -18,10 +18,7 @@ public class NetworkAPI {
 	}
 
 	UdpClient _udpClient;
-	int localPort = 3000;
-	private NetworkAPI(){
-		_udpClient = new UdpClient(localPort);
-	}
+	private NetworkAPI(){}
 	
 	private Queue<Packet> readQueue;
 	private Queue<Packet> sendQueue;
