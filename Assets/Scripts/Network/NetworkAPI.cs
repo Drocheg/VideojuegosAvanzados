@@ -41,7 +41,7 @@ public class NetworkAPI {
 		_udpSendingClient = new UdpClient();
 		_udpSendingClient.ExclusiveAddressUse = false;
 		_udpSendingClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-		// _udpSendingClient.Client.Bind(bindingAddress);
+		_udpSendingClient.Client.Bind(bindingAddress);
 		_spinLockSleepTime = spinLockTime;
 		_channelsPerHost = channelsPerHost;
 		_maxSeqPossible = maxSeqPossible;
@@ -57,6 +57,7 @@ public class NetworkAPI {
 	public void Close()
 	{
 		_udpClient.Close();
+		_udpSendingClient.Close();
 		_sendThread.Abort();
 		_recvThread.Abort();
 	}
@@ -71,12 +72,12 @@ public class NetworkAPI {
 		return AddChannel(id, ChanelType.RELIABLE, endpoint, 0);
 	}
 
-	public bool AddTimeoutReliableChannel(uint id, EndPoint endpoint, uint timeout)
+	public bool AddTimeoutReliableChannel(uint id, EndPoint endpoint, float timeout)
 	{
 		return AddChannel(id, ChanelType.TIMED, endpoint, timeout);
 	}
 
-	private bool AddChannel(uint id, ChanelType type, EndPoint endpoint, uint timeout) 
+	private bool AddChannel(uint id, ChanelType type, EndPoint endpoint, float timeout) 
 	{
 		if (!channelsMap.ContainsKey(endpoint))
 		{
