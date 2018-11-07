@@ -7,17 +7,17 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	public Vector3? _previousPosition, _nextPosition;
-	private Queue<Vector3DeltaTime> _queuedPositions;
+	public Queue<Vector3DeltaTime> _queuedPositions;
 	public Vector2? _previousAnimation, _nextAnimation;
-	public Quaternion? _previousRotation, _nextRotation, _currentRotation;
+	public float _previousRotation, _nextRotation, _currentRotation;
 	private Animator _animator;
 	private Transform _chest;
 	public bool IsLocalPlayer;
-	class Vector3DeltaTime
+	public class Vector3DeltaTime
 	{
 		public Vector3 pos;
 		public Vector2 animation;
-		public Quaternion rot;
+		public float rot;
 	}
 
 	public void Start()
@@ -32,7 +32,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		GameObject.FindObjectOfType<LocalWorld>().AddReference(Id, this);
 	}
 
-		public bool DequeNextPosition(out Vector3? deqPosition, out Vector2? animation, out Quaternion? rot)
+		public bool DequeNextPosition(out Vector3? deqPosition, out Vector2? animation, out float rot)
 	{
 		if (_queuedPositions.Count > 0){
 			var wrapper = _queuedPositions.Dequeue();
@@ -43,7 +43,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		}
 		deqPosition = null;
 		animation = null;
-		rot = null;
+		rot = 0;
 		return false;
 	}
 
@@ -60,13 +60,15 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		LerpAnimation(_previousAnimation.Value, _nextAnimation.Value, lerp);
 		
 		if(!IsLocalPlayer) {
-			transform.rotation = Quaternion.Lerp(_previousRotation.Value, _nextRotation.Value, lerp);
+			var euler = transform.eulerAngles;
+			euler.y = Mathf.Lerp(_previousRotation, _nextRotation, lerp);
+			transform.eulerAngles = euler;
 		}
 	}
 
-	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, Quaternion rot)
+	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, float rot)
 	{
-		if (_queuedPositions.Count >= MaxQueuedPositions) {
+		while (_queuedPositions.Count >= MaxQueuedPositions) {
 			Debug.Log("Dropping queued positions");
 			_queuedPositions.Dequeue();
 		}
@@ -74,6 +76,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	}
 
 	public void Deserialize(BitReader reader) {
+		Debug.Log("Enqueing");
 		Vector3 pos;
 		pos.x = reader.ReadFloat(MinPosX, MaxPosX, Step);
 		pos.y = reader.ReadFloat(MinPosY, MaxPosY, Step);
@@ -81,17 +84,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		Vector2 anim;
 		anim.x = reader.ReadFloat( -1, 1, AnimationStep);
 		anim.y = reader.ReadFloat( -1, 1, AnimationStep);
-		Quaternion rot;
-		if (IsLocalPlayer) {
-			rot = transform.rotation;
-			reader.ReadFloat(-1, 1, RotationStep);
-			reader.ReadFloat(-1, 1, RotationStep);
-		} else {
-			rot.w = reader.ReadFloat(-1, 1, RotationStep);
-			rot.x = 0;
-			rot.y = reader.ReadFloat(-1, 1, RotationStep);
-			rot.z = 0;
-		}
+		float rot = reader.ReadFloat(0, 360, RotationStep);
 		QueueNextPosition(pos, anim, rot);
 	} 
 }

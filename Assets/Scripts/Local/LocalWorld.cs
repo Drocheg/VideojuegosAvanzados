@@ -23,6 +23,7 @@ public class LocalWorld : MonoBehaviour {
 	void Start () {
 		entities = new LocalCharacterEntity[MaxEntities];
 		_queuedTimes = new Queue<float>();
+		_entitiesCounter = 0;
 	}
 	
 	// Update is called once per frame
@@ -41,9 +42,13 @@ public class LocalWorld : MonoBehaviour {
 					_currentTime = _previousTime;
 					foreach(var e in entities) {
 						if (e != null) {
+							Debug.Log("Dequeued");
 							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation);
 							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
 							e.UpdateEntity(0);
+							Debug.Log("1: " + e._queuedPositions.Count);
+							Debug.Log("2: " + _queuedTimes.Count);
+							Debug.Assert(e._queuedPositions.Count == _queuedTimes.Count);
 						}
 					}
 					_currentState = NetworkState.NORMAL;
@@ -64,6 +69,7 @@ public class LocalWorld : MonoBehaviour {
 								e._previousAnimation = e._nextAnimation;
 								e._previousRotation = e._nextRotation;
 								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
+								Debug.Assert(e._queuedPositions.Count == _queuedTimes.Count);
 							}
 						}
 						if (_nextTime - _currentTime > MaxAllowedDelay) {
@@ -73,7 +79,10 @@ public class LocalWorld : MonoBehaviour {
 						}
 					} else {
 						foreach(var e in entities) {
-							if (e != null ) e.UpdateEntity(1);
+							if (e != null ) {
+								e.UpdateEntity(1);
+								Debug.Assert(e._queuedPositions.Count == _queuedTimes.Count);
+							}
 						}
 						_currentState = NetworkState.INITIAL;
 						Debug.Log("Network problems");
@@ -83,6 +92,7 @@ public class LocalWorld : MonoBehaviour {
 				var d = (_currentTime - _previousTime) / (_nextTime - _previousTime);
 				foreach(var e in entities) {
 					if (e != null) {
+						Debug.Assert(e._queuedPositions.Count == _queuedTimes.Count);
 						e.UpdateEntity(d);
 					}
 				}
@@ -101,21 +111,27 @@ public class LocalWorld : MonoBehaviour {
 	}
 
 	public void NewSnapshot(BitReader reader) {
-		if (_entitiesCounter < ExpectedEntities) return;
+		Debug.Log("Snapshoting");
+		if (_entitiesCounter < ExpectedEntities) {
+			return;
+		}
+		Debug.Log("Snapshot1");
 		QueueNextSnapshot(reader.ReadFloat(0, MaxTime, TimePrecision));
+		
+		int c = 0;
 		foreach(var e in entities) {
 			var b = reader.ReadBit();
-			// Debug.Log("b:" + b);
 			if (b) {
+				c++;
+				Debug.Log("Snapshot2");
 				Debug.Assert(e != null);
 				e.Deserialize(reader);
 			} 
 		}
-		// Debug.Log("///////////////");
 	}
 
 	void QueueNextSnapshot(float timestamp) {
-		if (_queuedTimes.Count == MaxQueuedPositions) {
+		while (_queuedTimes.Count >= MaxQueuedPositions) {
 			_queuedTimes.Dequeue();
 		}
 		_queuedTimes.Enqueue(timestamp);

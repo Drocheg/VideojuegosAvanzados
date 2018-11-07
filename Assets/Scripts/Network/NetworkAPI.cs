@@ -176,9 +176,7 @@ public class NetworkAPI {
 		EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
 		byte[] buffer = new byte[1000];
 		while(true) {
-			Debug.Log("Receiving....");
 			int bytes = _udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
-			Debug.Log("Received " + bytes);
 			if (bytes > 0) {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
 				lock(readQueue) {
@@ -200,7 +198,6 @@ public class NetworkAPI {
 				}
 			}
 			if(packet!=null){
-				Debug.Log("Send something");
 				var sent = _udpSendingClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
 			} else {
 				System.Threading.Thread.Sleep(_spinLockSleepTime);
