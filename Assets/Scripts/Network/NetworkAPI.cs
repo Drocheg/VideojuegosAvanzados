@@ -57,6 +57,7 @@ public class NetworkAPI {
 	public void Close()
 	{
 		_udpClient.Close();
+		_udpSendingClient.Close();
 		_sendThread.Abort();
 		_recvThread.Abort();
 	}

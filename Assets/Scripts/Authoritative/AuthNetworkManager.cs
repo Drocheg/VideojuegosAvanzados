@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AuthNetworkManager : MonoBehaviour {
 	public class RemoteHost {
-		public EndPoint endPoint;
+		public EndPoint EndPoint;
 		public uint UnreliableChannel, ReliableChannel, TimedChannel;
 		public int Id;
 	}
@@ -13,27 +13,30 @@ public class AuthNetworkManager : MonoBehaviour {
 	private NetworkAPI _networkAPI;
 	private List<RemoteHost> hosts = new List<RemoteHost>();
 	public string TestRemoteIp;
-	public int TestRemotePort, LocalPort, SpinLockTime;
+	public int TestRemotePort, TestReceiveRemotePort, LocalPort, SpinLockTime;
 	public uint MaxHosts;
+	public uint ChannelsPerHost;
 	public ulong MaxSeqPossible;
 	private int _commandsCount;
 	private AuthWorld _authWorld;
 	void Start() {
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
-		_networkAPI.Init(LocalPort, SpinLockTime, 3, MaxSeqPossible);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible);
 		var endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		_networkAPI.AddUnreliableChannel(0, endpoint);
-		_networkAPI.AddNoTimeoutReliableChannel(1, endpoint);
-		hosts.Add(new RemoteHost(){endPoint = endpoint, UnreliableChannel = 0});
+		_networkAPI.AddTimeoutReliableChannel(1, endpoint, 1);
+		hosts.Add(new RemoteHost(){EndPoint = endpoint,  UnreliableChannel = 0});
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
 	}
 
 	void Update() {
+		_networkAPI.UpdateSendQueues();
+
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
-
 		foreach(var packet in packets) {
+			Debug.Log(packet.channelId);
 			switch(packet.channelId) {
 				case 0: {
 					// Unreliable channel;
@@ -55,7 +58,7 @@ public class AuthNetworkManager : MonoBehaviour {
 			case NetworkCommand.MOVE_COMMAND: {
 				int Id = -1;
 				foreach(var e in hosts) {
-					if (e.endPoint == packet.endPoint) {
+					if (e.EndPoint.Equals(packet.endPoint)) {
 						Id = e.Id;
 						break;
 					}
@@ -73,7 +76,7 @@ public class AuthNetworkManager : MonoBehaviour {
 
 	public void SendAuthEventUnreliable(Serialize ev) {
 		foreach(var host in hosts) {
-			_networkAPI.Send(host.UnreliableChannel, host.endPoint, ev);
+			_networkAPI.Send(host.UnreliableChannel, host.EndPoint, ev);
 		}
 		_networkAPI.UpdateSendQueues();
 		return;
