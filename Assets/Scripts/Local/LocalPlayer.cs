@@ -15,8 +15,8 @@ public class LocalPlayer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		var rot = transform.rotation;
-		var command = new MoveCommand(_animator.GetFloat("Run"), _animator.GetFloat("Strafe"),  MovePrecision, rot.w, rot.y, RotPrecision, Time.deltaTime, MaxTime, TimePrecision);
+		var rot = transform.eulerAngles.y;
+		var command = new MoveCommand(_animator.GetFloat("Run"), _animator.GetFloat("Strafe"),  MovePrecision, rot, RotPrecision, Time.deltaTime, MaxTime, TimePrecision);
 		_localNetworkEntity.SendReliable(command.Serialize);
 	}
 

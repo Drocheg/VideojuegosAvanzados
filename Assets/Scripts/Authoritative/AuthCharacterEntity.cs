@@ -34,13 +34,18 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 		writer.WriteFloat(transform.position.z, MinPosZ, MaxPosZ, Step);
 		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, AnimationStep);
 		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, AnimationStep);
-		writer.WriteFloat(transform.rotation.w, -1, 1, RotationStep);
-		writer.WriteFloat(transform.rotation.y, -1, 1, RotationStep);
+		
+		
+		writer.WriteFloat(transform.eulerAngles.y, 0, 360, RotationStep);
 	}
 
 	public void Move(MoveCommand command) {
 		Debug.Log("Move: " + command._run);
+		var eulerAngles = transform.eulerAngles;
+		eulerAngles.y = command._rot;
+		transform.eulerAngles = eulerAngles;
 		transform.Translate(command._run * Speed * command._delta * transform.forward);
 		transform.Translate(command._strafe * Speed * command._delta * transform.right);
+		
 	}
 }

@@ -827,6 +827,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TestRemoteIp: 127.0.0.1
   TestRemotePort: 33333
+  TestReceiveRemotePort: 0
   LocalPort: 40000
   SpinLockTime: 50
   MaxHosts: 10
@@ -1244,7 +1245,7 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.1
+  Step: 0.01
   RotationStep: 0.01
   AnimationStep: 0.1
   Id: 0
