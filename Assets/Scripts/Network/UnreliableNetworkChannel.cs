@@ -7,7 +7,7 @@ public class UnreliableNetworkChannel : NetworkChannel{
 	
 	ulong maxRecvSeq;
 
-	public UnreliableNetworkChannel(uint id, ChanelType type, EndPoint endPoint, uint totalChannels, ulong maxSeqPossible) : base(id, type, endPoint, totalChannels, maxSeqPossible)
+	public UnreliableNetworkChannel(uint id, ChanelType type, EndPoint receiving_endpoint, EndPoint sending_endpoint, uint totalChannels, ulong maxSeqPossible) : base(id, type, receiving_endpoint, sending_endpoint, totalChannels, maxSeqPossible)
 	{
 		maxRecvSeq = maxSeqPossible-1;
 	}
@@ -36,7 +36,7 @@ public class UnreliableNetworkChannel : NetworkChannel{
 	
 	
 	public override void SendPacket(Serialize serializable) {
-		sendQueue.Enqueue(Packet.WritePacket(id, incSeq(), serializable, totalChannels, (uint)maxSeqPossible, EndPoint, PacketType.DATA));
+		sendQueue.Enqueue(Packet.WritePacket(id, incSeq(), serializable, totalChannels, (uint)maxSeqPossible, SendingEndPoint, PacketType.DATA));
 	}
 	
 	public override void EnqueRecvPacket(Packet packet) {

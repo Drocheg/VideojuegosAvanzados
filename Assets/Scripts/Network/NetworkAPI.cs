@@ -62,43 +62,54 @@ public class NetworkAPI {
 		_recvThread.Abort();
 	}
 
-	public bool AddUnreliableChannel(uint id, EndPoint endpoint)
+	public bool AddUnreliableChannel(uint id, EndPoint receiving_endpoint, EndPoint sending_endpoint)
 	{
-		return AddChannel(id, ChanelType.UNRELIABLE, endpoint, 0);
+		return AddChannel(id, ChanelType.UNRELIABLE, receiving_endpoint, sending_endpoint, 0);
 	}
 
-	public bool AddNoTimeoutReliableChannel(uint id, EndPoint endpoint)
+	public bool AddNoTimeoutReliableChannel(uint id, EndPoint receiving_endpoint, EndPoint sending_endpoint)
 	{
-		return AddChannel(id, ChanelType.RELIABLE, endpoint, 0);
+		return AddChannel(id, ChanelType.RELIABLE, receiving_endpoint, sending_endpoint, 0);
 	}
 
-	public bool AddTimeoutReliableChannel(uint id, EndPoint endpoint, float timeout)
+	public bool AddTimeoutReliableChannel(uint id, EndPoint receiving_endpoint, EndPoint sending_endpoint, float timeout)
 	{
-		return AddChannel(id, ChanelType.TIMED, endpoint, timeout);
+		return AddChannel(id, ChanelType.TIMED, receiving_endpoint, sending_endpoint, timeout);
 	}
 
-	private bool AddChannel(uint id, ChanelType type, EndPoint endpoint, float timeout) 
+	private bool AddChannel(uint id, ChanelType type, EndPoint receiving_endpoint, EndPoint sending_endpoint, float timeout) 
 	{
-		if (!channelsMap.ContainsKey(endpoint))
+		if (!channelsMap.ContainsKey(receiving_endpoint))
 		{
-			channelsMap.Add(endpoint, new Dictionary<uint, NetworkChannel>());
+			channelsMap.Add(receiving_endpoint, new Dictionary<uint, NetworkChannel>());
+		}
+		if (!channelsMap.ContainsKey(sending_endpoint))
+		{
+			channelsMap.Add(sending_endpoint, new Dictionary<uint, NetworkChannel>());
 		}
 
-		Dictionary<uint, NetworkChannel> channels;
-		channelsMap.TryGetValue(endpoint, out channels);
+		Dictionary<uint, NetworkChannel> channelsReceiving;
+		channelsMap.TryGetValue(receiving_endpoint, out channelsReceiving);
 
-		if (!channels.ContainsKey(id))
+		Dictionary<uint, NetworkChannel> channelsSending;
+		channelsMap.TryGetValue(receiving_endpoint, out channelsSending);
+		
+		if (!channelsReceiving.ContainsKey(id) && !channelsSending.ContainsKey(id))
 		{
+			NetworkChannel newChannel = null;
 			switch (type)
 			{
 				case ChanelType.UNRELIABLE:
-					channels.Add(id, new UnreliableNetworkChannel(id, type, endpoint, _channelsPerHost, _maxSeqPossible));
+					newChannel = new UnreliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible);
 					break;
 				case ChanelType.RELIABLE:
 				case ChanelType.TIMED:
-					channels.Add(id, new ReliableNetworkChannel(id, type, endpoint, _channelsPerHost, _maxSeqPossible, timeout));
+					newChannel = new ReliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible, timeout);
 					break;
 			}
+			channelsSending.Add(id, newChannel);
+			channelsReceiving.Add(id, newChannel);
+			
 			
 			return true;
 		}

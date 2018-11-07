@@ -6,7 +6,8 @@ using System.Net;
 public abstract class NetworkChannel : INetworkChannel {
 	
 	public readonly uint id;
-	public readonly EndPoint EndPoint;
+	public readonly EndPoint ReceivingEndPoint;
+	public readonly EndPoint SendingEndPoint;
 	protected ChanelType type;
 	protected Queue<Packet> sendQueue;
 	protected Queue<Packet> recvQueue;
@@ -15,11 +16,12 @@ public abstract class NetworkChannel : INetworkChannel {
 	protected readonly ulong maxSeqPossible;
 	protected readonly uint totalChannels;
 
-	protected NetworkChannel(uint id, ChanelType type, EndPoint endPoint, uint totalChannels, ulong maxSeqPossible)
+	protected NetworkChannel(uint id, ChanelType type, EndPoint receiving_endpoint, EndPoint sending_endpoint, uint totalChannels, ulong maxSeqPossible)
 	{
 		this.type = type;
 		this.id = id;
-		EndPoint = endPoint;
+		ReceivingEndPoint = receiving_endpoint;
+		SendingEndPoint = sending_endpoint;
 		this.maxSeqPossible = maxSeqPossible;
 		this.totalChannels = totalChannels;
 		maxSendSeq = 0;
@@ -46,7 +48,7 @@ public abstract class NetworkChannel : INetworkChannel {
 	
 	protected void SendACK(ulong seq)
 	{
-		sendQueue.Enqueue(Packet.WriteACKPacket(id, seq, totalChannels, (uint)maxSeqPossible, EndPoint));
+		sendQueue.Enqueue(Packet.WriteACKPacket(id, seq, totalChannels, (uint)maxSeqPossible, SendingEndPoint));
 	}
 	
 	protected bool isBiggerThan(ulong first, ulong second, ulong max)

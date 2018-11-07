@@ -11,6 +11,8 @@ public class LocalNetworkManager : MonoBehaviour {
 	public string TestRemoteIp;
 	public int TestRemotePort;
 	private LocalWorld _localWorld;
+	private EndPoint _receiving_endpoint;
+	private EndPoint _sending_endpoint;
 	private EndPoint _endpoint;
 	
 	// Use this for initialization
