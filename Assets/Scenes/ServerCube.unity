@@ -827,10 +827,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TestRemoteIp: 127.0.0.1
   TestRemotePort: 33333
+  TestReceiveRemotePort: 33333
   LocalPort: 40000
   SpinLockTime: 50
   MaxHosts: 10
-  MaxSeqPossible: 1000
+  ChannelsPerHost: 3
+  MaxSeqPossible: 2000
 --- !u!114 &1214912809 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114458277167615630, guid: 42640f15a6598de41b1d38e021f17f3a,
@@ -979,7 +981,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1417401267}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 961388b112dd1ec47880d61cd846ae8a, type: 3}
   m_Name: 
@@ -990,12 +992,11 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.01
+  Step: 0.1
   RotationStep: 0.01
   AnimationStep: 0.1
   Id: 0
-  CharacterIsMoving: 1
-  CurrentMovement: {x: 0, y: 0, z: 0}
+  Speed: 0
   IsLocalPlayer: 1
 --- !u!114 &1487902411 stripped
 MonoBehaviour:
@@ -1261,7 +1262,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1819491261}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 961388b112dd1ec47880d61cd846ae8a, type: 3}
   m_Name: 
@@ -1272,12 +1273,11 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.01
+  Step: 0.1
   RotationStep: 0.01
   AnimationStep: 0.1
   Id: 0
-  CharacterIsMoving: 0
-  CurrentMovement: {x: 0, y: 0, z: 0}
+  Speed: 3
   IsLocalPlayer: 0
 --- !u!1001 &1899862995
 Prefab:

@@ -14,7 +14,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Speed
+  - m_Name: Run
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -177,7 +177,7 @@ BlendTree:
     m_DirectBlendParameter: Strafe
     m_Mirror: 0
   m_BlendParameter: Strafe
-  m_BlendParameterY: Speed
+  m_BlendParameterY: Run
   m_MinThreshold: 0
   m_MaxThreshold: 9
   m_UseAutomaticThresholds: 0

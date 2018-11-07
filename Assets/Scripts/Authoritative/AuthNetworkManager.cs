@@ -25,7 +25,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible);
 		var endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		_networkAPI.AddUnreliableChannel(0, endpoint);
-		_networkAPI.AddTimeoutReliableChannel(1, endpoint, 1);
+		_networkAPI.AddUnreliableChannel(1, endpoint);
 		hosts.Add(new RemoteHost(){EndPoint = endpoint,  UnreliableChannel = 0});
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
 	}
