@@ -827,7 +827,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TestRemoteIp: 127.0.0.1
   TestRemotePort: 33333
-  TestReceiveRemotePort: 33333
   LocalPort: 40000
   SpinLockTime: 50
   MaxHosts: 10
@@ -970,34 +969,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1417401267 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1043604709420386, guid: 5390e2c96591e14438516341e9398524,
-    type: 2}
-  m_PrefabInternal: {fileID: 887835017}
---- !u!114 &1417401270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1417401267}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 961388b112dd1ec47880d61cd846ae8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MinPosX: -1000
-  MaxPosX: 1000
-  MinPosY: -1000
-  MaxPosY: 1000
-  MinPosZ: -1000
-  MaxPosZ: 1000
-  Step: 0.1
-  RotationStep: 0.01
-  AnimationStep: 0.1
-  Id: 0
-  Speed: 0
-  IsLocalPlayer: 1
 --- !u!114 &1487902411 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114341873672965154, guid: 42640f15a6598de41b1d38e021f17f3a,
@@ -1647,7 +1618,8 @@ Prefab:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114493739829737636, guid: a85e722557b66554ba80960de6a77585, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: a85e722557b66554ba80960de6a77585, type: 2}
   m_IsPrefabAsset: 0
 --- !u!223 &2049691887 stripped

@@ -92,7 +92,7 @@ public class NetworkAPI {
 		channelsMap.TryGetValue(receiving_endpoint, out channelsReceiving);
 
 		Dictionary<uint, NetworkChannel> channelsSending;
-		channelsMap.TryGetValue(receiving_endpoint, out channelsSending);
+		channelsMap.TryGetValue(sending_endpoint, out channelsSending);
 		
 		if (!channelsReceiving.ContainsKey(id) && !channelsSending.ContainsKey(id))
 		{
@@ -109,8 +109,6 @@ public class NetworkAPI {
 			}
 			channelsSending.Add(id, newChannel);
 			channelsReceiving.Add(id, newChannel);
-			
-			
 			return true;
 		}
 		return false;
