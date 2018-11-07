@@ -32,16 +32,8 @@ public class NetworkAPI {
 	Thread _sendThread, _recvThread;
 
 	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible) {
-		
-		var bindingAddress = new IPEndPoint(IPAddress.Any, localPort);
-		_udpClient = new UdpClient();
-		_udpClient.ExclusiveAddressUse = false;
-		_udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-		_udpClient.Client.Bind(bindingAddress);
-		_udpSendingClient = new UdpClient();
-		_udpSendingClient.ExclusiveAddressUse = false;
-		_udpSendingClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-		_udpSendingClient.Client.Bind(bindingAddress);
+		_udpClient = new UdpClient(localPort);
+		_udpSendingClient = new UdpClient(localPort+1);
 		_spinLockSleepTime = spinLockTime;
 		_channelsPerHost = channelsPerHost;
 		_maxSeqPossible = maxSeqPossible;
@@ -92,7 +84,7 @@ public class NetworkAPI {
 		channelsMap.TryGetValue(receiving_endpoint, out channelsReceiving);
 
 		Dictionary<uint, NetworkChannel> channelsSending;
-		channelsMap.TryGetValue(receiving_endpoint, out channelsSending);
+		channelsMap.TryGetValue(sending_endpoint, out channelsSending);
 		
 		if (!channelsReceiving.ContainsKey(id) && !channelsSending.ContainsKey(id))
 		{
