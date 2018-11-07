@@ -364,74 +364,74 @@ public class TestNetworkApi
     
     
 
-    private SerialObject readPacket(Packet p)
-    {
-        Packet packetRes = Packet.ReadPacket(p.buffer.GetBuffer(), (int)MAX_CHANNELS, (int)MAX_SEQ, p.endPoint);
-        SerialObject o2 = new SerialObject(0, "", false);
-        o2.Deserialize(packetRes.bitReader);
-        p.buffer.Position = 0;
-        return o2;
-    }
+    // private SerialObject readPacket(Packet p)
+    // {
+    //     Packet packetRes = Packet.ReadPacket(p.buffer.GetBuffer(), (int)MAX_CHANNELS, (int)MAX_SEQ, p.endPoint);
+    //     SerialObject o2 = new SerialObject(0, "", false);
+    //     o2.Deserialize(packetRes.bitReader);
+    //     p.buffer.Position = 0;
+    //     return o2;
+    // }
 
-    private class SerialObject : ISerial
-    {
-        private ulong value;
-        private String text;
-        private bool flag;
+    // private class SerialObject : ISerial
+    // {
+    //     private ulong value;
+    //     private String text;
+    //     private bool flag;
         
-        public void Serialize(BitWriter writer)
-        {
-            writer.WriteInt(value, 0, 1000);
-            writer.WriteInt((ulong)text.Length, 0, 1000);
-            writer.WriteString(text);
-            writer.WriteBit(flag);
-        }
+    //     public void Serialize(BitWriter writer)
+    //     {
+    //         writer.WriteInt(value, 0, 1000);
+    //         writer.WriteInt((ulong)text.Length, 0, 1000);
+    //         writer.WriteString(text);
+    //         writer.WriteBit(flag);
+    //     }
 
-        public void Deserialize(BitReader reader)
-        {
-            value = (ulong)reader.ReadInt(0, 1000);
-            var size = reader.ReadInt(0, 1000);
-            text = reader.ReadString(size);
-            flag = reader.ReadBit();
-        }
+    //     public void Deserialize(BitReader reader)
+    //     {
+    //         value = (ulong)reader.ReadInt(0, 1000);
+    //         var size = reader.ReadInt(0, 1000);
+    //         text = reader.ReadString(size);
+    //         flag = reader.ReadBit();
+    //     }
 
-        protected bool Equals(SerialObject other)
-        {
-            return value == other.value && string.Equals(text, other.text) && flag == other.flag;
-        }
+    //     protected bool Equals(SerialObject other)
+    //     {
+    //         return value == other.value && string.Equals(text, other.text) && flag == other.flag;
+    //     }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((SerialObject) obj);
-        }
+    //     public override bool Equals(object obj)
+    //     {
+    //         if (ReferenceEquals(null, obj)) return false;
+    //         if (ReferenceEquals(this, obj)) return true;
+    //         if (obj.GetType() != this.GetType()) return false;
+    //         return Equals((SerialObject) obj);
+    //     }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = value.GetHashCode();
-                hashCode = (hashCode * 397) ^ (text != null ? text.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ flag.GetHashCode();
-                return hashCode;
-            }
-        }
+    //     public override int GetHashCode()
+    //     {
+    //         unchecked
+    //         {
+    //             var hashCode = value.GetHashCode();
+    //             hashCode = (hashCode * 397) ^ (text != null ? text.GetHashCode() : 0);
+    //             hashCode = (hashCode * 397) ^ flag.GetHashCode();
+    //             return hashCode;
+    //         }
+    //     }
 
-        public SerialObject(ulong value, string text, bool flag)
-        {
-            this.value = value;
-            this.text = text;
-            this.flag = flag;
-        }
+    //     public SerialObject(ulong value, string text, bool flag)
+    //     {
+    //         this.value = value;
+    //         this.text = text;
+    //         this.flag = flag;
+    //     }
 
-        public override string ToString()
-        {
-            return "Value: " + value +
-                   " text: " + text +
-                   " flag: " + flag;
-        }
-    }
+    //     public override string ToString()
+    //     {
+    //         return "Value: " + value +
+    //                " text: " + text +
+    //                " flag: " + flag;
+    //     }
+    // }
     
 }

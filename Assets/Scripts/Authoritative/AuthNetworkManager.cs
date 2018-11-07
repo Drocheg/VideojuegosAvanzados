@@ -24,10 +24,10 @@ public class AuthNetworkManager : MonoBehaviour {
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible);
-		var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort+1);
 		var sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
-		_networkAPI.AddUnreliableChannel(0, sending_endpoint, receiving_endpoint);
-		_networkAPI.AddTimeoutReliableChannel(1, sending_endpoint, receiving_endpoint, 0.01f);
+		var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
+		_networkAPI.AddUnreliableChannel(0, receiving_endpoint, sending_endpoint);
+		_networkAPI.AddTimeoutReliableChannel(1, receiving_endpoint, sending_endpoint, 0.01f);
 		hosts.Add(new RemoteHost(){_receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
 	}

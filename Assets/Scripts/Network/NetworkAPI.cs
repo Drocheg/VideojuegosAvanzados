@@ -101,8 +101,6 @@ public class NetworkAPI {
 			}
 			channelsSending.Add(id, newChannel);
 			channelsReceiving.Add(id, newChannel);
-			
-			
 			return true;
 		}
 		return false;
@@ -178,7 +176,9 @@ public class NetworkAPI {
 		EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
 		byte[] buffer = new byte[1000];
 		while(true) {
+			Debug.Log("Receiving....");
 			int bytes = _udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
+			Debug.Log("Received " + bytes);
 			if (bytes > 0) {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
 				lock(readQueue) {
