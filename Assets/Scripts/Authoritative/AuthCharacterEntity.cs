@@ -6,6 +6,7 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
 	public int Id;
 	private Animator _animator;
+	
 	// Use this for initialization
 	void Start () {
 		StartCoroutine(DelayedAddReference());

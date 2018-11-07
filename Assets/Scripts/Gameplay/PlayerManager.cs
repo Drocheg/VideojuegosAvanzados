@@ -11,11 +11,16 @@ public class PlayerManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		_pickUp = GetComponent<PickUpManager>();
+		_animator = GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		var run = Input.GetAxis("Vertical");
+		var strafe = Input.GetAxis("Horizontal");
+
+		_animator.SetFloat("Run", run);
+		_animator.SetFloat("Strafe", strafe);
 	}
 
 	public void IsAiming(bool isAiming) {

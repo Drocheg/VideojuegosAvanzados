@@ -61,7 +61,6 @@ public class LocalWorld : MonoBehaviour {
 								e._previousAnimation = e._nextAnimation;
 								e._previousRotation = e._nextRotation;
 								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
-
 							}
 						}
 					} else {

@@ -23,7 +23,7 @@ public class AuthWorld : MonoBehaviour {
 
 	public void AddReference(int id, IAuth auth)
 	{
-		entities[id] = auth;		
+		entities[id] = auth;
 	}
 
 	public void TakeSnapshot(BitWriter writer)

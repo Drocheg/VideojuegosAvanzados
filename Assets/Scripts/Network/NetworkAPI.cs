@@ -18,11 +18,9 @@ public class NetworkAPI {
 	}
 
 	UdpClient _udpClient;
-	int localPort = 3000;
-	private NetworkAPI(){
-		_udpClient = new UdpClient(localPort);
-	}
 	
+	private NetworkAPI(){}
+
 	private Queue<Packet> readQueue;
 	private Queue<Packet> sendQueue;
 	private Dictionary<EndPoint, Dictionary<uint, NetworkChannel>> channelsMap; //TODO check if two EndPoint are equals
