@@ -12,7 +12,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	public Quaternion? _previousRotation, _nextRotation, _currentRotation;
 	private Animator _animator;
 	private Transform _chest;
-
+	public bool IsLocalPlayer;
 	class Vector3DeltaTime
 	{
 		public Vector3 pos;
@@ -79,10 +79,16 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		anim.x = reader.ReadFloat( -1, 1, AnimationStep);
 		anim.y = reader.ReadFloat( -1, 1, AnimationStep);
 		Quaternion rot;
-		rot.w = reader.ReadFloat(-1, 1, RotationStep);
-		rot.x = 0;
-		rot.y = reader.ReadFloat(-1, 1, RotationStep);
-		rot.z = 0;
+		if (IsLocalPlayer) {
+			rot = transform.rotation;
+			reader.ReadFloat(-1, 1, RotationStep);
+			reader.ReadFloat(-1, 1, RotationStep);
+		} else {
+			rot.w = reader.ReadFloat(-1, 1, RotationStep);
+			rot.x = 0;
+			rot.y = reader.ReadFloat(-1, 1, RotationStep);
+			rot.z = 0;
+		}
 		QueueNextPosition(pos, anim, rot);
 	} 
 }
