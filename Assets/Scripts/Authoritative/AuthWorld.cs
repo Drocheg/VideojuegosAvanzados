@@ -8,6 +8,8 @@ public class AuthWorld : MonoBehaviour {
 	private float _timestamp;
 	public AuthNetworkManager NetworkManager;
 	private AuthCharacterEntity[] entities;
+	private int _expectedEntities;
+	public int ExpectedEntities;
 	// Use this for initialization
 	void Start () {
 		entities = new AuthCharacterEntity[MaxEntities];
@@ -27,11 +29,14 @@ public class AuthWorld : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		_timestamp += Time.fixedDeltaTime;
-		NetworkManager.SendAuthEventUnreliable(TakeSnapshot);
+		if (_expectedEntities >= ExpectedEntities) {
+			NetworkManager.SendAuthEventUnreliable(TakeSnapshot);
+		}
 	}
 
 	public void AddReference(int id, AuthCharacterEntity auth)
 	{
+		_expectedEntities++;
 		entities[id] = auth;
 	}
 

@@ -1,7 +1,6 @@
 public class MoveCommand {
 	public float _strafe, _run, _step, _delta, _maxTime, _timeStep, _rot, _rotStep;
 	
-	
 	public MoveCommand(float strafe, float run,  float step, float rot, float rotStep, float delta, float maxTime, float timeStep) {
 		_run = run;
 		_strafe = strafe;

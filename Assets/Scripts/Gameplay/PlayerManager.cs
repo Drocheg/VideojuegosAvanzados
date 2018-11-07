@@ -18,16 +18,18 @@ public class PlayerManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		var run = Input.GetAxis("Vertical");
-		var strafe = Input.GetAxis("Horizontal");
+		Run = Input.GetAxis("Vertical");
+		Strafe = Input.GetAxis("Horizontal");
 
-		_animator.SetFloat("Run", run);
-		_animator.SetFloat("Strafe", strafe);
+		_animator.SetFloat("Run", Run);
+		_animator.SetFloat("Strafe", Strafe);
 	}
 
 	public void IsAiming(bool isAiming) {
 		_isAiming = isAiming;
 	}
+
+	public float Run, Strafe;
 
 	public void Die() {
 		_pickUp.enabled = false;
