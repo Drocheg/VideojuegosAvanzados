@@ -11,18 +11,22 @@ public class LocalNetworkManager : MonoBehaviour {
 	public string TestRemoteIp;
 	public int TestRemotePort;
 	private LocalWorld _localWorld;
-
+	private EndPoint _endpoint;
+	
 	// Use this for initialization
 	void Start () {
 		_networkAPI = NetworkAPI.GetInstance();
 		_networkAPI.Init(LocalPort, SpinLockTime, TotalChannels, MaxSeqPossible);
-		var endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
-		_networkAPI.AddUnreliableChannel(0, endpoint);
+		_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
+		_networkAPI.AddUnreliableChannel(0, _endpoint);
+		_networkAPI.AddNoTimeoutReliableChannel(1, _endpoint);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		_networkAPI.UpdateSendQueues();
+
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
 
@@ -36,6 +40,10 @@ public class LocalNetworkManager : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	public void SendReliable(Serialize serial) {
+		_networkAPI.Send(1, _endpoint, serial);
 	}
 
 	void OnDisable() 

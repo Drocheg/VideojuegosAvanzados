@@ -10,6 +10,7 @@ public class MoveCommand {
 	}
 
 	public void Serialize(BitWriter writer) {
+		writer.WriteInt(0, 0, 1);
 		writer.WriteFloat(_strafe, -1, 1,_step);
 		writer.WriteFloat(_run, -1, 1, _step);
 		writer.WriteFloat(_delta, 0, _maxTime, _timeStep);

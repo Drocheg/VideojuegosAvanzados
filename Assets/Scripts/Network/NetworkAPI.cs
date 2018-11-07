@@ -17,7 +17,7 @@ public class NetworkAPI {
 		return _instance;
 	}
 
-	UdpClient _udpClient;
+	UdpClient _udpClient, _udpSendingClient;
 	private NetworkAPI(){}
 	
 
@@ -32,7 +32,16 @@ public class NetworkAPI {
 	Thread _sendThread, _recvThread;
 
 	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible) {
-		_udpClient = new UdpClient(localPort);
+		
+		var bindingAddress = new IPEndPoint(IPAddress.Any, localPort);
+		_udpClient = new UdpClient();
+		_udpClient.ExclusiveAddressUse = false;
+		_udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+		_udpClient.Client.Bind(bindingAddress);
+		_udpSendingClient = new UdpClient();
+		_udpSendingClient.ExclusiveAddressUse = false;
+		_udpSendingClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+		// _udpSendingClient.Client.Bind(bindingAddress);
 		_spinLockSleepTime = spinLockTime;
 		_channelsPerHost = channelsPerHost;
 		_maxSeqPossible = maxSeqPossible;
@@ -163,8 +172,8 @@ public class NetworkAPI {
 	public void RecvThread()
 	{
 		EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+		byte[] buffer = new byte[1000];
 		while(true) {
-			byte[] buffer = new byte[1000];
 			int bytes = _udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
 			if (bytes > 0) {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
@@ -187,7 +196,8 @@ public class NetworkAPI {
 				}
 			}
 			if(packet!=null){
-				var sent = _udpClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
+				Debug.Log("Send something");
+				var sent = _udpSendingClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
 			} else {
 				System.Threading.Thread.Sleep(_spinLockSleepTime);
 			}

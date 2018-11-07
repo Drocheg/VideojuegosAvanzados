@@ -51,7 +51,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	{
 		var anim = Vector2.Lerp(prevAnim, nextAnim, d);
 		_animator.SetFloat("Strafe", anim.x);
-		_animator.SetFloat("Speed", anim.y);
+		_animator.SetFloat("Run", anim.y);
 		_chest = _animator.GetBoneTransform(HumanBodyBones.Chest);
 	}
 
@@ -83,7 +83,6 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		rot.x = 0;
 		rot.y = reader.ReadFloat(-1, 1, RotationStep);
 		rot.z = 0;
-		Debug.Log(rot);
 		QueueNextPosition(pos, anim, rot);
 	} 
 }

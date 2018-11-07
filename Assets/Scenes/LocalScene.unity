@@ -444,6 +444,49 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &512930488 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1043604709420386, guid: 5390e2c96591e14438516341e9398524,
+    type: 2}
+  m_PrefabInternal: {fileID: 887835017}
+--- !u!114 &512930491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 512930488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d26a5a29335a9114198719e9b26ab074, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxTime: 1000
+  TimePrecision: 0.001
+  MovePrecision: 0.1
+--- !u!114 &512930497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 512930488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d9d2f70833a7141adc7acc0c0eab51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Id: 0
+  MinPosX: -1000
+  MaxPosX: 1000
+  MinPosY: -1000
+  MaxPosY: 1000
+  MinPosZ: -1000
+  MaxPosZ: 1000
+  Step: 0.1
+  RotationStep: 0.01
+  AnimationStep: 0.1
+  MinQueuedPositions: 2
+  MaxQueuedPositions: 4
+  TargetQueuedPositions: 1
 --- !u!223 &685897263 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 223711648772397380, guid: 42640f15a6598de41b1d38e021f17f3a,
@@ -714,6 +757,16 @@ Prefab:
       propertyPath: HealthPacksUI
       value: 
       objectReference: {fileID: 1487902411}
+    - target: {fileID: 114983513303723358, guid: 5390e2c96591e14438516341e9398524,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 143774574043348538, guid: 5390e2c96591e14438516341e9398524,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5390e2c96591e14438516341e9398524, type: 2}
   m_IsPrefabAsset: 0
@@ -1568,9 +1621,11 @@ MonoBehaviour:
   MaxEntities: 10
   MaxTime: 1000
   TimePrecision: 0.001
+  MaxAllowedDelay: 0
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
+  ExpectedEntities: 1
 --- !u!1001 &2039240387
 Prefab:
   m_ObjectHideFlags: 0
@@ -1609,6 +1664,10 @@ Prefab:
     - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
       propertyPath: m_RootOrder
       value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1418206940595112, guid: a85e722557b66554ba80960de6a77585, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a85e722557b66554ba80960de6a77585, type: 2}
