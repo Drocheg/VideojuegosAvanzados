@@ -487,6 +487,7 @@ MonoBehaviour:
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
+  IsLocalPlayer: 1
 --- !u!223 &685897263 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 223711648772397380, guid: 42640f15a6598de41b1d38e021f17f3a,
@@ -521,6 +522,7 @@ MonoBehaviour:
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
+  IsLocalPlayer: 0
 --- !u!1 &853822566
 GameObject:
   m_ObjectHideFlags: 0

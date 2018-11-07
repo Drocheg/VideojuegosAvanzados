@@ -12,6 +12,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	public Quaternion? _previousRotation, _nextRotation, _currentRotation;
 	private Animator _animator;
 	private Transform _chest;
+	public bool IsLocalPlayer;
 
 	class Vector3DeltaTime
 	{
@@ -58,7 +59,10 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	public void UpdateEntity(float lerp) {
 		transform.position = Vector3.Lerp(_previousPosition.Value, _nextPosition.Value, lerp);
 		LerpAnimation(_previousAnimation.Value, _nextAnimation.Value, lerp);
-		transform.rotation = Quaternion.Lerp(_previousRotation.Value, _nextRotation.Value, lerp);
+		
+		if(!IsLocalPlayer) {
+			transform.rotation = Quaternion.Lerp(_previousRotation.Value, _nextRotation.Value, lerp);
+		}
 	}
 
 	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, Quaternion rot)
