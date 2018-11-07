@@ -7,13 +7,22 @@ public class AuthWorld : MonoBehaviour {
 	public float MaxTime, TimePrecision;
 	private float _timestamp;
 	public AuthNetworkManager NetworkManager;
-	private IAuth[] entities;
+	private AuthCharacterEntity[] entities;
 	// Use this for initialization
 	void Start () {
-		entities = new IAuth[MaxEntities];
+		entities = new AuthCharacterEntity[MaxEntities];
 		_timestamp = 0;
 	}
 	
+	// void Update() {
+	// 	// Update entities positions
+	// 	foreach(var e in entities) {
+	// 		if (e != null) {
+	// 			e.UpdateEntity(Time.deltaTime);
+	// 		}
+	// 	}
+	// }
+
 
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -21,9 +30,15 @@ public class AuthWorld : MonoBehaviour {
 		NetworkManager.SendAuthEventUnreliable(TakeSnapshot);
 	}
 
-	public void AddReference(int id, IAuth auth)
+	public void AddReference(int id, AuthCharacterEntity auth)
 	{
 		entities[id] = auth;
+	}
+
+	public void MovementCommand(int id, BitReader reader) {
+		var entity = entities[id];
+		var command = MoveCommand.Deserialize(reader, entity.Step, MaxTime, TimePrecision);
+		entity.Move(command);
 	}
 
 	public void TakeSnapshot(BitWriter writer)

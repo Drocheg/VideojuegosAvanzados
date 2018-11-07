@@ -9,9 +9,11 @@ public class PlayerManager : MonoBehaviour {
 	PlayerHealthManager _playerHealth;
 	private bool _isAiming;
 	// Use this for initialization
+	private AuthCharacterEntity _authCharacterEntity;
 	void Start () {
 		_pickUp = GetComponent<PickUpManager>();
 		_animator = GetComponent<Animator>();
+		_authCharacterEntity = GetComponent<AuthCharacterEntity>();
 	}
 	
 	// Update is called once per frame
