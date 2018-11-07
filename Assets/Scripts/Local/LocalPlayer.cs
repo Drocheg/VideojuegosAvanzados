@@ -6,7 +6,7 @@ public class LocalPlayer : MonoBehaviour {
 	Animator _animator;
 	LocalNetworkManager _localNetworkEntity;
 
-	public float MaxTime, TimePrecision, MovePrecision;
+	public float MaxTime, TimePrecision, MovePrecision, RotPrecision;
 	// Use this for initialization
 	void Start () {
 		_animator = GetComponent<Animator>();
@@ -15,8 +15,8 @@ public class LocalPlayer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-		var command = new MoveCommand(_animator.GetFloat("Run"), _animator.GetFloat("Strafe"), MovePrecision, Time.deltaTime, MaxTime, TimePrecision);
+		var rot = transform.rotation;
+		var command = new MoveCommand(_animator.GetFloat("Run"), _animator.GetFloat("Strafe"),  MovePrecision, rot.w, rot.y, RotPrecision, Time.deltaTime, MaxTime, TimePrecision);
 		_localNetworkEntity.SendReliable(command.Serialize);
 	}
 
