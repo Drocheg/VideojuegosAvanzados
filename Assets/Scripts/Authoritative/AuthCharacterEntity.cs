@@ -6,7 +6,7 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
 	public int Id;
 	private Animator _animator;
-
+	public float Speed;
 	// Use this for initialization
 	void Start () {
 		StartCoroutine(DelayedAddReference());
@@ -39,7 +39,8 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 	}
 
 	public void Move(MoveCommand command) {
-		transform.Translate(command._run * command._delta * transform.forward);
-		transform.Translate(command._strafe * command._delta * transform.right);
+		Debug.Log("Move: " + command._run);
+		transform.Translate(command._run * Speed * command._delta * transform.forward);
+		transform.Translate(command._strafe * Speed * command._delta * transform.right);
 	}
 }
