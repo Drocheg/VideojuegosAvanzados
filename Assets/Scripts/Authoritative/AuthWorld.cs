@@ -7,6 +7,7 @@ public class AuthWorld : MonoBehaviour {
 
 	public int MaxEntities;
 	public float MaxTime, TimePrecision;
+	public int MaxMoves;
 	private float _timestamp;
 	public AuthNetworkManager NetworkManager;
 	public int MaxMoves;

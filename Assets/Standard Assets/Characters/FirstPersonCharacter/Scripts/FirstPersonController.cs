@@ -125,7 +125,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
             }
+<<<<<<< HEAD
             // m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
+=======
+            //m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
+>>>>>>> 7e9b7a9f7a9128b27031950aadeb76e4cb154d17
 
             ProgressStepCycle(speed);
             UpdateCameraPosition(speed);

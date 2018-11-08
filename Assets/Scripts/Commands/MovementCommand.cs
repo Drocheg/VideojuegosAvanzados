@@ -1,10 +1,16 @@
 using UnityEngine;
 
 public class MoveCommand {
+<<<<<<< HEAD
 	public float _strafe, _run, _step, _delta, _maxTime, _timeStep, _rot, _rotStep; 
 	public int _moveCounter, _maxMoves;
 	
 	public MoveCommand(float strafe, float run, float step, float rot, float rotStep, float delta, float maxTime, float timeStep, int moveCounter, int maxMoves) {
+=======
+	public float _strafe, _run, _step, _delta, _maxTime, _timeStep, _rot, _rotStep, _moveCounter, _maxMoves;
+	
+	public MoveCommand(float strafe, float run,  float step, float rot, float rotStep, float delta, float maxTime, float timeStep, int moveCounter, int maxMoves) {
+>>>>>>> 7e9b7a9f7a9128b27031950aadeb76e4cb154d17
 		_run = run;
 		_strafe = strafe;
 		_step = step;
@@ -33,6 +39,6 @@ public class MoveCommand {
 		var run = reader.ReadFloat(-1, 1, step);
 		var rot = reader.ReadFloat(0, 360, rotStep);
 		var delta = reader.ReadFloat(0, maxTime, timeStep);
-		return new MoveCommand(run, strafe, step, rot, rotStep, delta, maxTime, timeStep, moveCounter, maxMoves);
+		return new MoveCommand(strafe, run, step, rot, rotStep, delta, maxTime, timeStep, moveCounter, maxMoves);
 	}
 }
