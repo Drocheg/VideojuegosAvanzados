@@ -14,10 +14,6 @@ public class AuthWorld : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		entities = new AuthCharacterEntity[MaxEntities];
-		for (int i = 0; i < MaxNumberOfPlayers; i++)
-		{
-			AddReference(i, null);
-		}
 		_timestamp = 0;
 	}
 	
