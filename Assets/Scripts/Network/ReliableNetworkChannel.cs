@@ -30,6 +30,9 @@ public class ReliableNetworkChannel : NetworkChannel {
 		// We need to return the ACK and the Packets to sned but we need to eliminate ACK from the queue
 		var newQueue = new Queue<Packet>();
 		var retQueue = new Queue<Packet>();
+		bool gotACK = false;
+		Packet ackPacket = null;
+		
 		if (Time.realtimeSinceStartup - lastTime >= timeout)
 		{
 			lastTime = Time.realtimeSinceStartup;
@@ -43,16 +46,27 @@ public class ReliableNetworkChannel : NetworkChannel {
 			}
 			actualSendQueue = newQueue;
 		}
-
+		
 		foreach (var packet in sendQueue)
 		{
-			retQueue.Enqueue(packet);
-			if (packet.packetType == PacketType.DATA)
+			if (packet.packetType == PacketType.ACK)
 			{
+				gotACK = true;
+				ackPacket = packet;
+			}else {
 				actualSendQueue.Enqueue(packet);
+				if(isBiggerThan(packet.seq, maxACK, maxSeqPossible)){
+					retQueue.Enqueue(packet);
+				}
 			}
 		}
 
+		if (gotACK)
+		{
+			ackPacket.seq = maxReturnedSeq;
+			retQueue.Enqueue(ackPacket);
+		}
+		
 		return new List<Packet>(retQueue);
 	}
 
