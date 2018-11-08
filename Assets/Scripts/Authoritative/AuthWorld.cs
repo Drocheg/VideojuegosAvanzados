@@ -10,7 +10,6 @@ public class AuthWorld : MonoBehaviour {
 	public int MaxMoves;
 	private float _timestamp;
 	public AuthNetworkManager NetworkManager;
-	public int MaxMoves;
 	private AuthCharacterEntity[] entities;
 	private int _expectedEntities;
 	public int ExpectedEntities;
