@@ -38,6 +38,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	//	_networkAPI.AddTimeoutReliableChannel(1, receiving_endpoint, sending_endpoint, TimeoutEvents);
 	//	hosts.Add(new RemoteHost(){Id = 1, _receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
+		MaxHosts = (uint)_authWorld.MaxNumberOfPlayer;
 	}
 
 
@@ -81,6 +82,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		IPEndPoint currentSendingEndPoint = new IPEndPoint(((IPEndPoint)currentReceivingEndpoint).Address, TestRemotePort);
 		if(!_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint)) return false;
 		if(!_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint, TimeoutEvents)) return false;
+
 		var currentId = 0;
 		while (takenIds[currentId]) currentId++;
 		RemoteHost newHost = new RemoteHost()
@@ -98,7 +100,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
 		foreach (var host in hosts)
 		{
-			SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)host.Id, MaxHosts).Serialize);
+			SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
 		}
 		hosts.Add(newHost);
 		//_networkAPI.Send(hosts[currentId].ReliableChannel, hosts[currentId]._sending_endpoint, );	TODO send ADD PLAYER COMMAND

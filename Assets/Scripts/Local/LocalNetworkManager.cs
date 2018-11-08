@@ -11,7 +11,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	private NetworkAPI _networkAPI;
 	public string TestRemoteIp;
 	public int TestRemotePort;
-	public uint MaxPlayer;
+	private uint MaxPlayer;
 	public Transform RemotePlayerPrefab;
 	private LocalWorld _localWorld;
 	private EndPoint _receiving_endpoint;
@@ -32,6 +32,7 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.AddTimeoutReliableChannel(1, _receiving_endpoint, _sending_endpoint, TimeoutEvents);
 		//_networkAPI.AddTimeoutReliableChannel(1, _endpoint, 0.01f);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
+		MaxPlayer = (uint)_localWorld.MaxNumberOfPlayer;
 		SendReliable(new JoinCommand().Serialize);
 	}
 	

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LocalWorld : MonoBehaviour {
 	public int MaxEntities;
+	public int MaxNumberOfPlayer;
 	public float MaxTime, TimePrecision, MaxAllowedDelay;
 	private Queue<float> _queuedTimes;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
@@ -22,6 +23,10 @@ public class LocalWorld : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		entities = new LocalCharacterEntity[MaxEntities];
+		for (int i = 0; i < MaxNumberOfPlayer; i++)
+		{
+			AddReference(i, null);
+		}
 		_queuedTimes = new Queue<float>();
 		_entitiesCounter = 0;
 	}

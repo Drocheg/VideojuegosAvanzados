@@ -13,6 +13,11 @@ public class AuthWorld : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		entities = new AuthCharacterEntity[MaxEntities];
+		entities = new LocalCharacterEntity[MaxEntities];
+		for (int i = 0; i < MaxQueuedPositions; i++)
+		{
+			AddReference(i, null);
+		}
 		_timestamp = 0;
 	}
 	
