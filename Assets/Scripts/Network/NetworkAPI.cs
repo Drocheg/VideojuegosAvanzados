@@ -188,8 +188,8 @@ public class NetworkAPI {
 	public void RecvThread()
 	{
 		EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-		byte[] buffer = new byte[1000];
 		while(true) {
+			byte[] buffer = new byte[1000];
 			int bytes = _udpClient.Client.ReceiveFrom(buffer, 1000, SocketFlags.None, ref remoteEndPoint);
 			if (bytes > 0) {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);

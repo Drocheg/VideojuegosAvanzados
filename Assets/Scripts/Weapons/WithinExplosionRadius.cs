@@ -4,19 +4,20 @@ using UnityEngine;
 
 public class WithinExplosionRadius : MonoBehaviour {
 	private HashSet<LimbManager> _limbSet = new HashSet<LimbManager>();
-	// Use this for initialization
-	void Start () {
-		
-	}
+	public ProjectileManager ProjectileManager;
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
 	
-	public void Explode(float damage) {
+	public void Explode(float damage, AuthWorld authWorld) {
 		foreach(var limb in _limbSet) {
-			limb.TakeDamage(damage);
+			bool died = limb.HealthManager.TakeDamageAndDie(limb.TakeDamage(damage));
+			if (died) {
+				Debug.Log("Reviving...");
+				authWorld.Revive(limb.HealthManager);
+			}
 		}
 	}
 

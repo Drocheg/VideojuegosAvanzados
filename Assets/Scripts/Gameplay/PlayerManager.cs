@@ -10,19 +10,23 @@ public class PlayerManager : MonoBehaviour {
 	private bool _isAiming;
 	// Use this for initialization
 	private AuthCharacterEntity _authCharacterEntity;
+	HealthManager _healthManager;
 	void Start () {
 		_pickUp = GetComponent<PickUpManager>();
 		_animator = GetComponent<Animator>();
 		_authCharacterEntity = GetComponent<AuthCharacterEntity>();
+		_healthManager = GetComponent<HealthManager>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		Run = Input.GetAxis("Vertical");
-		Strafe = Input.GetAxis("Horizontal");
+		if (!_healthManager.Dead) {
+			Run = Input.GetAxis("Vertical");
+			Strafe = Input.GetAxis("Horizontal");
 
-		_animator.SetFloat("Run", Run);
-		_animator.SetFloat("Strafe", Strafe);
+			_animator.SetFloat("Run", Run);
+			_animator.SetFloat("Strafe", Strafe);
+		}
 	}
 
 	public void IsAiming(bool isAiming) {

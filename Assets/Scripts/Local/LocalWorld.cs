@@ -2,10 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum NetworkState {
+	INITIAL,
+	NORMAL,
+	NETWORK_PROBLEMS,
+}
+	
 public class LocalWorld : MonoBehaviour {
-	public int MaxEntities;
-	public int MaxNumberOfPlayer;
+	public int MaxEntities, MaxProjectiles, MaxNumberOfPlayer;
 	public float MaxTime, TimePrecision, MaxAllowedDelay;
+	public float MaxHP;
+	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
+	private ParticlePool _sparksPool, _bloodPool;
 	private Queue<float> _queuedTimes;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	private float _previousTime, _nextTime, _currentTime;
@@ -13,25 +21,22 @@ public class LocalWorld : MonoBehaviour {
 	private NetworkState _currentState;
 	private LocalCharacterEntity[] entities;
 
-	public bool Initialized;
-
-	public enum NetworkState {
-		INITIAL,
-		NORMAL,
-		NETWORK_PROBLEMS,
-	}
 	int _entitiesCounter;
 	public int ExpectedEntities;
+	private LocalPlayer _localPlayer;
 	// Use this for initialization
 	void Start() {
 		entities = new LocalCharacterEntity[MaxEntities];
 		_queuedTimes = new Queue<float>();
 		_entitiesCounter = 0;
-		Initialized = true;
+		var pools = GetComponents<ParticlePool>();
+		_sparksPool = pools[0];
+		_bloodPool = pools[1];
+		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 		// Read packets from NetworkAPI
 		if (_entitiesCounter < ExpectedEntities) {
 			return;
@@ -46,11 +51,13 @@ public class LocalWorld : MonoBehaviour {
 					_currentTime = _previousTime;
 					foreach(var e in entities) {
 						if (e != null) {
-							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation);
-							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
+							int lastProcessedInput;
+							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation, out lastProcessedInput);
+							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
 							e.UpdateEntity(0);
 						}
 					}
+					
 					_currentState = NetworkState.NORMAL;
 				}
 				break;
@@ -68,9 +75,14 @@ public class LocalWorld : MonoBehaviour {
 								e._previousPosition = e._nextPosition;
 								e._previousAnimation = e._nextAnimation;
 								e._previousRotation = e._nextRotation;
-								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
+								int lastProcessedInput;
+								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
+								if (e.IsLocalPlayer) {
+									_localPlayer.AdjustPositionFromSnapshot(e._nextPosition.Value, lastProcessedInput);
+								}
 							}
 						}
+						
 						if (_nextTime - _currentTime > MaxAllowedDelay) {
 							// Hard reset
 							_currentState = NetworkState.INITIAL;
@@ -121,11 +133,9 @@ public class LocalWorld : MonoBehaviour {
 		}
 		QueueNextSnapshot(reader.ReadFloat(0, MaxTime, TimePrecision));
 		
-		int c = 0;
 		foreach(var e in entities) {
 			var b = reader.ReadBit();
 			if (b) {
-				c++;
 				Debug.Assert(e != null);
 				e.Deserialize(reader);
 			} 
@@ -137,5 +147,23 @@ public class LocalWorld : MonoBehaviour {
 			_queuedTimes.Dequeue();
 		}
 		_queuedTimes.Enqueue(timestamp);
+	}
+
+	public void BulletCollision(BitReader reader) {
+		var comm = ShootCommand.Deserialize(reader, MaxEntities, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step );
+
+		var commPos = new Vector3(comm._cX, comm._cY, comm._cZ);
+		var commNor = new Vector3(comm._nX, comm._nY, comm._nZ);
+		ParticleSystem ps;
+
+		if (comm._damage > 0) {
+			ps = _bloodPool.GetParticleSystem();
+			_bloodPool.ReleaseParticleSystem(ps);
+		} else {
+			ps = _sparksPool.GetParticleSystem();
+			_sparksPool.ReleaseParticleSystem(ps);
+		}
+		ps.transform.SetPositionAndRotation(commPos, Quaternion.LookRotation(commNor));
+		ps.Play();
 	}
 }

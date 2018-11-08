@@ -53,7 +53,7 @@ public class ShootManager : IGenericWeaponManager {
 		}
 	}
 
-	protected virtual void RegisterHit(Collider hit) {
+	protected virtual void RegisterHit(Vector3 hit, Vector3 normal,  float damage, int id) {
 
 	}
 
@@ -78,21 +78,20 @@ public class ShootManager : IGenericWeaponManager {
 		RaycastHit hit;
 		if (Physics.Raycast(Camera.transform.position, Camera.transform.forward, out hit, 1000, _mask)) {
 			ParticlePool particlePool;
+			float damage = 0;
+			int id = -1;
 			// Check if another player was hit;
 			if (hit.collider.tag == "CharacterCollider") {
 				// Make other player take damage
 				var limbController = hit.collider.GetComponent<LimbManager>();
-				limbController.TakeDamage(DamageMultiplier);
+				id = limbController.HealthManager.GetComponent<CharacterEntity>().GetId();
+				damage = limbController.TakeDamage(DamageMultiplier);
 				particlePool = _bloodPool;
-				RegisterDamage();
 			} else {
 				particlePool = _sparklesPool;
 			}
-			var particleSystem = particlePool.GetParticleSystem();
-			particleSystem.transform.SetPositionAndRotation(hit.point, Quaternion.LookRotation(hit.normal));
-			particleSystem.Play();
-			particlePool.ReleaseParticleSystem(particleSystem);
-			RegisterHit(hit.collider);
+
+			RegisterHit(hit.point, hit.normal, damage, id);
 		}
 		StartCoroutine(Recoil());
 	}

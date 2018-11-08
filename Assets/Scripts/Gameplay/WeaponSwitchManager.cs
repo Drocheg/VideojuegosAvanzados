@@ -11,14 +11,17 @@ public class WeaponSwitchManager : MonoBehaviour {
 	}
 
 	IEnumerator DelayedStart() {
-		yield return new WaitForEndOfFrame();
+		yield return null;
+		yield return null;
 
 		foreach(var w in Weapons) {
-			w.gameObject.SetActive(false);
+			if (Weapons[_current] == w ) {
+				Weapons[_current].gameObject.SetActive(true);
+				Weapons[_current].ResetAnimations();
+			} else {
+				w.gameObject.SetActive(false);
+			}
 		}
-
-		Weapons[_current].gameObject.SetActive(true);
-		Weapons[_current].ResetAnimations();
 	}
 	
 	// Update is called once per frame

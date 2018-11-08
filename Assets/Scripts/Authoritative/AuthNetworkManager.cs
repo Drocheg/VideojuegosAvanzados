@@ -32,12 +32,24 @@ public class AuthNetworkManager : MonoBehaviour {
 		takenIds[0] = true; // TODO delete this when host stop being a player.
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
+<<<<<<< HEAD
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss);
 	//	var sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 	//	var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
 	//	_networkAPI.AddUnreliableChannel(0, receiving_endpoint, sending_endpoint);
 	//	_networkAPI.AddTimeoutReliableChannel(1, receiving_endpoint, sending_endpoint, TimeoutEvents);
 	//	hosts.Add(new RemoteHost(){Id = 1, _receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
+=======
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible);
+		var sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
+		var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
+		_networkAPI.AddUnreliableChannel(0, receiving_endpoint, sending_endpoint);
+		_networkAPI.AddTimeoutReliableChannel(1, receiving_endpoint, sending_endpoint, 0.01f);
+		_networkAPI.AddUnreliableChannel(2, receiving_endpoint, sending_endpoint);
+		
+		// _networkAPI.AddUnreliableChannel(2, receiving_endpoint, sending_endpoint);
+		hosts.Add(new RemoteHost(){Id = 1, _receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
+>>>>>>> master
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
 		MaxHosts = (uint)_authWorld.MaxNumberOfPlayers;
 	}
@@ -50,19 +62,33 @@ public class AuthNetworkManager : MonoBehaviour {
 		_networkAPI.UpdateSendQueues();
 
 		foreach(var packet in packets) {
-			Debug.Log(packet.channelId);
 			switch(packet.channelId) {
 				case 0: {
-					// Unreliable channel;
+					// Snapshot channel;
 					break;
 				}
 				case 1: {
-					// Reliable channel
+					// Reliable events channel
 					ParseCommand(packet);
+					break;
+				}
+				case 2: {
+					// Unreliable events channel
 					break;
 				}
 			}
 		}
+	}
+
+	int GetHostId(EndPoint packetOrigin) {
+		int Id = -1;
+		foreach(var e in hosts) {
+			if (e._receiving_endpoint.Equals(packetOrigin)) {
+				Id = e.Id;
+				break;
+			}
+		}
+<<<<<<< HEAD
 		foreach (var packet in channelLess)
 		{
 			var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
@@ -74,6 +100,9 @@ public class AuthNetworkManager : MonoBehaviour {
 				}
 			}
 		}
+=======
+		return Id;
+>>>>>>> master
 	}
 
 	private bool addHost(Packet packet)
@@ -117,10 +146,11 @@ public class AuthNetworkManager : MonoBehaviour {
 		return true;
 	}
 	void ParseCommand(Packet packet) {
-		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
+		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, System.Enum.GetValues(typeof(NetworkCommand)).Length);
 
 		switch(commandType) {
 			case NetworkCommand.MOVE_COMMAND: {
+<<<<<<< HEAD
 				Debug.Log("Movement from: " + packet.endPoint);
 				int Id = -1;
 				foreach(var e in hosts) {
@@ -129,12 +159,23 @@ public class AuthNetworkManager : MonoBehaviour {
 						break;
 					}
 				}
+=======
+				var Id = GetHostId(packet.endPoint);
+>>>>>>> master
 				if (Id == -1) {
 					Debug.Log("Could not match endpoint to id");
 					break;
 				}
 				_authWorld.MovementCommand(Id, packet.bitReader);
-				Debug.Log("Movement arrived");
+				break;
+			}
+			case NetworkCommand.SHOOT_COMMAND: {
+				var Id = GetHostId(packet.endPoint);
+				if (Id == -1) {
+					Debug.Log("Could not match endpoint to id");
+					break;
+				}
+				_authWorld.Shoot(Id, packet.bitReader);
 				break;
 			}
 		}
@@ -159,6 +200,21 @@ public class AuthNetworkManager : MonoBehaviour {
 	public void SendAuthEventReliableToSingleHost(RemoteHost host, Serialize ev) {
 		_networkAPI.Send(host.ReliableChannel, host._sending_endpoint, ev);	
 		//_networkAPI.UpdateSendQueues();
+		return;
+	}
+
+	public void SendAuthProjectiles(Serialize ev) {
+		foreach(var host in hosts) {
+			_networkAPI.Send(2, host._sending_endpoint, ev);
+		}
+		_networkAPI.UpdateSendQueues();
+	}
+
+	public void SendAuthEventReliable(Serialize ev) {
+		foreach(var host in hosts) {
+			_networkAPI.Send(1, host._sending_endpoint, ev);
+		}
+		_networkAPI.UpdateSendQueues();
 		return;
 	}
 
