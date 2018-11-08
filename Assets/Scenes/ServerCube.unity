@@ -12804,7 +12804,7 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.001
+  Step: 0.01
   RotationStep: 1
   AnimationStep: 0.1
   MaxEntities: 2
