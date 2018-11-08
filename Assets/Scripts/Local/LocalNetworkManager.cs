@@ -90,7 +90,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				//Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
 				currentId = joinPlayerCommand.playerId;
 				Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
-				lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
+				LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
 				lce.Id = (int)currentId;
 				//lce.Init();
 				
