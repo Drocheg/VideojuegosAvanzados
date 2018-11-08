@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class LocalNetworkManager : MonoBehaviour {
@@ -10,14 +11,19 @@ public class LocalNetworkManager : MonoBehaviour {
 	private NetworkAPI _networkAPI;
 	public string TestRemoteIp;
 	public int TestRemotePort;
+	public uint MaxPlayer;
+	public Transform RemotePlayerPrefab;
 	private LocalWorld _localWorld;
 	private EndPoint _receiving_endpoint;
 	private EndPoint _sending_endpoint;
 	public float TimeoutEvents;
 	public float PacketLoss;
+	private int _commandsCount;
+	public GameObject Player;
 	
 	// Use this for initialization
 	void Start () {
+		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss);
 		_sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
@@ -26,6 +32,7 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.AddTimeoutReliableChannel(1, _receiving_endpoint, _sending_endpoint, TimeoutEvents);
 		//_networkAPI.AddTimeoutReliableChannel(1, _endpoint, 0.01f);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
+		SendReliable(new JoinCommand().Serialize);
 	}
 	
 	// Update is called once per frame
@@ -43,7 +50,32 @@ public class LocalNetworkManager : MonoBehaviour {
 					_localWorld.NewSnapshot(packet.bitReader);
 					break;
 				}
+				case 1:
+				{
+					// Reliable channel
+					ParseCommand(packet);
+					break;
+				}
 			}
+		}
+	}
+	
+	void ParseCommand(Packet packet) {
+		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
+
+		switch(commandType) {
+			case NetworkCommand.JOIN_RESPONSE_COMMAND:
+				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
+				Player.GetComponent<LocalCharacterEntity>().Id = (int) joinResponseCommand.playerId;
+				break;
+			case NetworkCommand.JOIN_PLAYER_COMMAND:
+				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayer);
+				//Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
+				var currentId = (int) joinPlayerCommand.playerId;
+				Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*5, 0, 0), Quaternion.identity); // TODO initial position.
+				remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>().Id = currentId;
+				
+				break;
 		}
 	}
 

@@ -1,7 +1,7 @@
 public class JoinPlayerCommand
 {
-	private uint playerId;
-	private uint maxPlayers;
+	public uint playerId;
+	public uint maxPlayers;
 	
 	public JoinPlayerCommand(uint playerId, uint maxPlayers)
 	{
@@ -14,7 +14,7 @@ public class JoinPlayerCommand
 		writer.WriteInt(playerId, 0, maxPlayers);
 	}
 
-	public static JoinResponseCommand Deserialize(BitReader reader, uint playerId, uint maxPlayers) {
-		return new JoinResponseCommand(playerId, maxPlayers);
+	public static JoinPlayerCommand Deserialize(BitReader reader, uint maxPlayers) {
+		return new JoinPlayerCommand((uint)reader.ReadInt(0, (int)maxPlayers), maxPlayers);
 	}
 }
