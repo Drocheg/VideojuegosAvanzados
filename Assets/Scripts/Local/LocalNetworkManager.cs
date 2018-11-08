@@ -22,7 +22,7 @@ public class LocalNetworkManager : MonoBehaviour {
 		_sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		_receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort+1);
 		_networkAPI.AddUnreliableChannel(0, _receiving_endpoint, _sending_endpoint);
-		_networkAPI.AddTimeoutReliableChannel(1, _receiving_endpoint, _sending_endpoint, 0.01f);
+		_networkAPI.AddTimeoutReliableChannel(1, _receiving_endpoint, _sending_endpoint, TimeoutEvents);
 		//_networkAPI.AddTimeoutReliableChannel(1, _endpoint, 0.01f);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 	}
