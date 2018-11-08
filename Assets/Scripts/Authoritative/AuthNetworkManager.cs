@@ -102,6 +102,14 @@ public class AuthNetworkManager : MonoBehaviour {
 		return;
 	}
 
+	public void SendAuthEventReliable(Serialize ev) {
+		foreach(var host in hosts) {
+			_networkAPI.Send(1, host._sending_endpoint, ev);
+		}
+		_networkAPI.UpdateSendQueues();
+		return;
+	}
+
 	void OnDisable()
 	{
 		_networkAPI.Close();
