@@ -68,7 +68,11 @@ public class LocalNetworkManager : MonoBehaviour {
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:
 				Debug.Log("JOIN RESPONSE: " + packet.endPoint);
 				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
-				Player.GetComponent<LocalCharacterEntity>().Id = (int) joinResponseCommand.playerId;
+				LocalCharacterEntity lce = Player.GetComponent<LocalCharacterEntity>();
+				LocalWorld lw = GameObject.FindObjectOfType<LocalWorld>();
+				lw.RemoveReference((int)lce.Id);
+				lce.Id = (int) joinResponseCommand.playerId;
+				lw.AddReference((int)joinResponseCommand.playerId, lce);
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
 				Debug.Log("JOIN PLAYER: " + packet.endPoint);

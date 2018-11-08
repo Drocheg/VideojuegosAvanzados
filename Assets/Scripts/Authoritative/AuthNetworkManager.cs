@@ -16,7 +16,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	private NetworkAPI _networkAPI;
 	private List<RemoteHost> hosts = new List<RemoteHost>();
 	public string TestRemoteIp;
-	public int TestRemotePort, TestReceiveRemotePort, LocalPort, SpinLockTime;
+	public int TestRemotePort2, TestReceiveRemotePort, LocalPort, SpinLockTime;
 	public uint MaxHosts;
 	private bool[] takenIds;
 	public uint ChannelsPerHost;
@@ -32,8 +32,8 @@ public class AuthNetworkManager : MonoBehaviour {
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss);
-		var sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
-		var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
+	//	var sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
+	//	var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
 	//	_networkAPI.AddUnreliableChannel(0, receiving_endpoint, sending_endpoint);
 	//	_networkAPI.AddTimeoutReliableChannel(1, receiving_endpoint, sending_endpoint, TimeoutEvents);
 	//	hosts.Add(new RemoteHost(){Id = 1, _receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
@@ -79,7 +79,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		EndPoint currentReceivingEndpoint = packet.endPoint;
 		
 		//var port packet.bitReader.ReadInt()
-		IPEndPoint currentSendingEndPoint = new IPEndPoint(((IPEndPoint)currentReceivingEndpoint).Address, TestRemotePort);
+		IPEndPoint currentSendingEndPoint = new IPEndPoint(((IPEndPoint)currentReceivingEndpoint).Address, ((IPEndPoint) currentReceivingEndpoint).Port-1);
 		if(!_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint)) return false;
 		if(!_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint, TimeoutEvents)) return false;
 

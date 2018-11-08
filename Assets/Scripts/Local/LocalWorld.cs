@@ -105,6 +105,13 @@ public class LocalWorld : MonoBehaviour {
 		entities[id] = local;
 	}
 
+	public void RemoveReference(int id)
+	{
+		entities[id] = null;
+		_entitiesCounter--;
+	}
+
+
 	public void NewSnapshot(BitReader reader) {
 		if (_entitiesCounter < ExpectedEntities) {
 			return;
