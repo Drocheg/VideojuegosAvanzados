@@ -42,8 +42,10 @@ public class AuthWorld : MonoBehaviour {
 
 	public void MovementCommand(int id, BitReader reader) {
 		var entity = entities[id];
-		var command = MoveCommand.Deserialize(reader, entity.Step, entity.RotationStep, MaxTime, TimePrecision);
-		entity.Move(command);
+		if (entity != null) {
+			var command = MoveCommand.Deserialize(reader, entity.Step, entity.RotationStep, MaxTime, TimePrecision);
+			entity.Move(command);
+		}
 	}
 
 	public void TakeSnapshot(BitWriter writer)
