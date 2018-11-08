@@ -83,7 +83,10 @@ public class AuthNetworkManager : MonoBehaviour {
 		if(!_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint)) return false;
 		if(!_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint, TimeoutEvents)) return false;
 
+		Debug.Log("Adding HOST: " + packet.endPoint);
+		
 		var currentId = 0;
+		
 		while (takenIds[currentId]) currentId++;
 		RemoteHost newHost = new RemoteHost()
 		{
@@ -112,6 +115,7 @@ public class AuthNetworkManager : MonoBehaviour {
 			Debug.Log(commandType);
 		switch(commandType) {
 			case NetworkCommand.MOVE_COMMAND: {
+				Debug.Log("Movement from: " + packet.endPoint);
 				int Id = -1;
 				foreach(var e in hosts) {
 					if (e._receiving_endpoint.Equals(packet.endPoint)) {

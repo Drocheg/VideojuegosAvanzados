@@ -66,10 +66,12 @@ public class LocalNetworkManager : MonoBehaviour {
 
 		switch(commandType) {
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:
+				Debug.Log("JOIN RESPONSE: " + packet.endPoint);
 				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
 				Player.GetComponent<LocalCharacterEntity>().Id = (int) joinResponseCommand.playerId;
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
+				Debug.Log("JOIN PLAYER: " + packet.endPoint);
 				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayer);
 				//Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
 				var currentId = (int) joinPlayerCommand.playerId;
