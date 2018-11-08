@@ -9,11 +9,13 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 	public float Speed;
 	// Use this for initialization
 	private AuthWorld _world;
+	HealthManager _healthManager;
 	void Start () {
 		StartCoroutine(DelayedAddReference());
 		_animator = GetComponent<Animator>();
 		_characterController = GetComponent<CharacterController>();
 		_world = GameObject.FindObjectOfType<AuthWorld>();
+		_healthManager = GetComponent<HealthManager>();
 	}
 
 	IEnumerator DelayedAddReference() {
@@ -39,6 +41,7 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, _world.AnimationStep);
 		writer.WriteFloat(transform.eulerAngles.y, 0, 360, _world.RotationStep);
 		writer.WriteInt(lastProcessedInput, 0, (uint) _world.MaxMoves);
+		writer.WriteFloat(Mathf.Max(_healthManager._hp, 0), 0, _world.MaxHP, 1);
 	}
 
 	public void Move(MoveCommand command) {

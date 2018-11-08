@@ -14,6 +14,7 @@ public class AuthWorld : MonoBehaviour {
 	private int _expectedEntities;
 	public int ExpectedEntities;
 	public float SnapshotTickRate;
+	public float MaxHP;
 	private float _snapshotDelta; 
 	private ParticlePool _sparksPool, _bloodPool;
 	// Use this for initialization
