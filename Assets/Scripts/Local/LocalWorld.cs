@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum NetworkState {
+	INITIAL,
+	NORMAL,
+	NETWORK_PROBLEMS,
+}
+	
 public class LocalWorld : MonoBehaviour {
-	public int MaxEntities;
+	public int MaxEntities, MaxProjectiles;
 	public float MaxTime, TimePrecision, MaxAllowedDelay;
 	public float MaxHP;
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
@@ -15,11 +21,7 @@ public class LocalWorld : MonoBehaviour {
 	private NetworkState _currentState;
 	private LocalCharacterEntity[] entities;
 
-	public enum NetworkState {
-		INITIAL,
-		NORMAL,
-		NETWORK_PROBLEMS,
-	}
+	
 	int _entitiesCounter;
 	public int ExpectedEntities;
 	private LocalPlayer _localPlayer;

@@ -11,6 +11,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	public string TestRemoteIp;
 	public int TestRemotePort;
 	private LocalWorld _localWorld;
+	private LocalProjectileManager _localProjectileManager;
 	private EndPoint _receiving_endpoint;
 	private EndPoint _sending_endpoint;
 	
@@ -22,8 +23,10 @@ public class LocalNetworkManager : MonoBehaviour {
 		_receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort+1);
 		_networkAPI.AddUnreliableChannel(0, _receiving_endpoint, _sending_endpoint);
 		_networkAPI.AddTimeoutReliableChannel(1, _receiving_endpoint, _sending_endpoint, 0.01f);
+		_networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		// _networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
+		_localProjectileManager = GameObject.FindObjectOfType<LocalProjectileManager>();
 	}
 	
 	// Update is called once per frame
@@ -45,6 +48,10 @@ public class LocalNetworkManager : MonoBehaviour {
 					// Reliable events channel
 					ParseCommand(packet);
 					
+					break;
+				}
+				case 2: {
+					_localProjectileManager.NewSnapshot(packet.bitReader);
 					break;
 				}
 			}

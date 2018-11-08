@@ -12,10 +12,16 @@ public class Projectile : MonoBehaviour {
 	public float Damage;
 	private Rigidbody _rb;
 	private Renderer _renderer;
+	private AuthWorld _authWorld;
+	private AuthProjectileEntity _authProjectile;
 	// Use this for initialization
 	void Start () {
 		_rb = GetComponent<Rigidbody>();
 		_renderer = GetComponent<Renderer>();
+		if (IsAuth) {
+			_authProjectile = GetComponent<AuthProjectileEntity>();
+			_authWorld = GameObject.FindObjectOfType<AuthWorld>();
+		}
 	}
 	
 	// Update is called once per frame
@@ -28,7 +34,7 @@ public class Projectile : MonoBehaviour {
 			_hasExploded = true;
 			ExplosionParticles.Play();
 			if (IsAuth) {
-				ExplosionRadius.Explode(Damage);
+				_authWorld.Explode(_authProjectile, ExplosionRadius, Damage);
 			} 
 			_rb.isKinematic = true;
 			_renderer.enabled = false;

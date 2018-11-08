@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class AuthWorld : MonoBehaviour {
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
-
-	public int MaxEntities;
+	public AuthProjectileEntity AuthProjectile;
+	public int MaxEntities, MaxProjectiles;
 	public float MaxTime, TimePrecision;
 	public int MaxMoves;
 	private float _timestamp;
 	public AuthNetworkManager NetworkManager;
 	private AuthCharacterEntity[] entities;
+	private AuthProjectileEntity[] projectiles;
 	private int _expectedEntities;
 	public int ExpectedEntities;
 	public float SnapshotTickRate;
@@ -18,9 +19,13 @@ public class AuthWorld : MonoBehaviour {
 	public Transform SpawnLocation;
 	private float _snapshotDelta; 
 	private ParticlePool _sparksPool, _bloodPool;
+	public int ProjectileOffset;
+	public float ExplosionMagnitude;
+	
 	// Use this for initialization
 	void Start () {
 		entities = new AuthCharacterEntity[MaxEntities];
+		projectiles = new AuthProjectileEntity[MaxProjectiles];
 		_timestamp = 0;
 		var pools = GetComponents<ParticlePool>();
 		_sparksPool = pools[0];
@@ -42,6 +47,7 @@ public class AuthWorld : MonoBehaviour {
 			yield return new WaitForSecondsRealtime(_snapshotDelta);
 			if (_expectedEntities >= ExpectedEntities) {
 				NetworkManager.SendAuthEventUnreliable(TakeSnapshot);
+				NetworkManager.SendAuthProjectiles(TakeSnapshotProjectiles);
 			}
 		}	
 	}
@@ -116,10 +122,40 @@ public class AuthWorld : MonoBehaviour {
 		NetworkManager.SendAuthEventReliable(command.Serialize);
 	}
 
+	public void Explode(AuthProjectileEntity projectile, WithinExplosionRadius radius, float damage) {
+		radius.Explode(damage, this);
+		// send explosion.
+		entities[projectile.GetId()] = null;
+	}
+
+	public void NewProjectile(ProjectileShootCommand command) {
+		for(int i = 0; i < projectiles.Length; i++) {
+			if (projectiles[i] == null) {
+				projectiles[i] = Instantiate(AuthProjectile);
+				var pos = new Vector3(command._x, command._y, command._z);
+				var dir = new Vector3(command._dirX, command._dirY, command._dirZ);
+				projectiles[i].SetPositionAndForce(pos, dir);
+				break;
+			}
+		}
+	}
+
 	public void TakeSnapshot(BitWriter writer)
 	{
 		writer.WriteFloat(_timestamp, 0, MaxTime, TimePrecision);
 		foreach(var entity in entities) {
+			if (entity != null) {
+				writer.WriteBit(true);
+				entity.Serialize(writer);
+			} else {
+				writer.WriteBit(false);
+			}
+		}
+	}
+
+	public void TakeSnapshotProjectiles(BitWriter writer) {
+		writer.WriteFloat(_timestamp, 0, MaxTime, TimePrecision);
+		foreach(var entity in projectiles) {
 			if (entity != null) {
 				writer.WriteBit(true);
 				entity.Serialize(writer);

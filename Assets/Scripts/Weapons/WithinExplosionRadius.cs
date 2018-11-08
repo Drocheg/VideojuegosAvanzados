@@ -5,23 +5,18 @@ using UnityEngine;
 public class WithinExplosionRadius : MonoBehaviour {
 	private HashSet<LimbManager> _limbSet = new HashSet<LimbManager>();
 	public ProjectileManager ProjectileManager;
-	private AuthWorld _authWord;
-	// Use this for initialization
-	void Start () {
-		_authWord = GameObject.FindObjectOfType<AuthWorld>();
-	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
 	
-	public void Explode(float damage) {
+	public void Explode(float damage, AuthWorld authWorld) {
 		foreach(var limb in _limbSet) {
 			bool died = limb.HealthManager.TakeDamageAndDie(limb.TakeDamage(damage));
 			if (died) {
 				Debug.Log("Reviving...");
-				_authWord.Revive(limb.HealthManager);
+				authWorld.Revive(limb.HealthManager);
 			}
 		}
 	}

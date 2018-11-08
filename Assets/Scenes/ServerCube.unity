@@ -875,7 +875,10 @@ MonoBehaviour:
   Step: 0.01
   RotationStep: 1
   AnimationStep: 0.1
+  AuthProjectile: {fileID: 114804668641806502, guid: 802e418516e320745a49d1a78b983a23,
+    type: 2}
   MaxEntities: 2
+  MaxProjectiles: 10
   MaxTime: 10000
   TimePrecision: 0.001
   MaxMoves: 10000
@@ -885,6 +888,8 @@ MonoBehaviour:
   MaxHP: 100
   SpawnTime: 4
   SpawnLocation: {fileID: 1203181107}
+  ProjectileOffset: 0
+  ExplosionMagnitude: 50
 --- !u!114 &1304344874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1017,6 +1022,11 @@ Prefab:
       propertyPath: HealthBar
       value: 
       objectReference: {fileID: 214874634}
+    - target: {fileID: 114207538743343062, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: IsAuth
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef, type: 2}
   m_IsPrefabAsset: 0

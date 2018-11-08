@@ -28,6 +28,8 @@ public class AuthNetworkManager : MonoBehaviour {
 		var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
 		_networkAPI.AddUnreliableChannel(0, receiving_endpoint, sending_endpoint);
 		_networkAPI.AddTimeoutReliableChannel(1, receiving_endpoint, sending_endpoint, 0.01f);
+		_networkAPI.AddUnreliableChannel(2, receiving_endpoint, sending_endpoint);
+		
 		// _networkAPI.AddUnreliableChannel(2, receiving_endpoint, sending_endpoint);
 		hosts.Add(new RemoteHost(){Id = 1, _receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
@@ -51,7 +53,6 @@ public class AuthNetworkManager : MonoBehaviour {
 				}
 				case 2: {
 					// Unreliable events channel
-					ParseCommand(packet);
 					break;
 				}
 			}
@@ -100,6 +101,13 @@ public class AuthNetworkManager : MonoBehaviour {
 		}
 		_networkAPI.UpdateSendQueues();
 		return;
+	}
+
+	public void SendAuthProjectiles(Serialize ev) {
+		foreach(var host in hosts) {
+			_networkAPI.Send(2, host._sending_endpoint, ev);
+		}
+		_networkAPI.UpdateSendQueues();
 	}
 
 	public void SendAuthEventReliable(Serialize ev) {
