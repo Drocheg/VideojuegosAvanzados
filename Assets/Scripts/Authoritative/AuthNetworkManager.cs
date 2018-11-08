@@ -65,7 +65,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		foreach (var packet in channelLess)
 		{
 			var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
-			if (commandType == NetworkCommand.JOIN_COMMAND) // TODO change JOIN COMMAND
+			if (commandType == NetworkCommand.JOIN_COMMAND)
 			{
 				if (hosts.Count < MaxHosts)
 				{
@@ -81,7 +81,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		
 		//var port packet.bitReader.ReadInt()
 		IPEndPoint currentSendingEndPoint = new IPEndPoint(((IPEndPoint)currentReceivingEndpoint).Address, ((IPEndPoint) currentReceivingEndpoint).Port-1);
-		if(!_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint)) return false;
+		if(!_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint))
 		if(!_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint, TimeoutEvents)) return false;
 
 		Debug.Log("Adding HOST: " + packet.endPoint);
