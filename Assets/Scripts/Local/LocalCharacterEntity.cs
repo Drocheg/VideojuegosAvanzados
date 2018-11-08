@@ -84,7 +84,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		Vector2 anim;
 		anim.x = reader.ReadFloat( -1, 1, AnimationStep);
 		anim.y = reader.ReadFloat( -1, 1, AnimationStep);
-		float rot = reader.ReadFloat(0, 360, RotationStep);
+		float rot = reader.ReadFloat(-360, 360, RotationStep);
 		QueueNextPosition(pos, anim, rot);
 	} 
 }
