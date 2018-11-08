@@ -74,6 +74,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
 				lce.Id = (int)currentId;
 				lce.Init();
+				Player = lce.gameObject;
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
 				Debug.Log("JOIN PLAYER: " + packet.endPoint);
