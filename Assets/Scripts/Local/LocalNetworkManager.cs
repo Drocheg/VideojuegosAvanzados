@@ -77,10 +77,10 @@ public class LocalNetworkManager : MonoBehaviour {
 			//	LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
 			//	lce.Id = (int)currentId;
 			//	lce.Init();
-				LocalCharacterEntity lce = Player.GetComponent<LocalCharacterEntity>();
-				_localWorld.RemoveReference(lce.Id);
-				lce.Id = (int)currentId;
-				_localWorld.AddReference((int)currentId, lce);
+			//	LocalCharacterEntity lce = Player.GetComponent<LocalCharacterEntity>();
+			//	_localWorld.RemoveReference(lce.Id);
+			//	lce.Id = (int)currentId;
+			//	_localWorld.AddReference((int)currentId, lce);
 				
 				//Player = lce.gameObject;
 				break;

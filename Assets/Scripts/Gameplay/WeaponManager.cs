@@ -19,7 +19,7 @@ public class WeaponManager : MonoBehaviour {
 	}
 	
 	// Use this for initialization
-	void Awake () {
+	void Start () {
 		_bulletsLoaded = BulletClipSize;
 		_bulletsRemaining = InitialBullets;	
 	}
