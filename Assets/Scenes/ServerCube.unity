@@ -883,7 +883,7 @@ MonoBehaviour:
   ExpectedEntities: 2
   SnapshotTickRate: 5
   MaxHP: 100
-  SpawnTime: 1
+  SpawnTime: 4
   SpawnLocation: {fileID: 1203181107}
 --- !u!114 &1304344874
 MonoBehaviour:
