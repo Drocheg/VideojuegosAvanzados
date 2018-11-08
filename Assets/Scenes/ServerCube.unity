@@ -1012,28 +1012,12 @@ Prefab:
       propertyPath: BulletsCanvas
       value: 
       objectReference: {fileID: 1508585261}
-    - target: {fileID: 114147288061539458, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: PickUpPrompt
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114147288061539458, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: PickUpItemName
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 114425466349415322, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
         type: 2}
       propertyPath: HealthBar
       value: 
       objectReference: {fileID: 214874634}
-    - target: {fileID: 114425466349415322, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: HealthPacksUI
-      value: 
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114147288061539458, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef, type: 2}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1375455735

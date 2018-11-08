@@ -278,7 +278,6 @@ GameObject:
   - component: {fileID: 95865412078206246}
   - component: {fileID: 114331494597253928}
   - component: {fileID: 114425466349415322}
-  - component: {fileID: 114147288061539458}
   - component: {fileID: 114669342120072804}
   - component: {fileID: 114220166766431302}
   - component: {fileID: 114010346004087720}
@@ -3597,26 +3596,6 @@ MonoBehaviour:
   InitialHP: 100
   _hp: 0
   Dead: 0
---- !u!114 &114147288061539458
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1223574183058490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14385b712667613479c5627ef5060f61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponManagers:
-  - {fileID: 114763752862373632}
-  - {fileID: 0}
-  - {fileID: 114524337371568196}
-  WorldCamera: {fileID: 4975453541813850}
-  PickUpDistance: 2
-  PickUpPrompt: {fileID: 0}
-  PickUpItemName: {fileID: 0}
-  PickUpSound: {fileID: 82299201555253898}
 --- !u!114 &114166069608322762
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3749,7 +3728,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb584ee42430314e9c8a0df8b07b741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InitialBullets: 0
+  InitialBullets: 100
   BulletClipSize: 4
   RemainingBulletsUI: {fileID: 0}
   ClipBulletsUI: {fileID: 0}
@@ -3840,7 +3819,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb584ee42430314e9c8a0df8b07b741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InitialBullets: 20
+  InitialBullets: 100
   BulletClipSize: 10
   RemainingBulletsUI: {fileID: 0}
   ClipBulletsUI: {fileID: 0}

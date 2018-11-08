@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour {
 	public ParticleSystem ExplosionParticles;
 
 	private bool _explode, _hasExploded;
+	public bool IsAuth;
 	public float DestroyDelay;
 	public float Damage;
 	private Rigidbody _rb;
@@ -26,7 +27,9 @@ public class Projectile : MonoBehaviour {
 		if (_explode && !_hasExploded) {
 			_hasExploded = true;
 			ExplosionParticles.Play();
-			ExplosionRadius.Explode(Damage);
+			if (IsAuth) {
+				ExplosionRadius.Explode(Damage);
+			} 
 			_rb.isKinematic = true;
 			_renderer.enabled = false;
 			StartCoroutine(WaitAndDestroy());

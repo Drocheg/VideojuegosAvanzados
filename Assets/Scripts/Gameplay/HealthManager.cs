@@ -36,9 +36,16 @@ public class HealthManager : MonoBehaviour {
 	public void TakeDamage(float damage) {
 		if (Dead) return;
 		_hp -= damage;
-		if (_hp <= 0) {
+		_hp = Mathf.Max(_hp, 0);
+		if (_hp == 0) {
 			DeathAnimation();
 		}
+	}
+
+	public bool TakeDamageAndDie(float damage) {
+		if (Dead) return false;
+		TakeDamage(damage);
+		return Dead;
 	}
 
 	public void SetHP(float hp) {
@@ -46,7 +53,7 @@ public class HealthManager : MonoBehaviour {
 		if (_hp <= 0 && !Dead) {
 			DeathAnimation();
 		}
-		if (_hp > 0 && Dead) {
+		else if (_hp > 0 && Dead) {
 			AliveAnimation();
 		}
 	}

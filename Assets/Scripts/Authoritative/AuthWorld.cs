@@ -78,7 +78,11 @@ public class AuthWorld : MonoBehaviour {
 
 		entity.SetHP(MaxHP);
 		entity.transform.SetPositionAndRotation(SpawnLocation.position, SpawnLocation.rotation);
-	
+
+	}
+
+	public void Revive(HealthManager entity) {
+		StartCoroutine(ReviveEntity(entity));
 	}
 
 	public void Shoot(int id, ShootCommand comm) {
@@ -95,7 +99,7 @@ public class AuthWorld : MonoBehaviour {
 				healthManager.TakeDamage(comm._damage);
 				if (healthManager.Dead) {
 					// entity was killed. Revive it.
-					StartCoroutine(ReviveEntity(healthManager));
+					Revive(healthManager);
 				}
 			} else {
 				Debug.Log("No health manager");
