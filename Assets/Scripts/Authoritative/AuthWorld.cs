@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AuthWorld : MonoBehaviour {
+	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
+
 	public int MaxEntities;
 	public float MaxTime, TimePrecision;
 	private float _timestamp;
@@ -10,10 +12,14 @@ public class AuthWorld : MonoBehaviour {
 	private AuthCharacterEntity[] entities;
 	private int _expectedEntities;
 	public int ExpectedEntities;
+	private ParticlePool _sparksPool, _bloodPool;
 	// Use this for initialization
 	void Start () {
 		entities = new AuthCharacterEntity[MaxEntities];
 		_timestamp = 0;
+		var pools = GetComponents<ParticlePool>();
+		_sparksPool = pools[0];
+		_bloodPool = pools[1];
 	}
 	
 	// void Update() {
@@ -43,9 +49,26 @@ public class AuthWorld : MonoBehaviour {
 	public void MovementCommand(int id, BitReader reader) {
 		var entity = entities[id];
 		if (entity != null) {
-			var command = MoveCommand.Deserialize(reader, entity.Step, entity.RotationStep, MaxTime, TimePrecision);
+			var command = MoveCommand.Deserialize(reader, Step, RotationStep, MaxTime, TimePrecision);
 			entity.Move(command);
 		}
+	}
+
+	public void Shoot(int id, BitReader reader) {
+		var comm = ShootCommand.Deserialize(reader, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
+		var commPos = new Vector3(comm._cX, comm._cY, comm._cZ);
+		Debug.Log(comm._cX);
+		ParticleSystem ps;
+
+		if (comm._hitBlood) {
+			ps = _sparksPool.GetParticleSystem();
+			_sparksPool.ReleaseParticleSystem(ps);
+		} else {
+			ps = _bloodPool.GetParticleSystem();
+			_bloodPool.ReleaseParticleSystem(ps);
+		}
+		ps.transform.position = commPos;
+		ps.Play();
 	}
 
 	public void TakeSnapshot(BitWriter writer)

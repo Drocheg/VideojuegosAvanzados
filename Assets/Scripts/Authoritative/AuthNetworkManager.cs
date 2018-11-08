@@ -28,6 +28,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
 		_networkAPI.AddUnreliableChannel(0, receiving_endpoint, sending_endpoint);
 		_networkAPI.AddTimeoutReliableChannel(1, receiving_endpoint, sending_endpoint, 0.01f);
+		// _networkAPI.AddUnreliableChannel(2, receiving_endpoint, sending_endpoint);
 		hosts.Add(new RemoteHost(){Id = 1, _receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
 	}
@@ -38,14 +39,18 @@ public class AuthNetworkManager : MonoBehaviour {
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
 		foreach(var packet in packets) {
-			Debug.Log(packet.channelId);
 			switch(packet.channelId) {
 				case 0: {
-					// Unreliable channel;
+					// Snapshot channel;
 					break;
 				}
 				case 1: {
-					// Reliable channel
+					// Reliable events channel
+					ParseCommand(packet);
+					break;
+				}
+				case 2: {
+					// Unreliable events channel
 					ParseCommand(packet);
 					break;
 				}
@@ -53,24 +58,37 @@ public class AuthNetworkManager : MonoBehaviour {
 		}
 	}
 
+	int GetHostId(EndPoint packetOrigin) {
+		int Id = -1;
+		foreach(var e in hosts) {
+			if (e._receiving_endpoint.Equals(packetOrigin)) {
+				Id = e.Id;
+				break;
+			}
+		}
+		return Id;
+	}
+
 	void ParseCommand(Packet packet) {
-		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
+		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, System.Enum.GetValues(typeof(NetworkCommand)).Length);
 
 		switch(commandType) {
 			case NetworkCommand.MOVE_COMMAND: {
-				int Id = -1;
-				foreach(var e in hosts) {
-					if (e._receiving_endpoint.Equals(packet.endPoint)) {
-						Id = e.Id;
-						break;
-					}
-				}
+				var Id = GetHostId(packet.endPoint);
 				if (Id == -1) {
 					Debug.Log("Could not match endpoint to id");
 					break;
 				}
 				_authWorld.MovementCommand(Id, packet.bitReader);
-				Debug.Log("Movement arrived");
+				break;
+			}
+			case NetworkCommand.SHOOT_COMMAND: {
+				var Id = GetHostId(packet.endPoint);
+				if (Id == -1) {
+					Debug.Log("Could not match endpoint to id");
+					break;
+				}
+				_authWorld.Shoot(Id, packet.bitReader);
 				break;
 			}
 		}

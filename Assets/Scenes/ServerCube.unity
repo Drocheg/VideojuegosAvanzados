@@ -848,6 +848,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1304344872}
   - component: {fileID: 1304344873}
+  - component: {fileID: 1304344875}
+  - component: {fileID: 1304344874}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -879,11 +881,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c077f21888199348a05df63b84cac61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MinPosX: -1000
+  MaxPosX: 1000
+  MinPosY: -1000
+  MaxPosY: 1000
+  MinPosZ: -1000
+  MaxPosZ: 1000
+  Step: 0.001
+  RotationStep: 1
+  AnimationStep: 0.1
   MaxEntities: 2
   MaxTime: 10000
   TimePrecision: 0.001
   NetworkManager: {fileID: 1175571462}
   ExpectedEntities: 2
+--- !u!114 &1304344874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1304344871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e68bee9b31221a4b831402612875a85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParticleSystemCount: 10
+  ParticleSystemPrefab: {fileID: 198858841386093954, guid: ce4f137e4e09e844c86da8a4798e2534,
+    type: 2}
+--- !u!114 &1304344875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1304344871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e68bee9b31221a4b831402612875a85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParticleSystemCount: 10
+  ParticleSystemPrefab: {fileID: 198750189035362808, guid: 962a6f241583c454789e9c35883e64ae,
+    type: 2}
 --- !u!1 &1375455735
 GameObject:
   m_ObjectHideFlags: 0

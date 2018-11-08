@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AuthCharacterEntity : MonoBehaviour, IAuth {
-	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
 	public int Id;
 	private Animator _animator;
 	private CharacterController _characterController;
 	public float Speed;
 	// Use this for initialization
+	private AuthWorld _world;
 	void Start () {
 		StartCoroutine(DelayedAddReference());
 		_animator = GetComponent<Animator>();
 		_characterController = GetComponent<CharacterController>();
+		_world = GameObject.FindObjectOfType<AuthWorld>();
 	}
 
 	IEnumerator DelayedAddReference() {
@@ -31,12 +32,12 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 	// }
 
 	public void Serialize(BitWriter writer) {
-		writer.WriteFloat(transform.position.x, MinPosX, MaxPosX, Step);
-		writer.WriteFloat(transform.position.y, MinPosY, MaxPosY, Step);
-		writer.WriteFloat(transform.position.z, MinPosZ, MaxPosZ, Step);
-		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, AnimationStep);
-		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, AnimationStep);
-		writer.WriteFloat(transform.eulerAngles.y, 0, 360, RotationStep);
+		writer.WriteFloat(transform.position.x, _world.MinPosX, _world.MaxPosX, _world.Step);
+		writer.WriteFloat(transform.position.y, _world.MinPosY, _world.MaxPosY, _world.Step);
+		writer.WriteFloat(transform.position.z, _world.MinPosZ, _world.MaxPosZ, _world.Step);
+		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, _world.AnimationStep);
+		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, _world.AnimationStep);
+		writer.WriteFloat(transform.eulerAngles.y, 0, 360, _world.RotationStep);
 	}
 
 	public void Move(MoveCommand command) {
