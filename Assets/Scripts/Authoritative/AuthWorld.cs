@@ -10,11 +10,11 @@ public class AuthWorld : MonoBehaviour {
 	private AuthCharacterEntity[] entities;
 	private int _expectedEntities;
 	public int ExpectedEntities;
+	public int MaxNumberOfPlayers;
 	// Use this for initialization
 	void Start () {
 		entities = new AuthCharacterEntity[MaxEntities];
-		entities = new LocalCharacterEntity[MaxEntities];
-		for (int i = 0; i < MaxQueuedPositions; i++)
+		for (int i = 0; i < MaxNumberOfPlayers; i++)
 		{
 			AddReference(i, null);
 		}

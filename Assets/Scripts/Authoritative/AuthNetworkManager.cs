@@ -38,7 +38,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	//	_networkAPI.AddTimeoutReliableChannel(1, receiving_endpoint, sending_endpoint, TimeoutEvents);
 	//	hosts.Add(new RemoteHost(){Id = 1, _receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
-		MaxHosts = (uint)_authWorld.MaxNumberOfPlayer;
+		MaxHosts = (uint)_authWorld.MaxNumberOfPlayers;
 	}
 
 
