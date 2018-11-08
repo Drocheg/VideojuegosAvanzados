@@ -834,6 +834,7 @@ MonoBehaviour:
   ChannelsPerHost: 3
   MaxSeqPossible: 2000
   TimeoutEvents: 0.01
+  PacketLoss: 0
 --- !u!114 &1214912809 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114458277167615630, guid: 42640f15a6598de41b1d38e021f17f3a,

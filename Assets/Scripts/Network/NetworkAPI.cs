@@ -42,6 +42,7 @@ public class NetworkAPI {
 		_maxSeqPossible = maxSeqPossible;
 		readQueue = new Queue<Packet>();
 		sendQueue = new Queue<Packet>();
+		_Random = new System.Random();
 		_packetLoss = packetLoss;
 		channelsMap = new Dictionary<EndPoint, Dictionary<uint, NetworkChannel>>();
 		_sendThread = new Thread(new ThreadStart(SendThread));
