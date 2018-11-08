@@ -18,13 +18,15 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		public Vector3 pos;
 		public Vector2 animation;
 		public float rot;
+		public int lastProcessedInput;
 	}
-
+	private LocalPlayer _localPlayer;
 	public void Start()
 	{
 		_queuedPositions = new Queue<Vector3DeltaTime>(MaxQueuedPositions);
 		_animator = GetComponent<Animator>();
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
+		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
 		StartCoroutine(DelayAddReference());
 	}
 
@@ -33,18 +35,20 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		GameObject.FindObjectOfType<LocalWorld>().AddReference(Id, this);
 	}
 
-		public bool DequeNextPosition(out Vector3? deqPosition, out Vector2? animation, out float rot)
+		public bool DequeNextPosition(out Vector3? deqPosition, out Vector2? animation, out float rot, out int lastProcessedInput)
 	{
 		if (_queuedPositions.Count > 0){
 			var wrapper = _queuedPositions.Dequeue();
 			deqPosition = wrapper.pos;
 			animation = wrapper.animation;
 			rot = wrapper.rot;
+			lastProcessedInput = wrapper.lastProcessedInput;
 			return true;
 		}
 		deqPosition = null;
 		animation = null;
 		rot = 0;
+		lastProcessedInput = -1;
 		return false;
 	}
 
@@ -57,22 +61,23 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 	}
 
 	public void UpdateEntity(float lerp) {
-		transform.position = Vector3.Lerp(_previousPosition.Value, _nextPosition.Value, lerp);
-		LerpAnimation(_previousAnimation.Value, _nextAnimation.Value, lerp);
-		
-		if(!IsLocalPlayer) {
-			var euler = transform.eulerAngles;
-			euler.y = Mathf.Lerp(_previousRotation, _nextRotation, lerp);
-			transform.eulerAngles = euler;
+		if(!IsLocalPlayer || !_localPlayer.Prediction) {
+			transform.position = Vector3.Lerp(_previousPosition.Value, _nextPosition.Value, lerp);
+			LerpAnimation(_previousAnimation.Value, _nextAnimation.Value, lerp);
+			if (!IsLocalPlayer) {
+				var euler = transform.eulerAngles;
+				euler.y = Mathf.Lerp(_previousRotation, _nextRotation, lerp);
+				transform.eulerAngles = euler;
+			}
 		}
 	}
 
-	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, float rot)
+	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, float rot, int lastProcessedInput)
 	{
 		while (_queuedPositions.Count >= MaxQueuedPositions) {
 			_queuedPositions.Dequeue();
 		}
-		_queuedPositions.Enqueue(new Vector3DeltaTime() { pos = nextPos, animation = anim, rot = rot });
+		_queuedPositions.Enqueue(new Vector3DeltaTime() { pos = nextPos, animation = anim, rot = rot, lastProcessedInput = lastProcessedInput});
 	}
 
 	public void Deserialize(BitReader reader) {
@@ -84,7 +89,8 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		anim.x = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
 		anim.y = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
 		float rot = reader.ReadFloat(0, 360, _localWorld.RotationStep);
-		QueueNextPosition(pos, anim, rot);
+		int lastProcessedInput = reader.ReadInt(0, _localPlayer.MaxMoves);
+		QueueNextPosition(pos, anim, rot, lastProcessedInput);
 	} 
 
 	public override int GetId() {

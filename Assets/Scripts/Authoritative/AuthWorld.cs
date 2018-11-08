@@ -9,6 +9,7 @@ public class AuthWorld : MonoBehaviour {
 	public float MaxTime, TimePrecision;
 	private float _timestamp;
 	public AuthNetworkManager NetworkManager;
+	public int MaxMoves;
 	private AuthCharacterEntity[] entities;
 	private int _expectedEntities;
 	public int ExpectedEntities;
@@ -57,7 +58,7 @@ public class AuthWorld : MonoBehaviour {
 	public void MovementCommand(int id, BitReader reader) {
 		var entity = entities[id];
 		if (entity != null) {
-			var command = MoveCommand.Deserialize(reader, Step, RotationStep, MaxTime, TimePrecision);
+			var command = MoveCommand.Deserialize(reader, Step, RotationStep, MaxTime, TimePrecision, MaxMoves);
 			entity.Move(command);
 		}
 	}

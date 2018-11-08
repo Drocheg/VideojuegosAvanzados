@@ -21,6 +21,7 @@ public class LocalWorld : MonoBehaviour {
 	}
 	int _entitiesCounter;
 	public int ExpectedEntities;
+	private LocalPlayer _localPlayer;
 	// Use this for initialization
 	void Start () {
 		entities = new LocalCharacterEntity[MaxEntities];
@@ -29,10 +30,11 @@ public class LocalWorld : MonoBehaviour {
 		var pools = GetComponents<ParticlePool>();
 		_sparksPool = pools[0];
 		_bloodPool = pools[1];
+		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 		// Read packets from NetworkAPI
 		if (_entitiesCounter < ExpectedEntities) {
 			return;
@@ -47,11 +49,13 @@ public class LocalWorld : MonoBehaviour {
 					_currentTime = _previousTime;
 					foreach(var e in entities) {
 						if (e != null) {
-							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation);
-							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
+							int lastProcessedInput;
+							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation, out lastProcessedInput);
+							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
 							e.UpdateEntity(0);
 						}
 					}
+					
 					_currentState = NetworkState.NORMAL;
 				}
 				break;
@@ -69,9 +73,14 @@ public class LocalWorld : MonoBehaviour {
 								e._previousPosition = e._nextPosition;
 								e._previousAnimation = e._nextAnimation;
 								e._previousRotation = e._nextRotation;
-								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
+								int lastProcessedInput;
+								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
+								if (e.IsLocalPlayer) {
+									_localPlayer.AdjustPositionFromSnapshot(e._nextPosition.Value, lastProcessedInput);
+								}
 							}
 						}
+						
 						if (_nextTime - _currentTime > MaxAllowedDelay) {
 							// Hard reset
 							_currentState = NetworkState.INITIAL;
@@ -115,11 +124,9 @@ public class LocalWorld : MonoBehaviour {
 		}
 		QueueNextSnapshot(reader.ReadFloat(0, MaxTime, TimePrecision));
 		
-		int c = 0;
 		foreach(var e in entities) {
 			var b = reader.ReadBit();
 			if (b) {
-				c++;
 				Debug.Assert(e != null);
 				e.Deserialize(reader);
 			} 
