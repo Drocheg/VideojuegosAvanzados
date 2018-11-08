@@ -1330,7 +1330,6 @@ GameObject:
   - component: {fileID: 512930496}
   - component: {fileID: 512930490}
   - component: {fileID: 512930495}
-  - component: {fileID: 512930494}
   - component: {fileID: 512930492}
   - component: {fileID: 512930491}
   - component: {fileID: 512930497}
@@ -1423,27 +1422,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialHP: 100
   _hp: 0
---- !u!114 &512930494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114500908144292410, guid: 5390e2c96591e14438516341e9398524,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 512930488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14385b712667613479c5627ef5060f61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponManagers:
-  - {fileID: 1398201022}
-  - {fileID: 0}
-  - {fileID: 2135269226}
-  WorldCamera: {fileID: 1994935335}
-  PickUpDistance: 2
-  PickUpPrompt: {fileID: 1214912809}
-  PickUpItemName: {fileID: 2121813138}
-  PickUpSound: {fileID: 1642704315}
+  Dead: 0
 --- !u!114 &512930495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7717,12 +7696,6 @@ Transform:
   m_Father: {fileID: 2032913054}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1214912809 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114458277167615630, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 1899862995}
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 --- !u!1 &1321144206
 GameObject:
   m_ObjectHideFlags: 0
@@ -23956,6 +23929,7 @@ MonoBehaviour:
   MaxTime: 10000
   TimePrecision: 0.001
   MaxAllowedDelay: 1
+  MaxHP: 100
   MinPosX: -1000
   MaxPosX: 1000
   MinPosY: -1000
@@ -24231,12 +24205,6 @@ Transform:
 --- !u!114 &2112908009 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114246228875450170, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 1899862995}
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
---- !u!114 &2121813138 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114473341340278758, guid: 42640f15a6598de41b1d38e021f17f3a,
     type: 2}
   m_PrefabInternal: {fileID: 1899862995}
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}

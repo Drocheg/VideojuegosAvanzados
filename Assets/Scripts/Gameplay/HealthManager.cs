@@ -7,6 +7,7 @@ public class HealthManager : MonoBehaviour {
 	public float InitialHP;
 	private Animator _animator;
 	public float _hp;
+	public bool Dead;
 	// Use this for initialization
 	void Start () {
 		_hp = InitialHP;
@@ -22,12 +23,24 @@ public class HealthManager : MonoBehaviour {
 	{
 		_animator.SetTrigger("Dead");
 		_animator.SetLayerWeight(1, 0);
+		Dead = true;
 	}
 
 	public void TakeDamage(float damage) {
+		if (Dead) return;
 		_hp -= damage;
 		if (_hp <= 0) {
 			DeathAnimation();
+		}
+	}
+
+	public void SetHP(float hp) {
+		_hp = hp;
+		if (_hp <= 0 && !Dead) {
+			DeathAnimation();
+		}
+		if (_hp > 0) {
+			Dead = false;
 		}
 	}
 }

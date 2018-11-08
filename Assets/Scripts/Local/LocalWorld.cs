@@ -5,6 +5,7 @@ using UnityEngine;
 public class LocalWorld : MonoBehaviour {
 	public int MaxEntities;
 	public float MaxTime, TimePrecision, MaxAllowedDelay;
+	public float MaxHP;
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
 	private ParticlePool _sparksPool, _bloodPool;
 	private Queue<float> _queuedTimes;

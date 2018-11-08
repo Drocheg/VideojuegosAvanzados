@@ -13,6 +13,8 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 	private Transform _chest;
 	public bool IsLocalPlayer;
 	private LocalWorld _localWorld;
+	private HealthManager _healthManager;
+
 	public class Vector3DeltaTime
 	{
 		public Vector3 pos;
@@ -27,6 +29,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		_animator = GetComponent<Animator>();
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
+		_healthManager = GetComponent<HealthManager>();
 		StartCoroutine(DelayAddReference());
 	}
 
@@ -90,6 +93,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		anim.y = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
 		float rot = reader.ReadFloat(0, 360, _localWorld.RotationStep);
 		int lastProcessedInput = reader.ReadInt(0, _localPlayer.MaxMoves);
+		_healthManager.SetHP(reader.ReadFloat(0, _localWorld.MaxHP, 1));
 		QueueNextPosition(pos, anim, rot, lastProcessedInput);
 	} 
 
