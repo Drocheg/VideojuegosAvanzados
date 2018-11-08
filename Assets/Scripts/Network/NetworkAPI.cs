@@ -108,6 +108,15 @@ public class NetworkAPI {
 			channelsReceiving.Add(id, newChannel);
 			return true;
 		}
+		//if (channelsReceiving.ContainsKey(id) && channelsSending.ContainsKey(id))
+		//{
+		//	NetworkChannel nc;
+		//	channelsReceiving.TryGetValue(id, out nc);
+		//	if(nc != null) nc.clear();
+		//	channelsSending.TryGetValue(id, out nc);
+		//	if(nc != null) nc.clear();
+		//}
+		
 		return false;
 	}
 
@@ -185,6 +194,7 @@ public class NetworkAPI {
 			if (bytes > 0) {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
 				lock(readQueue) {
+				Debug.Log("RECV THREAD: " + readQueue.Count);
 					readQueue.Enqueue(packet);
 				}
 			}
@@ -197,6 +207,7 @@ public class NetworkAPI {
 		{
 			Packet packet = null;
 			lock (sendQueue){
+			Debug.Log("SEND THREAD: " + sendQueue.Count);
 				if (sendQueue.Count > 0)
 				{
 					packet = sendQueue.Dequeue();

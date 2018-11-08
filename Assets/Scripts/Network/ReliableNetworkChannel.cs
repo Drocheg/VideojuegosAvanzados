@@ -23,6 +23,7 @@ public class ReliableNetworkChannel : NetworkChannel {
 		actualSendQueue = new Queue<Packet>();
 		maxACK = maxSeqPossible-1;
 		maxReturnedSeq = maxSeqPossible-1;
+		lastTime = 0;
 	}
 
 	public override List<Packet> GetPacketsToSend()
@@ -72,6 +73,17 @@ public class ReliableNetworkChannel : NetworkChannel {
 		return new List<Packet>(retQueue);
 	}
 
+	public override void clear()
+	{
+		maxSendSeq = 0;
+		sendQueue.Clear();
+		recvQueue.Clear();
+		auxReceiveQueue.Clear();
+		actualSendQueue.Clear();
+		maxACK = maxSeqPossible-1;
+		maxReturnedSeq = maxSeqPossible-1;
+		lastTime = 0;
+	}
 	
 	public override List<Packet> ReceivePackets()
 	{

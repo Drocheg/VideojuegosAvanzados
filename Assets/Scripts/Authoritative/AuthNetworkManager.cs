@@ -109,6 +109,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	void ParseCommand(Packet packet) {
 		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
 
+			Debug.Log(commandType);
 		switch(commandType) {
 			case NetworkCommand.MOVE_COMMAND: {
 				int Id = -1;

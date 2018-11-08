@@ -33,7 +33,13 @@ public class UnreliableNetworkChannel : NetworkChannel{
 		return ret.GetRange(i+1, ret.Count - (i + 1));
 	}
 
-	
+	public override void clear()
+	{
+		maxSendSeq = 0;
+		sendQueue.Clear();
+		recvQueue.Clear();
+		maxRecvSeq = maxSeqPossible-1;
+	}
 	
 	public override void SendPacket(Serialize serializable) {
 		sendQueue.Enqueue(Packet.WritePacket(id, incSeq(), serializable, totalChannels, (uint)maxSeqPossible, SendingEndPoint, PacketType.DATA));

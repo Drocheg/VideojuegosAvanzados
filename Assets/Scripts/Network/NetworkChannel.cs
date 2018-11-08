@@ -12,7 +12,7 @@ public abstract class NetworkChannel : INetworkChannel {
 	protected Queue<Packet> sendQueue;
 	protected Queue<Packet> recvQueue;
 	
-	private ulong maxSendSeq;
+	protected ulong maxSendSeq;
 	protected readonly ulong maxSeqPossible;
 	protected readonly uint totalChannels;
 
@@ -50,6 +50,8 @@ public abstract class NetworkChannel : INetworkChannel {
 	{
 		sendQueue.Enqueue(Packet.WriteACKPacket(id, seq, totalChannels, (uint)maxSeqPossible, SendingEndPoint));
 	}
+
+	public abstract void clear(); 
 	
 	protected bool isBiggerThan(ulong first, ulong second, ulong max)
 	{
