@@ -87,8 +87,8 @@ GameObject:
   - component: {fileID: 114674152321437606}
   - component: {fileID: 114687773746141114}
   - component: {fileID: 114500908144292410}
-  - component: {fileID: 114976578479007724}
   - component: {fileID: 114195077622813518}
+  - component: {fileID: 114953344849258868}
   m_Layer: 9
   m_Name: player
   m_TagString: Player
@@ -4550,6 +4550,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11e9ad87ab4b72b4aa96eeff0291d061, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Run: 0
+  Strafe: 0
 --- !u!114 &114687574392585776
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4697,7 +4699,7 @@ MonoBehaviour:
     type: 2}
   ExplosionMagnitude: 50
   ProjectilePositionOrigin: {fileID: 4696328194731660}
---- !u!114 &114976578479007724
+--- !u!114 &114953344849258868
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4705,9 +4707,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1043604709420386}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63c6bb6c140b9484baa2f1370d9132b2, type: 3}
+  m_Script: {fileID: 11500000, guid: 961388b112dd1ec47880d61cd846ae8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MinPosX: -1000
+  MaxPosX: 1000
+  MinPosY: -1000
+  MaxPosY: 1000
+  MinPosZ: -1000
+  MaxPosZ: 1000
+  Step: 0.01
+  RotationStep: 1
+  AnimationStep: 0.1
+  Id: 0
+  Speed: 6
+  IsLocalPlayer: 1
 --- !u!114 &114983513303723358
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4813,7 +4827,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8bc94ec6ed537e743b481638bdcd503d, type: 3}
   m_JumpSound: {fileID: 0}
   m_LandSound: {fileID: 0}
-  StopMovement: 0
 --- !u!114 &114996040451375318
 MonoBehaviour:
   m_ObjectHideFlags: 1

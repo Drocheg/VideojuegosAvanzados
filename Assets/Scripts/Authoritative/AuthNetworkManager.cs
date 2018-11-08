@@ -8,7 +8,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		public EndPoint _receiving_endpoint;
 		public EndPoint _sending_endpoint;
 		public uint UnreliableChannel, ReliableChannel, TimedChannel;
-		public int Id;
+		public int Id; // The Id of the entity this host relates to.
 	}
 
 	private NetworkAPI _networkAPI;
@@ -28,7 +28,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
 		_networkAPI.AddUnreliableChannel(0, receiving_endpoint, sending_endpoint);
 		_networkAPI.AddTimeoutReliableChannel(1, receiving_endpoint, sending_endpoint, 0.01f);
-		hosts.Add(new RemoteHost(){_receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
+		hosts.Add(new RemoteHost(){Id = 1, _receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
 	}
 

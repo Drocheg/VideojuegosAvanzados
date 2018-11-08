@@ -571,10 +571,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4331550167715726}
   - component: {fileID: 95250331984709514}
-  - component: {fileID: 114493739829737636}
   - component: {fileID: 114816644493921598}
   - component: {fileID: 114209656608527446}
   - component: {fileID: 82766131313130156}
+  - component: {fileID: 143413222022875676}
+  - component: {fileID: 114521308717107652}
   m_Layer: 0
   m_Name: RemotePlayer (2)
   m_TagString: Untagged
@@ -3072,7 +3073,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LimbDamage: 50
   HealthManager: {fileID: 114816644493921598}
---- !u!114 &114493739829737636
+--- !u!114 &114521308717107652
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3080,19 +3081,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1418206940595112}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4532b2d4953064e49bdf880f1bd030e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 961388b112dd1ec47880d61cd846ae8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PositionSerialMin: -2000
-  PositionSerialMax: 2000
-  PositionSerialStep: 0.01
-  RotationSerialStep: 0.01
-  AnimationSerialStep: 0.1
-  TimeSerialStep: 0.001
-  TimeSerialMax: 10000
-  MinQueuedPositions: 2
-  MaxQueuedPositions: 4
-  TargetQueuedPositions: 1
+  MinPosX: -1000
+  MaxPosX: 1000
+  MinPosY: -1000
+  MaxPosY: 1000
+  MinPosZ: -1000
+  MaxPosZ: 1000
+  Step: 0.01
+  RotationStep: 1
+  AnimationStep: 0.1
+  Id: 1
+  Speed: 6
+  IsLocalPlayer: 0
 --- !u!114 &114617446841658898
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3403,3 +3406,20 @@ SkinnedMeshRenderer:
     m_Center: {x: 0, y: 0.2621296, z: -0.0029519051}
     m_Extent: {x: 0.11541334, y: 0.16209465, z: 0.15504377}
   m_DirtyAABB: 0
+--- !u!143 &143413222022875676
+CharacterController:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1418206940595112}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.1
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.01
+  m_Center: {x: 0, y: 1, z: 0}
