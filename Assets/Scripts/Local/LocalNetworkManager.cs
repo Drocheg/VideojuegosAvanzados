@@ -73,7 +73,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
 				LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
 				lce.Id = (int)currentId;
-				//lce.Init();
+				lce.Init();
 				Player = lce.gameObject;
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
@@ -84,7 +84,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
 				lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
 				lce.Id = (int)currentId;
-				//lce.Init();
+				lce.Init();
 				
 				break;
 		}

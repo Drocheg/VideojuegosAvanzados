@@ -10,9 +10,10 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 	public float Speed;
 	// Use this for initialization
 	public void Init () {
-		StartCoroutine(DelayedAddReference());
+		//StartCoroutine(DelayedAddReference());
 		_animator = GetComponent<Animator>();
 		_characterController = GetComponent<CharacterController>();
+		GameObject.FindObjectOfType<AuthWorld>().AddReference(Id, this);
 	}
 
 	IEnumerator DelayedAddReference() {

@@ -100,7 +100,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
 		AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
 		ace.Id = currentId;
-		//ace.Init();
+		ace.Init();
 		SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
 		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
 		foreach (var host in hosts)
