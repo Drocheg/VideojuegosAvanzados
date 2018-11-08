@@ -18,6 +18,7 @@ public class PlayerHealthManager : MonoBehaviour {
 	public AudioSource NoHealthPackSound;
 	public AudioSource DeathSound;
 	public TextMeshProUGUI HealthPacksUI;
+	private HealthManager _hManager;
 	private bool dead;
 
 	// Use this for initialization
@@ -26,44 +27,11 @@ public class PlayerHealthManager : MonoBehaviour {
 		_animator = GetComponent<Animator>();
 		_playerManager = GetComponent<PlayerManager>();
 		_healthPacks = InitialHealthPacks;
+		_hManager = GetComponent<HealthManager>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		HealthBar.fillAmount = _hp / HealthPoints;
-		HealthPacksUI.text = _healthPacks.ToString();
-		if(Input.GetButtonDown("UseHealthPack")) {
-			if (_hp < HealthPoints && _healthPacks > 0) {
-				// Use health pack	
-				UseHealthPackSound.Play();
-				_healthPacks--;
-				_hp = HealthPoints;
-			} else {
-				// No health pack sound.
-				NoHealthPackSound.Play();
-			}
-		}
-	}
-
-	private void DeathAnimation()
-	{
-		_animator.SetTrigger("Dead");
-		DeathSound.Play();
-		_playerManager.Die();
-		_animator.SetLayerWeight(1, 0);
-	}
-
-	public void TakeDamage(float damage) {
-		if (!dead) {
-			_hp -= damage;
-			if (_hp <= 0) {
-				dead = true;
-				DeathAnimation();
-			}
-		}
-	}
-
-	public void AddHealthPack() {
-		_healthPacks++;
+		HealthBar.fillAmount = _hManager._hp / HealthPoints;
 	}
 }

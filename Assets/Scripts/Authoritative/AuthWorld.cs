@@ -55,20 +55,31 @@ public class AuthWorld : MonoBehaviour {
 	}
 
 	public void Shoot(int id, BitReader reader) {
-		// var comm = ShootCommand.Deserialize(reader, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
-		// var commPos = new Vector3(comm._cX, comm._cY, comm._cZ);
-		// Debug.Log(comm._cX);
-		// ParticleSystem ps;
+		var comm = ShootCommand.Deserialize(reader, MaxEntities, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
+		var commPos = new Vector3(comm._cX, comm._cY, comm._cZ);
+		var commNor = new Vector3(comm._nX, comm._nY, comm._nZ);
+		ParticleSystem ps;
 
-		// if (comm._hitBlood) {
-		// 	ps = _sparksPool.GetParticleSystem();
-		// 	_sparksPool.ReleaseParticleSystem(ps);
-		// } else {
-		// 	ps = _bloodPool.GetParticleSystem();
-		// 	_bloodPool.ReleaseParticleSystem(ps);
-		// }
-		// ps.transform.position = commPos;
-		// ps.Play();
+		if (comm._damage > 0) {
+			ps = _bloodPool.GetParticleSystem();
+			_bloodPool.ReleaseParticleSystem(ps);
+			Debug.Log("Entity " + comm._id + " takes " + comm._damage + " damage.");
+			var healthManager = entities[comm._id].GetComponent<HealthManager>();
+			if (healthManager != null) {
+				healthManager.TakeDamage(comm._damage);
+			} else {
+				Debug.Log("No health manager");
+			}
+		} else {
+			ps = _sparksPool.GetParticleSystem();
+			_sparksPool.ReleaseParticleSystem(ps);
+		}
+		ps.transform.SetPositionAndRotation(commPos, Quaternion.LookRotation(commNor));
+		ps.Play();
+
+		// Send shoot info to all hosts.
+		var command = new ShootCommand(comm._damage, comm._id, MaxEntities, comm._cX, comm._cY, comm._cZ, comm._nX, comm._nY, comm._nZ, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
+		NetworkManager.SendAuthEventReliable(command.Serialize);
 	}
 
 	public void TakeSnapshot(BitWriter writer)
