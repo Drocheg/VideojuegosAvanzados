@@ -11,10 +11,17 @@ public class AuthWorld : MonoBehaviour {
 	private int _expectedEntities;
 	public int ExpectedEntities;
 	public int MaxNumberOfPlayers;
+
+	public AuthCharacterEntity e0;
+	public AuthCharacterEntity e1;
+	public AuthCharacterEntity e2;
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		entities = new AuthCharacterEntity[MaxEntities];
 		_timestamp = 0;
+		entities[0] = e0;
+		entities[1] = e1;
+		entities[2] = e2;
 	}
 	
 	// void Update() {

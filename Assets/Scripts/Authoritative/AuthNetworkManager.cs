@@ -81,10 +81,10 @@ public class AuthNetworkManager : MonoBehaviour {
 		
 		//var port packet.bitReader.ReadInt()
 		IPEndPoint currentSendingEndPoint = new IPEndPoint(((IPEndPoint)currentReceivingEndpoint).Address, ((IPEndPoint) currentReceivingEndpoint).Port-1);
-		if(!_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint))
+		_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint);
 		if(!_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint, TimeoutEvents)) return false;
 
-		Debug.Log("Adding HOST: " + packet.endPoint);
+		
 		
 		var currentId = 0;
 		
@@ -97,6 +97,8 @@ public class AuthNetworkManager : MonoBehaviour {
 			UnreliableChannel = 0,
 			ReliableChannel = 1
 		};
+		
+		Debug.Log("Adding HOST: " + packet.endPoint + "With ID: " + currentId);
 		takenIds[currentId] = true;
 		//Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
 		//AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
@@ -108,7 +110,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		//{
 		//	SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
 		//}
-		//hosts.Add(newHost);
+		hosts.Add(newHost);
 		//_networkAPI.Send(hosts[currentId].ReliableChannel, hosts[currentId]._sending_endpoint, );	TODO send ADD PLAYER COMMAND
 		return true;
 	}
