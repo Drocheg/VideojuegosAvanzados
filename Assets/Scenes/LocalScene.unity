@@ -462,7 +462,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxTime: 1000
   TimePrecision: 0.001
-  MovePrecision: 0.01
+  MovePrecision: 0.001
   RotPrecision: 1
 --- !u!114 &512930497
 MonoBehaviour:
@@ -482,7 +482,7 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.01
+  Step: 0.001
   RotationStep: 1
   AnimationStep: 0.1
   MinQueuedPositions: 2
@@ -520,7 +520,7 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.01
+  Step: 0.001
   RotationStep: 1
   AnimationStep: 0.1
   MinQueuedPositions: 2
@@ -780,7 +780,13 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114953344849258868, guid: 5390e2c96591e14438516341e9398524,
+        type: 2}
+      propertyPath: Step
+      value: 0.001
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114953344849258868, guid: 5390e2c96591e14438516341e9398524, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 5390e2c96591e14438516341e9398524, type: 2}
   m_IsPrefabAsset: 0
 --- !u!114 &1095808263 stripped
@@ -1682,7 +1688,13 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114521308717107652, guid: a85e722557b66554ba80960de6a77585,
+        type: 2}
+      propertyPath: Step
+      value: 0.001
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114521308717107652, guid: a85e722557b66554ba80960de6a77585, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: a85e722557b66554ba80960de6a77585, type: 2}
   m_IsPrefabAsset: 0
 --- !u!223 &2049691887 stripped

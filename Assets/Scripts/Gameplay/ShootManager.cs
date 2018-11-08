@@ -24,7 +24,7 @@ public class ShootManager : IGenericWeaponManager {
 	protected AudioSource _audioSource;
 	public float DamageMultiplier;
 	// Use this for initialization
-	void Start () {
+	public void Start () {
 		_playerAnimator = PlayerManager.GetComponent<Animator>();
 		var particlePools = GetComponents<ParticlePool>();
 		_sparklesPool = particlePools[0];
@@ -51,6 +51,13 @@ public class ShootManager : IGenericWeaponManager {
 		}
 	}
 
+	protected virtual void RegisterHit(Collider hit) {
+
+	}
+
+	protected virtual void RegisterDamage() {
+
+	}
 
 	protected virtual void Shoot() 
 	{
@@ -75,6 +82,7 @@ public class ShootManager : IGenericWeaponManager {
 				var limbController = hit.collider.GetComponent<LimbManager>();
 				limbController.TakeDamage(DamageMultiplier);
 				particlePool = _bloodPool;
+				RegisterDamage();
 			} else {
 				particlePool = _sparklesPool;
 			}
@@ -82,6 +90,7 @@ public class ShootManager : IGenericWeaponManager {
 			particleSystem.transform.SetPositionAndRotation(hit.point, Quaternion.LookRotation(hit.normal));
 			particleSystem.Play();
 			particlePool.ReleaseParticleSystem(particleSystem);
+			RegisterHit(hit.collider);
 		}
 		StartCoroutine(Recoil());
 	}

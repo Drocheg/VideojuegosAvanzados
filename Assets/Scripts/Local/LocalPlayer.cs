@@ -19,6 +19,4 @@ public class LocalPlayer : MonoBehaviour {
 		var command = new MoveCommand(_player.Run, _player.Strafe,  MovePrecision, rot, RotPrecision, Time.deltaTime, MaxTime, TimePrecision);
 		_localNetworkEntity.SendReliable(command.Serialize);
 	}
-
-
 }
