@@ -55,20 +55,20 @@ public class AuthWorld : MonoBehaviour {
 	}
 
 	public void Shoot(int id, BitReader reader) {
-		var comm = ShootCommand.Deserialize(reader, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
-		var commPos = new Vector3(comm._cX, comm._cY, comm._cZ);
-		Debug.Log(comm._cX);
-		ParticleSystem ps;
+		// var comm = ShootCommand.Deserialize(reader, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
+		// var commPos = new Vector3(comm._cX, comm._cY, comm._cZ);
+		// Debug.Log(comm._cX);
+		// ParticleSystem ps;
 
-		if (comm._hitBlood) {
-			ps = _sparksPool.GetParticleSystem();
-			_sparksPool.ReleaseParticleSystem(ps);
-		} else {
-			ps = _bloodPool.GetParticleSystem();
-			_bloodPool.ReleaseParticleSystem(ps);
-		}
-		ps.transform.position = commPos;
-		ps.Play();
+		// if (comm._hitBlood) {
+		// 	ps = _sparksPool.GetParticleSystem();
+		// 	_sparksPool.ReleaseParticleSystem(ps);
+		// } else {
+		// 	ps = _bloodPool.GetParticleSystem();
+		// 	_bloodPool.ReleaseParticleSystem(ps);
+		// }
+		// ps.transform.position = commPos;
+		// ps.Play();
 	}
 
 	public void TakeSnapshot(BitWriter writer)

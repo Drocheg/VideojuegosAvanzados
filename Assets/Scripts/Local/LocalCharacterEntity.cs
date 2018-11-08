@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	public int Id;
-	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	public Vector3? _previousPosition, _nextPosition;
 	public Queue<Vector3DeltaTime> _queuedPositions;
@@ -13,6 +12,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	private Animator _animator;
 	private Transform _chest;
 	public bool IsLocalPlayer;
+	private LocalWorld _localWorld;
 	public class Vector3DeltaTime
 	{
 		public Vector3 pos;
@@ -24,6 +24,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	{
 		_queuedPositions = new Queue<Vector3DeltaTime>(MaxQueuedPositions);
 		_animator = GetComponent<Animator>();
+		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		StartCoroutine(DelayAddReference());
 	}
 
@@ -76,13 +77,13 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 
 	public void Deserialize(BitReader reader) {
 		Vector3 pos;
-		pos.x = reader.ReadFloat(MinPosX, MaxPosX, Step);
-		pos.y = reader.ReadFloat(MinPosY, MaxPosY, Step);
-		pos.z = reader.ReadFloat(MinPosZ, MaxPosZ, Step);
+		pos.x = reader.ReadFloat(_localWorld.MinPosX, _localWorld.MaxPosX, _localWorld.Step);
+		pos.y = reader.ReadFloat(_localWorld.MinPosY, _localWorld.MaxPosY, _localWorld.Step);
+		pos.z = reader.ReadFloat(_localWorld.MinPosZ, _localWorld.MaxPosZ, _localWorld.Step);
 		Vector2 anim;
-		anim.x = reader.ReadFloat( -1, 1, AnimationStep);
-		anim.y = reader.ReadFloat( -1, 1, AnimationStep);
-		float rot = reader.ReadFloat(0, 360, RotationStep);
+		anim.x = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
+		anim.y = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
+		float rot = reader.ReadFloat(0, 360, _localWorld.RotationStep);
 		QueueNextPosition(pos, anim, rot);
 	} 
 }

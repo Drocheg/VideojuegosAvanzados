@@ -5,6 +5,8 @@ using UnityEngine;
 public class LocalWorld : MonoBehaviour {
 	public int MaxEntities;
 	public float MaxTime, TimePrecision, MaxAllowedDelay;
+	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
+	private ParticlePool _sparksPool, _bloodPool;
 	private Queue<float> _queuedTimes;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	private float _previousTime, _nextTime, _currentTime;
@@ -24,6 +26,9 @@ public class LocalWorld : MonoBehaviour {
 		entities = new LocalCharacterEntity[MaxEntities];
 		_queuedTimes = new Queue<float>();
 		_entitiesCounter = 0;
+		var pools = GetComponents<ParticlePool>();
+		_sparksPool = pools[0];
+		_bloodPool = pools[1];
 	}
 	
 	// Update is called once per frame
@@ -126,5 +131,23 @@ public class LocalWorld : MonoBehaviour {
 			_queuedTimes.Dequeue();
 		}
 		_queuedTimes.Enqueue(timestamp);
+	}
+
+	public void BulletCollision(BitReader reader) {
+		var comm = ShootCommand.Deserialize(reader, MaxEntities, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step );
+
+		var commPos = new Vector3(comm._cX, comm._cY, comm._cZ);
+		var commNor = new Vector3(comm._nX, comm._nY, comm._nZ);
+		ParticleSystem ps;
+
+		if (comm._damage > 0) {
+			ps = _bloodPool.GetParticleSystem();
+			_bloodPool.ReleaseParticleSystem(ps);
+		} else {
+			ps = _sparksPool.GetParticleSystem();
+			_sparksPool.ReleaseParticleSystem(ps);
+		}
+		ps.transform.SetPositionAndRotation(commPos, Quaternion.LookRotation(commNor));
+		ps.Play();
 	}
 }

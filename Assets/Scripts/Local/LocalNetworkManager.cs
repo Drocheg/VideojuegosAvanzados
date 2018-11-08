@@ -22,7 +22,7 @@ public class LocalNetworkManager : MonoBehaviour {
 		_receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort+1);
 		_networkAPI.AddUnreliableChannel(0, _receiving_endpoint, _sending_endpoint);
 		_networkAPI.AddTimeoutReliableChannel(1, _receiving_endpoint, _sending_endpoint, 0.01f);
-		//_networkAPI.AddTimeoutReliableChannel(1, _endpoint, 0.01f);
+		// _networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 	}
 	
@@ -41,12 +41,33 @@ public class LocalNetworkManager : MonoBehaviour {
 					_localWorld.NewSnapshot(packet.bitReader);
 					break;
 				}
+				case 1: {
+					// Reliable events channel
+					ParseCommand(packet);
+					
+					break;
+				}
+			}
+		}
+	}
+
+	void ParseCommand(Packet packet) {
+		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, System.Enum.GetValues(typeof(NetworkCommand)).Length);
+
+		switch(commandType) {
+			case NetworkCommand.SHOOT_COMMAND: {
+				_localWorld.BulletCollision(packet.bitReader);
+				break;
 			}
 		}
 	}
 
 	public void SendReliable(Serialize serial) {
 		_networkAPI.Send(1, _sending_endpoint, serial);
+	}
+
+	public void SendUnreliable(Serialize serial) {
+		// _networkAPI.Send(2, _sending_endpoint, serial);
 	}
 
 	void OnDisable() 
