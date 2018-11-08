@@ -25,6 +25,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	public float PacketLoss;
 	private int _commandsCount;
 	private AuthWorld _authWorld;
+	
 	void Start()
 	{
 		takenIds = new bool[MaxHosts];
@@ -100,16 +101,17 @@ public class AuthNetworkManager : MonoBehaviour {
 		
 		Debug.Log("Adding HOST: " + packet.endPoint + "With ID: " + currentId);
 		takenIds[currentId] = true;
-		//Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
-		//AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
-		//ace.Id = currentId;
-		//ace.Init();
-		//SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
-		//SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
-		//foreach (var host in hosts)
-		//{
-		//	SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
-		//}
+		Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
+		AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
+		ace.Id = currentId;
+		ace.Init();
+		
+		SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
+		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
+		foreach (var host in hosts)
+		{
+			SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
+		}
 		hosts.Add(newHost);
 		//_networkAPI.Send(hosts[currentId].ReliableChannel, hosts[currentId]._sending_endpoint, );	TODO send ADD PLAYER COMMAND
 		return true;
@@ -117,7 +119,6 @@ public class AuthNetworkManager : MonoBehaviour {
 	void ParseCommand(Packet packet) {
 		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
 
-			Debug.Log(commandType);
 		switch(commandType) {
 			case NetworkCommand.MOVE_COMMAND: {
 				Debug.Log("Movement from: " + packet.endPoint);

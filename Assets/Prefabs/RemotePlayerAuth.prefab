@@ -576,9 +576,8 @@ GameObject:
   - component: {fileID: 82766131313130156}
   - component: {fileID: 143413222022875676}
   - component: {fileID: 114521308717107652}
-  - component: {fileID: 114596911821860868}
   m_Layer: 0
-  m_Name: RemotePlayer
+  m_Name: RemotePlayerAuth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3096,34 +3095,6 @@ MonoBehaviour:
   AnimationStep: 0.1
   Id: 1
   Speed: 6
-  IsLocalPlayer: 0
---- !u!114 &114596911821860868
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1418206940595112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9d9d2f70833a7141adc7acc0c0eab51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Id: 0
-  MinPosX: -1000
-  MaxPosX: 1000
-  MinPosY: -1000
-  MaxPosY: 1000
-  MinPosZ: -1000
-  MaxPosZ: 1000
-  Step: 0.001
-  RotationStep: 1
-  AnimationStep: 0.1
-  MinQueuedPositions: 2
-  MaxQueuedPositions: 4
-  TargetQueuedPositions: 1
-  _previousRotation: 0
-  _nextRotation: 0
-  _currentRotation: 0
   IsLocalPlayer: 0
 --- !u!114 &114617446841658898
 MonoBehaviour:

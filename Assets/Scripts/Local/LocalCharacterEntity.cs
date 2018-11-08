@@ -20,7 +20,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		public float rot;
 	}
 
-	public void Start()
+	public void Init()
 	{
 		_queuedPositions = new Queue<Vector3DeltaTime>(MaxQueuedPositions);
 		_animator = GetComponent<Animator>();

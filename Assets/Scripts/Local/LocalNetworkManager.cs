@@ -70,29 +70,30 @@ public class LocalNetworkManager : MonoBehaviour {
 
 		switch(commandType) {
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:
-			//	Debug.Log("JOIN RESPONSE: " + packet.endPoint);
-			//	JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
-			//	uint currentId = joinResponseCommand.playerId;
-			//	Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
-			//	LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
-			//	lce.Id = (int)currentId;
-			//	lce.Init();
-			//	LocalCharacterEntity lce = Player.GetComponent<LocalCharacterEntity>();
-			//	_localWorld.RemoveReference(lce.Id);
-			//	lce.Id = (int)currentId;
-			//	_localWorld.AddReference((int)currentId, lce);
+			Debug.Log("JOIN RESPONSE: " + packet.endPoint);
+				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
+				uint currentId = joinResponseCommand.playerId;
+				//Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
+				//LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
+				//lce.Id = (int)currentId;
+				//lce.Init();
+				LocalCharacterEntity lce = Player.GetComponent<LocalCharacterEntity>();
+				//_localWorld.RemoveReference(lce.Id);
+				lce.Id = (int)currentId;
+				//_localWorld.AddReference((int)currentId, lce);
+				lce.Init();
 				
 				//Player = lce.gameObject;
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
-			//	Debug.Log("JOIN PLAYER: " + packet.endPoint);
-			//	JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayer);
-				//Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
-			//	currentId = joinPlayerCommand.playerId;
-			//	Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
-			//	LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
-			//	lce.Id = (int)currentId;
-				//lce.Init();
+				Debug.Log("JOIN PLAYER: " + packet.endPoint);
+				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayer);
+			//	Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
+				currentId = joinPlayerCommand.playerId;
+				Transform localPlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
+				lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
+				lce.Id = (int)currentId;
+				lce.Init();
 				
 				break;
 		}
