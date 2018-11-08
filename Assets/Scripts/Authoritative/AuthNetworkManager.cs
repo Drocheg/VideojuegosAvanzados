@@ -97,8 +97,10 @@ public class AuthNetworkManager : MonoBehaviour {
 			ReliableChannel = 1
 		};
 		takenIds[currentId] = true;
-		Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*5, 0, 0), Quaternion.identity); // TODO initial position.
-		remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>().Id = currentId;
+		Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
+		AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
+		ace.Id = currentId;
+		ace.Init();
 		SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
 		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
 		foreach (var host in hosts)

@@ -21,7 +21,7 @@ public class LocalWorld : MonoBehaviour {
 	int _entitiesCounter;
 	public int ExpectedEntities;
 	// Use this for initialization
-	void Start () {
+	void Init() {
 		entities = new LocalCharacterEntity[MaxEntities];
 		_queuedTimes = new Queue<float>();
 		_entitiesCounter = 0;

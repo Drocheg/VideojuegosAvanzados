@@ -9,7 +9,7 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 	private CharacterController _characterController;
 	public float Speed;
 	// Use this for initialization
-	void Start () {
+	public void Init () {
 		StartCoroutine(DelayedAddReference());
 		_animator = GetComponent<Animator>();
 		_characterController = GetComponent<CharacterController>();
