@@ -19,13 +19,13 @@ public class AuthNetworkManager : MonoBehaviour {
 	public uint ChannelsPerHost;
 	public ulong MaxSeqPossible;
 	public float TimeoutEvents;
-	public float pPacketLoss;
+	public float PacketLoss;
 	private int _commandsCount;
 	private AuthWorld _authWorld;
 	void Start() {
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
-		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss);
 		var sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
 		_networkAPI.AddUnreliableChannel(0, receiving_endpoint, sending_endpoint);
@@ -80,10 +80,7 @@ public class AuthNetworkManager : MonoBehaviour {
 
 	public void SendAuthEventUnreliable(Serialize ev) {
 		foreach(var host in hosts) {
-			if (Random.value > pPacketLoss)
-			{
-				_networkAPI.Send(host.UnreliableChannel, host._sending_endpoint, ev);	
-			}
+			_networkAPI.Send(host.UnreliableChannel, host._sending_endpoint, ev);	
 		}
 		_networkAPI.UpdateSendQueues();
 		return;

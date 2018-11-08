@@ -24,6 +24,7 @@ public class NetworkAPI {
 	private Queue<Packet> readQueue;
 	private Queue<Packet> sendQueue;
 	private Dictionary<EndPoint, Dictionary<uint, NetworkChannel>> channelsMap; //TODO check if two EndPoint are equals
+	private float _packetLoss;
 	
 	int _spinLockSleepTime;
 	// uint _totalChannels;
@@ -31,7 +32,7 @@ public class NetworkAPI {
 	ulong _maxSeqPossible;
 	Thread _sendThread, _recvThread;
 
-	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible) {
+	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible, float packetLoss) {
 		_udpClient = new UdpClient(localPort);
 		_udpSendingClient = new UdpClient(localPort+1);
 		_spinLockSleepTime = spinLockTime;
@@ -39,6 +40,7 @@ public class NetworkAPI {
 		_maxSeqPossible = maxSeqPossible;
 		readQueue = new Queue<Packet>();
 		sendQueue = new Queue<Packet>();
+		_packetLoss = packetLoss;
 		channelsMap = new Dictionary<EndPoint, Dictionary<uint, NetworkChannel>>();
 		_sendThread = new Thread(new ThreadStart(SendThread));
 		_recvThread = new Thread(new ThreadStart(RecvThread));
@@ -198,7 +200,10 @@ public class NetworkAPI {
 				}
 			}
 			if(packet!=null){
-				var sent = _udpSendingClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
+				if (Random.value > _packetLoss)
+				{
+					var sent = _udpSendingClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
+				}
 			} else {
 				System.Threading.Thread.Sleep(_spinLockSleepTime);
 			}

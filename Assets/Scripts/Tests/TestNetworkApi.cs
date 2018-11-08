@@ -19,6 +19,7 @@ public class TestNetworkApi
     private uint MAX_SEQ = 20;
     private uint MAX_CHANNELS = 4;
     private int SPINLOCK_TIME = 1;
+    private float PacketLoss = 0;
 
     [TestFixtureSetUp]
     public void Init()
@@ -40,7 +41,7 @@ public class TestNetworkApi
     [SetUp]
     public void RunBeforeAnyTests()
     {
-        networkApi.Init(port, SPINLOCK_TIME, MAX_CHANNELS, MAX_SEQ);
+        networkApi.Init(port, SPINLOCK_TIME, MAX_CHANNELS, MAX_SEQ, PacketLoss);
     }
     
     [TearDown]

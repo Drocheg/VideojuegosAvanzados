@@ -14,11 +14,12 @@ public class LocalNetworkManager : MonoBehaviour {
 	private EndPoint _receiving_endpoint;
 	private EndPoint _sending_endpoint;
 	public float TimeoutEvents;
+	public float PacketLoss;
 	
 	// Use this for initialization
 	void Start () {
 		_networkAPI = NetworkAPI.GetInstance();
-		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss);
 		_sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		_receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort+1);
 		_networkAPI.AddUnreliableChannel(0, _receiving_endpoint, _sending_endpoint);
