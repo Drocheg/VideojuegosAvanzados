@@ -794,7 +794,7 @@ MonoBehaviour:
   LocalPort: 40000
   SpinLockTime: 50
   MaxHosts: 10
-  ChannelsPerHost: 3
+  ChannelsPerHost: 4
   MaxSeqPossible: 2000
 --- !u!1 &1203181106
 GameObject:
@@ -884,7 +884,7 @@ MonoBehaviour:
   MaxMoves: 10000
   NetworkManager: {fileID: 1175571462}
   ExpectedEntities: 2
-  SnapshotTickRate: 5
+  SnapshotTickRate: 20
   MaxHP: 100
   SpawnTime: 4
   SpawnLocation: {fileID: 1203181107}

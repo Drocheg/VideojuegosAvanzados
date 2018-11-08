@@ -23,7 +23,7 @@ public class ProjectileShootCommand {
 
 	public void Serialize(BitWriter writer) {
 		// Serialize Command number
-		writer.WriteInt((uint) NetworkCommand.SHOOT_COMMAND, 0, (uint) System.Enum.GetValues(typeof(NetworkCommand)).Length);
+		writer.WriteInt((uint) NetworkCommand.PROJECTILE_SHOOT_COMMAND, 0, (uint) System.Enum.GetValues(typeof(NetworkCommand)).Length);
 		writer.WriteFloat(_x, _minX, _maxX, _positionPrecision);
 		writer.WriteFloat(_y, _minY, _maxY, _positionPrecision);
 		writer.WriteFloat(_z, _minZ, _maxZ, _positionPrecision);
