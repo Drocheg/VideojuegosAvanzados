@@ -9,6 +9,8 @@ public delegate void Serialize(BitWriter writer);
 
 public class NetworkAPI {
 	private static NetworkAPI _instance;
+	
+	private System.Random _Random;
 
 	public static NetworkAPI GetInstance() {
 		if (_instance == null) {
@@ -200,7 +202,7 @@ public class NetworkAPI {
 				}
 			}
 			if(packet!=null){
-				if (Random.value > _packetLoss)
+				if (_Random.NextDouble() > _packetLoss)
 				{
 					var sent = _udpSendingClient.Client.SendTo(packet.buffer.GetBuffer(), (int) packet.buffer.Length, SocketFlags.None, packet.endPoint);
 				}
