@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 54923507166206976}
   - component: {fileID: 114197208988394138}
   m_Layer: 9
-  m_Name: AuthPlayer
+  m_Name: player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3596,6 +3596,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialHP: 100
   _hp: 0
+  Dead: 0
 --- !u!114 &114147288061539458
 MonoBehaviour:
   m_ObjectHideFlags: 1
