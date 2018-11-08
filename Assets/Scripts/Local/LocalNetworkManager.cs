@@ -51,7 +51,7 @@ public class LocalNetworkManager : MonoBehaviour {
 					break;
 				}
 				case 2: {
-					_localProjectileManager.NewSnapshot(packet.bitReader);
+					// _localProjectileManager.NewSnapshot(packet.bitReader);
 					break;
 				}
 			}
