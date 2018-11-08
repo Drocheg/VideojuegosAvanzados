@@ -23,10 +23,6 @@ public class LocalWorld : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		entities = new LocalCharacterEntity[MaxEntities];
-		for (int i = 0; i < MaxNumberOfPlayer; i++)
-		{
-			AddReference(i, null);
-		}
 		_queuedTimes = new Queue<float>();
 		_entitiesCounter = 0;
 	}

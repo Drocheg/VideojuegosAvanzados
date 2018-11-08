@@ -883,11 +883,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c077f21888199348a05df63b84cac61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxEntities: 2
+  MaxEntities: 20
   MaxTime: 10000
   TimePrecision: 0.001
   NetworkManager: {fileID: 1175571462}
-  ExpectedEntities: 2
+  ExpectedEntities: 1
+  MaxNumberOfPlayers: 5
 --- !u!1 &1375455735
 GameObject:
   m_ObjectHideFlags: 0
