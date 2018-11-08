@@ -15,6 +15,7 @@ public class LocalProjectileEntity : CharacterEntity {
 	private NetworkState _currentState;
 	void Awake () {
 		_qPositions = new Queue<Vector3>();
+		_queuedTimes = new Queue<float>();
 		_world = GameObject.FindObjectOfType<LocalWorld>();
 	}
 	
