@@ -21,9 +21,16 @@ public class HealthManager : MonoBehaviour {
 
 	private void DeathAnimation()
 	{
-		_animator.SetTrigger("Dead");
+		_animator.SetBool("Dead", true);
 		_animator.SetLayerWeight(1, 0);
 		Dead = true;
+	}
+
+	private void AliveAnimation()
+	{
+		_animator.SetBool("Dead", false);
+		_animator.SetLayerWeight(1, 0.8f);
+		Dead = false;
 	}
 
 	public void TakeDamage(float damage) {
@@ -39,8 +46,8 @@ public class HealthManager : MonoBehaviour {
 		if (_hp <= 0 && !Dead) {
 			DeathAnimation();
 		}
-		if (_hp > 0) {
-			Dead = false;
+		if (_hp > 0 && Dead) {
+			AliveAnimation();
 		}
 	}
 }

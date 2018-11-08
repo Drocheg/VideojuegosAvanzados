@@ -27,7 +27,7 @@ public class ShootCommand {
 		writer.WriteFloat(_nX, _minX, _maxX, _positionPrecision);
 		writer.WriteFloat(_nY, _minY, _maxY, _positionPrecision);
 		writer.WriteFloat(_nZ, _minZ, _maxZ, _positionPrecision);
-		writer.WriteFloat(_damage, 0, 100, 0.1f);
+		writer.WriteFloat(_damage, 0, 100, 1f);
 		if (_damage > 0) {
 			writer.WriteInt((uint) _id, 0, (uint)_maxEntities);
 		}
@@ -40,7 +40,7 @@ public class ShootCommand {
 		var nx = reader.ReadFloat(minX, maxX, positionPrecision);
 		var ny = reader.ReadFloat(minY, maxY, positionPrecision);
 		var nz = reader.ReadFloat(minZ, maxZ, positionPrecision);
-		var hb = reader.ReadFloat(0, 100, 0.1f);
+		var hb = reader.ReadFloat(0, 100, 1f);
 		var id = -1;
 		if (hb > 0) {
 			id = reader.ReadInt(0, maxEntities);
