@@ -36,16 +36,16 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 		writer.WriteFloat(transform.position.z, MinPosZ, MaxPosZ, Step);
 		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, AnimationStep);
 		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, AnimationStep);
-		writer.WriteFloat(transform.eulerAngles.y, -360, 360, RotationStep);
+		writer.WriteFloat(transform.eulerAngles.y, 0, 360, RotationStep);
 	}
 
 	public void Move(MoveCommand command) {
-		Debug.Log("Move: " + command._run);
 		var eulerAngles = transform.eulerAngles;
 		eulerAngles.y = command._rot;
 		transform.eulerAngles = eulerAngles;
 		_characterController.Move(command._run * Speed * command._delta * transform.TransformDirection(Vector3.forward));
 		_characterController.Move(command._strafe * Speed * command._delta * transform.TransformDirection(Vector3.right));
-		
+		_animator.SetFloat("Strafe", command._strafe);
+		_animator.SetFloat("Run", command._run);
 	}
 }
