@@ -57,17 +57,17 @@ public class AuthWorld : MonoBehaviour {
 	public void Shoot(int id, BitReader reader) {
 		var comm = ShootCommand.Deserialize(reader, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
 		var commPos = new Vector3(comm._cX, comm._cY, comm._cZ);
-		Debug.Log(comm._cX);
+		var commNor = new Vector3(comm._nX, comm._nY, comm._nZ);
 		ParticleSystem ps;
 
-		if (comm._hitBlood) {
-			ps = _sparksPool.GetParticleSystem();
-			_sparksPool.ReleaseParticleSystem(ps);
-		} else {
+		if (comm._damage > 0) {
 			ps = _bloodPool.GetParticleSystem();
 			_bloodPool.ReleaseParticleSystem(ps);
+		} else {
+			ps = _sparksPool.GetParticleSystem();
+			_sparksPool.ReleaseParticleSystem(ps);
 		}
-		ps.transform.position = commPos;
+		ps.transform.SetPositionAndRotation(commPos, Quaternion.LookRotation(commNor));
 		ps.Play();
 	}
 
