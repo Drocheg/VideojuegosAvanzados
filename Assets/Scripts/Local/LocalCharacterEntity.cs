@@ -69,14 +69,12 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, float rot)
 	{
 		while (_queuedPositions.Count >= MaxQueuedPositions) {
-			Debug.Log("Dropping queued positions");
 			_queuedPositions.Dequeue();
 		}
 		_queuedPositions.Enqueue(new Vector3DeltaTime() { pos = nextPos, animation = anim, rot = rot });
 	}
 
 	public void Deserialize(BitReader reader) {
-		Debug.Log("Enqueing");
 		Vector3 pos;
 		pos.x = reader.ReadFloat(MinPosX, MaxPosX, Step);
 		pos.y = reader.ReadFloat(MinPosY, MaxPosY, Step);
@@ -84,7 +82,7 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		Vector2 anim;
 		anim.x = reader.ReadFloat( -1, 1, AnimationStep);
 		anim.y = reader.ReadFloat( -1, 1, AnimationStep);
-		float rot = reader.ReadFloat(-360, 360, RotationStep);
+		float rot = reader.ReadFloat(0, 360, RotationStep);
 		QueueNextPosition(pos, anim, rot);
 	} 
 }

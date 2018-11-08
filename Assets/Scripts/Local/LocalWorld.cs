@@ -42,13 +42,9 @@ public class LocalWorld : MonoBehaviour {
 					_currentTime = _previousTime;
 					foreach(var e in entities) {
 						if (e != null) {
-							Debug.Log("Dequeued");
 							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation);
 							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
 							e.UpdateEntity(0);
-							Debug.Log("1: " + e._queuedPositions.Count);
-							Debug.Log("2: " + _queuedTimes.Count);
-							Debug.Assert(e._queuedPositions.Count == _queuedTimes.Count);
 						}
 					}
 					_currentState = NetworkState.NORMAL;
@@ -69,19 +65,18 @@ public class LocalWorld : MonoBehaviour {
 								e._previousAnimation = e._nextAnimation;
 								e._previousRotation = e._nextRotation;
 								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation);
-								Debug.Assert(e._queuedPositions.Count == _queuedTimes.Count);
 							}
 						}
 						if (_nextTime - _currentTime > MaxAllowedDelay) {
 							// Hard reset
 							_currentState = NetworkState.INITIAL;
+							Debug.Log("Hard reset");
 							break;
 						}
 					} else {
 						foreach(var e in entities) {
 							if (e != null ) {
 								e.UpdateEntity(1);
-								Debug.Assert(e._queuedPositions.Count == _queuedTimes.Count);
 							}
 						}
 						_currentState = NetworkState.INITIAL;
@@ -92,7 +87,6 @@ public class LocalWorld : MonoBehaviour {
 				var d = (_currentTime - _previousTime) / (_nextTime - _previousTime);
 				foreach(var e in entities) {
 					if (e != null) {
-						Debug.Assert(e._queuedPositions.Count == _queuedTimes.Count);
 						e.UpdateEntity(d);
 					}
 				}
@@ -111,11 +105,9 @@ public class LocalWorld : MonoBehaviour {
 	}
 
 	public void NewSnapshot(BitReader reader) {
-		Debug.Log("Snapshoting");
 		if (_entitiesCounter < ExpectedEntities) {
 			return;
 		}
-		Debug.Log("Snapshot1");
 		QueueNextSnapshot(reader.ReadFloat(0, MaxTime, TimePrecision));
 		
 		int c = 0;
@@ -123,7 +115,6 @@ public class LocalWorld : MonoBehaviour {
 			var b = reader.ReadBit();
 			if (b) {
 				c++;
-				Debug.Log("Snapshot2");
 				Debug.Assert(e != null);
 				e.Deserialize(reader);
 			} 
