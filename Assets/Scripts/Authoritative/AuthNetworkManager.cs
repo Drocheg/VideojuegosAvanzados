@@ -98,17 +98,17 @@ public class AuthNetworkManager : MonoBehaviour {
 			ReliableChannel = 1
 		};
 		takenIds[currentId] = true;
-		Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
-		AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
-		ace.Id = currentId;
+		//Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
+		//AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
+		//ace.Id = currentId;
 		//ace.Init();
-		SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
-		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
-		foreach (var host in hosts)
-		{
-			SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
-		}
-		hosts.Add(newHost);
+		//SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
+		//SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
+		//foreach (var host in hosts)
+		//{
+		//	SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
+		//}
+		//hosts.Add(newHost);
 		//_networkAPI.Send(hosts[currentId].ReliableChannel, hosts[currentId]._sending_endpoint, );	TODO send ADD PLAYER COMMAND
 		return true;
 	}

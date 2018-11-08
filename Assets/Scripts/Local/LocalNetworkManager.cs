@@ -70,9 +70,9 @@ public class LocalNetworkManager : MonoBehaviour {
 
 		switch(commandType) {
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:
-				Debug.Log("JOIN RESPONSE: " + packet.endPoint);
-				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
-				uint currentId = joinResponseCommand.playerId;
+			//	Debug.Log("JOIN RESPONSE: " + packet.endPoint);
+			//	JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
+			//	uint currentId = joinResponseCommand.playerId;
 			//	Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
 			//	LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
 			//	lce.Id = (int)currentId;
@@ -85,13 +85,13 @@ public class LocalNetworkManager : MonoBehaviour {
 				//Player = lce.gameObject;
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
-				Debug.Log("JOIN PLAYER: " + packet.endPoint);
-				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayer);
+			//	Debug.Log("JOIN PLAYER: " + packet.endPoint);
+			//	JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayer);
 				//Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
-				currentId = joinPlayerCommand.playerId;
-				Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
-				LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
-				lce.Id = (int)currentId;
+			//	currentId = joinPlayerCommand.playerId;
+			//	Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
+			//	LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
+			//	lce.Id = (int)currentId;
 				//lce.Init();
 				
 				break;
