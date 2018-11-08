@@ -16,7 +16,6 @@ public class PlayerManager : MonoBehaviour {
 		_animator = GetComponent<Animator>();
 		_authCharacterEntity = GetComponent<AuthCharacterEntity>();
 		_healthManager = GetComponent<HealthManager>();
-
 	}
 	
 	// Update is called once per frame

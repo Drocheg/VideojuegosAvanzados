@@ -14,7 +14,8 @@ public class AuthWorld : MonoBehaviour {
 	private int _expectedEntities;
 	public int ExpectedEntities;
 	public float SnapshotTickRate;
-	public float MaxHP;
+	public float MaxHP, SpawnTime;
+	public Transform SpawnLocation;
 	private float _snapshotDelta; 
 	private ParticlePool _sparksPool, _bloodPool;
 	// Use this for initialization
@@ -60,13 +61,24 @@ public class AuthWorld : MonoBehaviour {
 		var entity = entities[id];
 		if (entity != null) {
 			var command = MoveCommand.Deserialize(reader, Step, RotationStep, MaxTime, TimePrecision, MaxMoves);
-			entity.Move(command);
+			if (!entity.GetComponent<HealthManager>().Dead) {
+				entity.Move(command);
+			}
+			
 		}
 	}
 
 	public void Shoot(int id, BitReader reader) {
 		var comm = ShootCommand.Deserialize(reader, MaxEntities, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
 		Shoot(id, comm);
+	}
+
+	IEnumerator ReviveEntity(HealthManager entity) {
+		yield return new WaitForSeconds(SpawnTime);
+
+		entity.SetHP(MaxHP);
+		entity.transform.SetPositionAndRotation(SpawnLocation.position, SpawnLocation.rotation);
+	
 	}
 
 	public void Shoot(int id, ShootCommand comm) {
@@ -81,6 +93,10 @@ public class AuthWorld : MonoBehaviour {
 			var healthManager = entities[comm._id].GetComponent<HealthManager>();
 			if (healthManager != null) {
 				healthManager.TakeDamage(comm._damage);
+				if (healthManager.Dead) {
+					// entity was killed. Revive it.
+					StartCoroutine(ReviveEntity(healthManager));
+				}
 			} else {
 				Debug.Log("No health manager");
 			}
