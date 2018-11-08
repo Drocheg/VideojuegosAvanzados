@@ -12057,6 +12057,7 @@ MonoBehaviour:
   Id: 0
   Speed: 6
   IsLocalPlayer: 1
+  lastProcessedInput: 0
 --- !u!114 &1101925778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12809,9 +12810,10 @@ MonoBehaviour:
   MaxEntities: 2
   MaxTime: 10000
   TimePrecision: 0.001
+  MaxMoves: 10000
   NetworkManager: {fileID: 1175571462}
   ExpectedEntities: 2
-  SnapshotTickRate: 20
+  SnapshotTickRate: 5
 --- !u!114 &1304344874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19167,6 +19169,7 @@ MonoBehaviour:
   Id: 1
   Speed: 6
   IsLocalPlayer: 0
+  lastProcessedInput: 0
 --- !u!1 &1940205782
 GameObject:
   m_ObjectHideFlags: 0

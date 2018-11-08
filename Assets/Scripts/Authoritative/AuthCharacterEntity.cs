@@ -22,7 +22,7 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 	}
 	
 	public bool IsLocalPlayer;
-
+	public uint lastProcessedInput;
 	// Update is called once per frame
 	// public void UpdateEntity (float deltaTime) {
 	// 	if (!IsLocalPlayer && CharacterIsMoving) {
@@ -38,6 +38,7 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, _world.AnimationStep);
 		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, _world.AnimationStep);
 		writer.WriteFloat(transform.eulerAngles.y, 0, 360, _world.RotationStep);
+		writer.WriteInt(lastProcessedInput, 0, (uint) _world.MaxMoves);
 	}
 
 	public void Move(MoveCommand command) {
@@ -48,6 +49,7 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 		_characterController.Move(command._strafe * Speed * command._delta * transform.TransformDirection(Vector3.right));
 		_animator.SetFloat("Strafe", command._strafe);
 		_animator.SetFloat("Run", command._run);
+		lastProcessedInput = (uint) command._moveCounter;
 	}
 
 	public override int GetId(){return Id;}
