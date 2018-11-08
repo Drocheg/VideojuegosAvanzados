@@ -36,7 +36,7 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 		writer.WriteFloat(transform.position.z, MinPosZ, MaxPosZ, Step);
 		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, AnimationStep);
 		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, AnimationStep);
-		writer.WriteFloat(transform.eulerAngles.y, 0, 360, RotationStep);
+		writer.WriteFloat(transform.eulerAngles.y, -360, 360, RotationStep);
 	}
 
 	public void Move(MoveCommand command) {
