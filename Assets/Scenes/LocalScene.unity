@@ -462,8 +462,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxTime: 1000
   TimePrecision: 0.001
-  MovePrecision: 0.01
-  RotPrecision: 0.01
+  MovePrecision: 0.001
+  RotPrecision: 1
 --- !u!114 &512930497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -475,15 +475,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d9d2f70833a7141adc7acc0c0eab51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: 0
+  Id: 1
   MinPosX: -1000
   MaxPosX: 1000
   MinPosY: -1000
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.01
-  RotationStep: 0.01
+  Step: 0.001
+  RotationStep: 1
   AnimationStep: 0.1
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
@@ -508,7 +508,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 795593238}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9d9d2f70833a7141adc7acc0c0eab51, type: 3}
   m_Name: 
@@ -520,8 +520,8 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.1
-  RotationStep: 0.01
+  Step: 0.001
+  RotationStep: 1
   AnimationStep: 0.1
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
@@ -776,7 +776,17 @@ Prefab:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 1043604709420386, guid: 5390e2c96591e14438516341e9398524, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114953344849258868, guid: 5390e2c96591e14438516341e9398524,
+        type: 2}
+      propertyPath: Step
+      value: 0.001
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114953344849258868, guid: 5390e2c96591e14438516341e9398524, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 5390e2c96591e14438516341e9398524, type: 2}
   m_IsPrefabAsset: 0
 --- !u!114 &1095808263 stripped
@@ -1627,14 +1637,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1640a529f64753046a8649cbb3607736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxEntities: 1
-  MaxTime: 1000
+  MaxEntities: 2
+  MaxTime: 10000
   TimePrecision: 0.001
   MaxAllowedDelay: 1
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
-  ExpectedEntities: 1
+  ExpectedEntities: 2
 --- !u!1001 &2039240387
 Prefab:
   m_ObjectHideFlags: 0
@@ -1676,9 +1686,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1418206940595112, guid: a85e722557b66554ba80960de6a77585, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114521308717107652, guid: a85e722557b66554ba80960de6a77585,
+        type: 2}
+      propertyPath: Step
+      value: 0.001
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114521308717107652, guid: a85e722557b66554ba80960de6a77585, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: a85e722557b66554ba80960de6a77585, type: 2}
   m_IsPrefabAsset: 0
 --- !u!223 &2049691887 stripped
