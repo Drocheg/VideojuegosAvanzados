@@ -70,7 +70,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				Debug.Log("JOIN RESPONSE: " + packet.endPoint);
 				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
 				uint currentId = joinResponseCommand.playerId;
-				Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
+				Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
 				LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
 				lce.Id = (int)currentId;
 				lce.Init();
