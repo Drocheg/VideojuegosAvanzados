@@ -12,6 +12,8 @@ public class AuthWorld : MonoBehaviour {
 	private AuthCharacterEntity[] entities;
 	private int _expectedEntities;
 	public int ExpectedEntities;
+	public float SnapshotTickRate;
+	private float _snapshotDelta; 
 	private ParticlePool _sparksPool, _bloodPool;
 	// Use this for initialization
 	void Start () {
@@ -20,6 +22,8 @@ public class AuthWorld : MonoBehaviour {
 		var pools = GetComponents<ParticlePool>();
 		_sparksPool = pools[0];
 		_bloodPool = pools[1];
+		_snapshotDelta = 1 / SnapshotTickRate;
+		StartCoroutine(SnapshotLoop());
 	}
 	
 	// void Update() {
@@ -30,14 +34,18 @@ public class AuthWorld : MonoBehaviour {
 	// 		}
 	// 	}
 	// }
-
+	IEnumerator SnapshotLoop() {
+		while(true) {
+			yield return new WaitForSecondsRealtime(_snapshotDelta);
+			if (_expectedEntities >= ExpectedEntities) {
+				NetworkManager.SendAuthEventUnreliable(TakeSnapshot);
+			}
+		}	
+	}
 
 	// Update is called once per frame
-	void FixedUpdate () {
-		_timestamp += Time.fixedDeltaTime;
-		if (_expectedEntities >= ExpectedEntities) {
-			NetworkManager.SendAuthEventUnreliable(TakeSnapshot);
-		}
+	void Update () {
+		_timestamp += Time.deltaTime;
 	}
 
 	public void AddReference(int id, AuthCharacterEntity auth)
