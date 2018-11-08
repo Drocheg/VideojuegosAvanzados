@@ -60,6 +60,7 @@ public class ReliableNetworkChannel : NetworkChannel {
 				}
 			}
 		}
+		sendQueue.Clear();
 
 		if (gotACK)
 		{
@@ -67,6 +68,7 @@ public class ReliableNetworkChannel : NetworkChannel {
 			retQueue.Enqueue(ackPacket);
 		}
 		
+		Debug.Log("Count is: " + retQueue.Count);
 		return new List<Packet>(retQueue);
 	}
 
