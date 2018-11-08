@@ -14,13 +14,12 @@ public class AuthWorld : MonoBehaviour {
 	private AuthProjectileEntity[] projectiles;
 	private int _expectedEntities;
 	public int ExpectedEntities;
-<<<<<<< HEAD
 	public int MaxNumberOfPlayers;
 
-	public AuthCharacterEntity e0;
-	public AuthCharacterEntity e1;
-	public AuthCharacterEntity e2;
-=======
+	//public AuthCharacterEntity e0;
+	//public AuthCharacterEntity e1;
+	//public AuthCharacterEntity e2;
+	
 	public float SnapshotTickRate;
 	public float MaxHP, SpawnTime;
 	public Transform SpawnLocation;
@@ -28,24 +27,20 @@ public class AuthWorld : MonoBehaviour {
 	private ParticlePool _sparksPool, _bloodPool;
 	public int ProjectileOffset;
 	public float ExplosionMagnitude;
-	
->>>>>>> master
+	 
 	// Use this for initialization
 	void Awake () {
 		entities = new AuthCharacterEntity[MaxEntities];
 		projectiles = new AuthProjectileEntity[MaxProjectiles];
-		_timestamp = 0;
-<<<<<<< HEAD
-		entities[0] = e0;
-		entities[1] = e1;
-		entities[2] = e2;
-=======
+		_timestamp = 0; 
+	//	entities[0] = e0;
+	//	entities[1] = e1;
+	//	entities[2] = e2;
 		var pools = GetComponents<ParticlePool>();
 		_sparksPool = pools[0];
 		_bloodPool = pools[1];
 		_snapshotDelta = 1 / SnapshotTickRate;
 		StartCoroutine(SnapshotLoop());
->>>>>>> master
 	}
 	
 	// void Update() {

@@ -8,22 +8,17 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 	private CharacterController _characterController;
 	public float Speed;
 	// Use this for initialization
-<<<<<<< HEAD
-	public void Init() {
-		StartCoroutine(DelayedAddReference());
-		_animator = GetComponent<Animator>();
-		_characterController = GetComponent<CharacterController>();
-		//GameObject.FindObjectOfType<AuthWorld>().AddReference(Id, this);
-=======
 	private AuthWorld _world;
 	HealthManager _healthManager;
-	void Start () {
+
+	public void Init()
+	{
 		StartCoroutine(DelayedAddReference());
 		_animator = GetComponent<Animator>();
 		_characterController = GetComponent<CharacterController>();
 		_world = GameObject.FindObjectOfType<AuthWorld>();
 		_healthManager = GetComponent<HealthManager>();
->>>>>>> master
+		//GameObject.FindObjectOfType<AuthWorld>().AddReference(Id, this);
 	}
 
 	IEnumerator DelayedAddReference() {
