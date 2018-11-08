@@ -14,11 +14,13 @@ public class ReliableNetworkChannel : NetworkChannel {
 	private float lastTime;
 
 	private readonly Queue<Packet> auxReceiveQueue;
+	private Queue<Packet> actualSendQueue;
 
 	public ReliableNetworkChannel(uint id, ChanelType type, EndPoint receiving_endpoint, EndPoint sending_endpoint, uint totalChannels, ulong maxSeqPossible, float timeout) : base(id, type, receiving_endpoint, sending_endpoint, totalChannels, maxSeqPossible)
 	{
 		this.timeout = timeout;
 		auxReceiveQueue = new Queue<Packet>();
+		actualSendQueue = new Queue<Packet>();
 		maxACK = maxSeqPossible-1;
 		maxReturnedSeq = maxSeqPossible-1;
 	}
@@ -31,25 +33,27 @@ public class ReliableNetworkChannel : NetworkChannel {
 		if (Time.realtimeSinceStartup - lastTime >= timeout)
 		{
 			lastTime = Time.realtimeSinceStartup;
-			foreach (var packet in sendQueue)
+			foreach (var packet in actualSendQueue)
 			{
-				if (packet.packetType == PacketType.ACK)
-				{   
-					retQueue.Enqueue(packet);
-				}
-				else
+				if (isBiggerThan(packet.seq, maxACK, maxSeqPossible))
 				{
-					if (isBiggerThan(packet.seq, maxACK, maxSeqPossible))
-					{
-						retQueue.Enqueue(packet);
-						newQueue.Enqueue(packet);
-					}
+					retQueue.Enqueue(packet);
+					newQueue.Enqueue(packet);
 				}					
 			}
-			sendQueue = newQueue;
-			return new List<Packet>(retQueue);
+			actualSendQueue = newQueue;
 		}
-		return new List<Packet>();
+
+		foreach (var packet in sendQueue)
+		{
+			retQueue.Enqueue(packet);
+			if (packet.packetType == PacketType.DATA)
+			{
+				actualSendQueue.Enqueue(packet);
+			}
+		}
+
+		return new List<Packet>(retQueue);
 	}
 
 	
