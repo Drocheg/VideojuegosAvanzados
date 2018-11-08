@@ -577,7 +577,7 @@ GameObject:
   - component: {fileID: 143413222022875676}
   - component: {fileID: 114521308717107652}
   m_Layer: 0
-  m_Name: RemotePlayer (2)
+  m_Name: RemotePlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3090,7 +3090,7 @@ MonoBehaviour:
   MaxPosY: 1000
   MinPosZ: -1000
   MaxPosZ: 1000
-  Step: 0.01
+  Step: 0.001
   RotationStep: 1
   AnimationStep: 0.1
   Id: 1
