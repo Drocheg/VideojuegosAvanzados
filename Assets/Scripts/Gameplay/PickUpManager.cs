@@ -17,7 +17,7 @@ public class PickUpManager : MonoBehaviour {
 	private LayerMask mask;
 	public AudioSource PickUpSound;
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		mask = LayerMask.GetMask("Default");
 	}
 	

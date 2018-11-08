@@ -39,27 +39,30 @@ public class LocalNetworkManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		_networkAPI.UpdateSendQueues();
+		
+			_networkAPI.UpdateSendQueues();
 
-		List<Packet> channelLess;
-		var packets = _networkAPI.Receive(out channelLess);
+			List<Packet> channelLess;
+			var packets = _networkAPI.Receive(out channelLess);
 
-		foreach (var packet in packets) {
-			switch(packet.channelId) {
-				case 0: {
-					// Unreliable channel
-					// Add snapshot to local world queue
-					_localWorld.NewSnapshot(packet.bitReader);
-					break;
-				}
-				case 1:
-				{
-					// Reliable channel
-					ParseCommand(packet);
-					break;
+			foreach (var packet in packets) {
+				switch(packet.channelId) {
+					case 0: {
+						// Unreliable channel
+						// Add snapshot to local world queue
+						_localWorld.NewSnapshot(packet.bitReader);
+						break;
+					}
+					case 1:
+					{
+						// Reliable channel
+						ParseCommand(packet);
+						break;
+					}
 				}
 			}
-		}
+		
+		
 	}
 	
 	void ParseCommand(Packet packet) {
@@ -70,21 +73,26 @@ public class LocalNetworkManager : MonoBehaviour {
 				Debug.Log("JOIN RESPONSE: " + packet.endPoint);
 				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
 				uint currentId = joinResponseCommand.playerId;
-				Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
-				LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
+			//	Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
+			//	LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
+			//	lce.Id = (int)currentId;
+			//	lce.Init();
+				LocalCharacterEntity lce = Player.GetComponent<LocalCharacterEntity>();
+				_localWorld.RemoveReference(lce.Id);
 				lce.Id = (int)currentId;
-				lce.Init();
-				Player = lce.gameObject;
+				_localWorld.AddReference((int)currentId, lce);
+				
+				//Player = lce.gameObject;
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
 				Debug.Log("JOIN PLAYER: " + packet.endPoint);
 				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayer);
 				//Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
 				currentId = joinPlayerCommand.playerId;
-				localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
+				Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
 				lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
 				lce.Id = (int)currentId;
-				lce.Init();
+				//lce.Init();
 				
 				break;
 		}

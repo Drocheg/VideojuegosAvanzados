@@ -13,6 +13,8 @@ public class LocalWorld : MonoBehaviour {
 	private NetworkState _currentState;
 	private LocalCharacterEntity[] entities;
 
+	public bool Initialized;
+
 	public enum NetworkState {
 		INITIAL,
 		NORMAL,
@@ -21,10 +23,11 @@ public class LocalWorld : MonoBehaviour {
 	int _entitiesCounter;
 	public int ExpectedEntities;
 	// Use this for initialization
-	void Init() {
+	void Start() {
 		entities = new LocalCharacterEntity[MaxEntities];
 		_queuedTimes = new Queue<float>();
 		_entitiesCounter = 0;
+		Initialized = true;
 	}
 	
 	// Update is called once per frame
