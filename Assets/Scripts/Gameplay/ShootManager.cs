@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void DamageTaker();
+
 [RequireComponent (typeof(AimManager))]
 public class ShootManager : IGenericWeaponManager {
 	protected Animator _playerAnimator;
@@ -50,7 +52,6 @@ public class ShootManager : IGenericWeaponManager {
 			_playerAnimator.SetBool("Shooting", false);
 		}
 	}
-
 
 	protected virtual void Shoot() 
 	{

@@ -14,7 +14,7 @@ public class MoveCommand {
 
 	public void Serialize(BitWriter writer) {
 		// 
-		writer.WriteInt(0, 0, 1);
+		writer.WriteInt((uint) NetworkCommand.MOVE_COMMAND, 0, (uint) System.Enum.GetValues(typeof(NetworkCommand)).Length);
 		writer.WriteFloat(_strafe, -1, 1,_step);
 		writer.WriteFloat(_run, -1, 1, _step);
 		writer.WriteFloat(_rot, 0, 360, _rotStep);
