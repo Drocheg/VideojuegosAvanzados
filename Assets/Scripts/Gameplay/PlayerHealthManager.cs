@@ -21,7 +21,7 @@ public class PlayerHealthManager : MonoBehaviour {
 	private bool dead;
 
 	// Use this for initialization
-	void Awake () {
+	void Start () {
 		_hp = HealthPoints;
 		_animator = GetComponent<Animator>();
 		_playerManager = GetComponent<PlayerManager>();

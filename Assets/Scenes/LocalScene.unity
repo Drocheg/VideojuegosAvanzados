@@ -705,14 +705,14 @@ MonoBehaviour:
   LocalPort: 33333
   SpinLockTime: 10
   ChannelsPerHosts: 3
-  MaxSeqPossible: 2000
+  MaxSeqPossible: 10000
   TestRemoteIp: 127.0.0.1
   TestRemotePort: 40000
   RemotePlayerPrefab: {fileID: 4537889672831052, guid: 83322e05aac25af4d817cc087413af28,
     type: 2}
   MainPlayerFab: {fileID: 4264874166694948, guid: 00927243669e1294e90eb41537e34118,
     type: 2}
-  TimeoutEvents: 0.01
+  TimeoutEvents: 0.1
   PacketLoss: 0
   Player: {fileID: 387683472}
 --- !u!1 &1375455735
