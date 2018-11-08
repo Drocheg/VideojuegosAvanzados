@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AuthCharacterEntity : MonoBehaviour, IAuth {
+public class AuthCharacterEntity : CharacterEntity, IAuth {
 	public int Id;
 	private Animator _animator;
 	private CharacterController _characterController;
@@ -49,4 +49,6 @@ public class AuthCharacterEntity : MonoBehaviour, IAuth {
 		_animator.SetFloat("Strafe", command._strafe);
 		_animator.SetFloat("Run", command._run);
 	}
+
+	public override int GetId(){return Id;}
 }

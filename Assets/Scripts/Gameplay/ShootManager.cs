@@ -84,7 +84,7 @@ public class ShootManager : IGenericWeaponManager {
 			if (hit.collider.tag == "CharacterCollider") {
 				// Make other player take damage
 				var limbController = hit.collider.GetComponent<LimbManager>();
-				id = limbController.HealthManager.GetComponent<LocalCharacterEntity>().Id;
+				id = limbController.HealthManager.GetComponent<CharacterEntity>().GetId();
 				damage = limbController.TakeDamage(DamageMultiplier);
 				particlePool = _bloodPool;
 			} else {

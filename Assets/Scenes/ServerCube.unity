@@ -924,7 +924,6 @@ GameObject:
   - component: {fileID: 312182918}
   - component: {fileID: 312182917}
   - component: {fileID: 312182916}
-  - component: {fileID: 312182915}
   - component: {fileID: 312182914}
   - component: {fileID: 312182913}
   - component: {fileID: 312182912}
@@ -1003,33 +1002,6 @@ MonoBehaviour:
   ParticleSystemCount: 10
   ParticleSystemPrefab: {fileID: 198750189035362808, guid: 962a6f241583c454789e9c35883e64ae,
     type: 2}
---- !u!114 &312182915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114804118068390244, guid: 5390e2c96591e14438516341e9398524,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 312182910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc85c59462871614d8eddc1c6042412d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  WeaponFire: {fileID: 8300000, guid: 8602b7d5cd15c1943a50aa53f171c8cf, type: 3}
-  ClipEmpty: {fileID: 8300000, guid: 01d5f944020259248b89cdad55173949, type: 3}
-  Camera: {fileID: 1992121687}
-  GunCamera: {fileID: 1875999156}
-  _timeSinceLastShot: 0
-  ShootingTimeout: 0.5
-  MuzzleFlash: {fileID: 882867563}
-  PlayerManager: {fileID: 1101925776}
-  AnimationLayer: 1
-  GunCameraAdjustment: {x: 0, y: 0, z: 0}
-  DamageMultiplier: 1
-  RecoilAmount: 50
-  RecoilSmoothness: 0.1
-  FOVAdjustment: 60
-  GunCameraAdjustmentAngle: 0
 --- !u!114 &312182916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12098,7 +12070,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Weapons:
-  - {fileID: 312182915}
+  - {fileID: 312182919}
   - {fileID: 1066908030}
 --- !u!114 &1101925779
 MonoBehaviour:
@@ -12839,6 +12811,7 @@ MonoBehaviour:
   TimePrecision: 0.001
   NetworkManager: {fileID: 1175571462}
   ExpectedEntities: 2
+  SnapshotTickRate: 20
 --- !u!114 &1304344874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19175,6 +19148,25 @@ Transform:
   m_Father: {fileID: 1229902022}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1939474348 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1418206940595112, guid: a85e722557b66554ba80960de6a77585,
+    type: 2}
+  m_PrefabInternal: {fileID: 2039240387}
+--- !u!114 &1939474349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1939474348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 961388b112dd1ec47880d61cd846ae8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Id: 1
+  Speed: 6
+  IsLocalPlayer: 0
 --- !u!1 &1940205782
 GameObject:
   m_ObjectHideFlags: 0
@@ -19617,7 +19609,13 @@ Prefab:
       propertyPath: Step
       value: 0.001
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114417932107600348, guid: a85e722557b66554ba80960de6a77585,
+        type: 2}
+      propertyPath: Id
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114417932107600348, guid: a85e722557b66554ba80960de6a77585, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: a85e722557b66554ba80960de6a77585, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &2040329949

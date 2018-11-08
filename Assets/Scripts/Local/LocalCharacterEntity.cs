@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocalCharacterEntity : MonoBehaviour, ILocal {
+public class LocalCharacterEntity : CharacterEntity, ILocal {
 	public int Id;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	public Vector3? _previousPosition, _nextPosition;
@@ -86,5 +86,9 @@ public class LocalCharacterEntity : MonoBehaviour, ILocal {
 		float rot = reader.ReadFloat(0, 360, _localWorld.RotationStep);
 		QueueNextPosition(pos, anim, rot);
 	} 
+
+	public override int GetId() {
+		return Id;
+	}
 }
 
