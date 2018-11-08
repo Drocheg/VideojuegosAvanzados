@@ -828,14 +828,14 @@ MonoBehaviour:
   RemotePlayerPrefab: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585,
     type: 2}
   TestRemoteIp: 127.0.0.1
-  TestRemotePort: 33333
+  TestRemotePort2: 0
   TestReceiveRemotePort: 0
   LocalPort: 40000
   SpinLockTime: 50
   MaxHosts: 10
   ChannelsPerHost: 3
-  MaxSeqPossible: 2000
-  TimeoutEvents: 0.01
+  MaxSeqPossible: 10000
+  TimeoutEvents: 0.1
   PacketLoss: 0
 --- !u!114 &1214912809 stripped
 MonoBehaviour:

@@ -43,10 +43,11 @@ public class AuthNetworkManager : MonoBehaviour {
 
 
 	void Update() {
-		_networkAPI.UpdateSendQueues();
-
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
+		
+		_networkAPI.UpdateSendQueues();
+
 		foreach(var packet in packets) {
 			Debug.Log(packet.channelId);
 			switch(packet.channelId) {
@@ -140,7 +141,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		foreach(var host in hosts) {
 			_networkAPI.Send(host.UnreliableChannel, host._sending_endpoint, ev);	
 		}
-		_networkAPI.UpdateSendQueues();
+		//_networkAPI.UpdateSendQueues();
 		return;
 	}
 	
@@ -148,13 +149,13 @@ public class AuthNetworkManager : MonoBehaviour {
 		foreach(var host in hosts) {
 			_networkAPI.Send(host.ReliableChannel, host._sending_endpoint, ev);	
 		}
-		_networkAPI.UpdateSendQueues();
+		//_networkAPI.UpdateSendQueues();
 		return;
 	}
 	
 	public void SendAuthEventReliableToSingleHost(RemoteHost host, Serialize ev) {
 		_networkAPI.Send(host.ReliableChannel, host._sending_endpoint, ev);	
-		_networkAPI.UpdateSendQueues();
+		//_networkAPI.UpdateSendQueues();
 		return;
 	}
 

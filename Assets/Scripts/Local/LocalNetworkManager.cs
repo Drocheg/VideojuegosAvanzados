@@ -40,10 +40,10 @@ public class LocalNetworkManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-			_networkAPI.UpdateSendQueues();
-
 			List<Packet> channelLess;
 			var packets = _networkAPI.Receive(out channelLess);
+			_networkAPI.UpdateSendQueues();
+
 
 			foreach (var packet in packets) {
 				switch(packet.channelId) {
