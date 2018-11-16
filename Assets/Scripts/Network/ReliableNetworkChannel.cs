@@ -69,7 +69,7 @@ public class ReliableNetworkChannel : NetworkChannel {
 			retQueue.Enqueue(ackPacket);
 		}
 		
-		Debug.Log("Count is: " + retQueue.Count);
+		// Debug.Log("Count is: " + retQueue.Count);
 		return new List<Packet>(retQueue);
 	}
 

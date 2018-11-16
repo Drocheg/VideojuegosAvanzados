@@ -826,7 +826,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1304344871
 GameObject:
@@ -881,14 +881,13 @@ MonoBehaviour:
   AnimationStep: 0.1
   AuthProjectile: {fileID: 114804668641806502, guid: 802e418516e320745a49d1a78b983a23,
     type: 2}
-  MaxEntities: 2
+  MaxEntities: 10
   MaxProjectiles: 10
   MaxTime: 10000
   TimePrecision: 0.001
   MaxMoves: 10000
   NetworkManager: {fileID: 1175571462}
-  ExpectedEntities: 2
-  MaxNumberOfPlayers: 0
+  ExpectedEntities: 1
   SnapshotTickRate: 20
   MaxHP: 100
   SpawnTime: 4
@@ -1543,48 +1542,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2039240387
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -2.21
-      objectReference: {fileID: 0}
-    - target: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef, type: 2}
-      propertyPath: m_RootOrder
-      value: 16
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d5e5bc5308c224841a9ed85c498cfeef, type: 2}
-  m_IsPrefabAsset: 0
 --- !u!223 &2049691887 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 223906119707660302, guid: 42640f15a6598de41b1d38e021f17f3a,

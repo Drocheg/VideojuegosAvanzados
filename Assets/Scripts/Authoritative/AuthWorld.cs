@@ -14,7 +14,7 @@ public class AuthWorld : MonoBehaviour {
 	private AuthProjectileEntity[] projectiles;
 	private int _expectedEntities;
 	public int ExpectedEntities;
-	public int MaxNumberOfPlayers;
+
 
 	//public AuthCharacterEntity e0;
 	//public AuthCharacterEntity e1;
@@ -154,6 +154,7 @@ public class AuthWorld : MonoBehaviour {
 		writer.WriteFloat(_timestamp, 0, MaxTime, TimePrecision);
 		foreach(var entity in entities) {
 			if (entity != null) {
+				Debug.Log("Creando snapshot para id: " + entity.Id);
 				writer.WriteBit(true);
 				entity.Serialize(writer);
 			} else {

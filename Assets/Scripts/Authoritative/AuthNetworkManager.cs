@@ -25,6 +25,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	public float PacketLoss;
 	private int _commandsCount;
 	private AuthWorld _authWorld;
+	public AuthCharacterEntity AuthPlayer;
 	
 	void Start()
 	{
@@ -32,8 +33,8 @@ public class AuthNetworkManager : MonoBehaviour {
 		takenIds[0] = true; // TODO delete this when host stop being a player.
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
-
-		//_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss);
+		
 		//var sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		//var receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort + 1 );
 		//_networkAPI.AddUnreliableChannel(0, receiving_endpoint, sending_endpoint);
@@ -42,8 +43,9 @@ public class AuthNetworkManager : MonoBehaviour {
 		
 		// _networkAPI.AddUnreliableChannel(2, receiving_endpoint, sending_endpoint);
 	    //hosts.Add(new RemoteHost(){Id = 1, _receiving_endpoint = receiving_endpoint, _sending_endpoint = sending_endpoint, UnreliableChannel = 0});
+		AuthPlayer.Init();
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
-		MaxHosts = (uint)_authWorld.MaxNumberOfPlayers;
+		
 	}
 
 
@@ -134,6 +136,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		{
 			SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
 		}
+		SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand(0, MaxHosts).Serialize);
 		hosts.Add(newHost);
 		//_networkAPI.Send(hosts[currentId].ReliableChannel, hosts[currentId]._sending_endpoint, );	TODO send ADD PLAYER COMMAND
 		return true;

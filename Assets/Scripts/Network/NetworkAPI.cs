@@ -194,7 +194,7 @@ public class NetworkAPI {
 			if (bytes > 0) {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
 				lock(readQueue) {
-				Debug.Log("RECV THREAD: " + readQueue.Count);
+					Debug.Log("RECV THREAD: " + readQueue.Count);
 					readQueue.Enqueue(packet);
 				}
 			}
@@ -207,7 +207,7 @@ public class NetworkAPI {
 		{
 			Packet packet = null;
 			lock (sendQueue){
-			Debug.Log("SEND THREAD: " + sendQueue.Count);
+				// Debug.Log("SEND THREAD: " + sendQueue.Count);
 				if (sendQueue.Count > 0)
 				{
 					packet = sendQueue.Dequeue();

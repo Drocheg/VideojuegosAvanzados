@@ -43,7 +43,6 @@ namespace Menu
 			_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 			_networkAPI = NetworkAPI.GetInstance();
 			_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss);
-			MaxHosts = (uint)_authWorld.MaxNumberOfPlayers;
 		}
 
 
