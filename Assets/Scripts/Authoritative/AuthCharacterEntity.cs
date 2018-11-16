@@ -18,12 +18,11 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 		_characterController = GetComponent<CharacterController>();
 		_world = GameObject.FindObjectOfType<AuthWorld>();
 		_healthManager = GetComponent<HealthManager>();
-		//GameObject.FindObjectOfType<AuthWorld>().AddReference(Id, this);
 	}
 
 	IEnumerator DelayedAddReference() {
 		yield return new WaitForEndOfFrame();
-		GameObject.FindObjectOfType<AuthWorld>().AddReference(Id, this);
+		_world.AddReference(Id, this);
 	}
 	
 	public bool IsLocalPlayer;
