@@ -37,7 +37,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 
 	IEnumerator DelayAddReference() {
 		yield return new WaitForEndOfFrame();
-		GameObject.FindObjectOfType<LocalWorld>().AddReference(Id, this);
+		_localWorld.AddReference(Id, this);
 	}
 
 	public bool DequeNextPosition(out Vector3? deqPosition, out Vector2? animation, out float rot, out int lastProcessedInput)
@@ -66,7 +66,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 	}
 
 	public void UpdateEntity(float lerp) {
-		if(!IsLocalPlayer || !_localPlayer.Prediction) {
+		if((!IsLocalPlayer || !_localPlayer.Prediction) && _previousPosition != null && _nextPosition != null) {
 			transform.position = Vector3.Lerp(_previousPosition.Value, _nextPosition.Value, lerp);
 			LerpAnimation(_previousAnimation.Value, _nextAnimation.Value, lerp);
 			if (!IsLocalPlayer) {

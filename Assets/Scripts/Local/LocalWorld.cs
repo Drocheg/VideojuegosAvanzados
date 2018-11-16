@@ -9,7 +9,7 @@ public enum NetworkState {
 }
 	
 public class LocalWorld : MonoBehaviour {
-	public int MaxEntities, MaxProjectiles, MaxNumberOfPlayer;
+	public int MaxEntities, MaxProjectiles;
 	public float MaxTime, TimePrecision, MaxAllowedDelay;
 	public float MaxHP;
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
@@ -136,6 +136,7 @@ public class LocalWorld : MonoBehaviour {
 		foreach(var e in entities) {
 			var b = reader.ReadBit();
 			if (b) {
+				Debug.Log("Snapshot para id: " + e.Id);
 				Debug.Assert(e != null);
 				e.Deserialize(reader);
 			} 

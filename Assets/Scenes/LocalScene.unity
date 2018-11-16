@@ -7248,6 +7248,7 @@ MonoBehaviour:
   MaxSeqPossible: 2000
   TestRemoteIp: 127.0.0.1
   TestRemotePort: 40000
+  MaxPlayers: 10
   RemotePlayerPrefab: {fileID: 4537889672831052, guid: 83322e05aac25af4d817cc087413af28,
     type: 2}
   MainPlayerFab: {fileID: 4834306638117020, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
@@ -23699,9 +23700,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1640a529f64753046a8649cbb3607736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxEntities: 2
+  MaxEntities: 10
   MaxProjectiles: 10
-  MaxNumberOfPlayer: 0
   MaxTime: 10000
   TimePrecision: 0.001
   MaxAllowedDelay: 1
@@ -23718,7 +23718,7 @@ MonoBehaviour:
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
-  ExpectedEntities: 2
+  ExpectedEntities: 1
 --- !u!114 &2010554598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23778,58 +23778,6 @@ Transform:
   m_Father: {fileID: 77458132}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2039240387
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -2.21
-      objectReference: {fileID: 0}
-    - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585, type: 2}
-      propertyPath: m_RootOrder
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 143413222022875676, guid: a85e722557b66554ba80960de6a77585,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114521308717107652, guid: a85e722557b66554ba80960de6a77585,
-        type: 2}
-      propertyPath: Id
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a85e722557b66554ba80960de6a77585, type: 2}
-  m_IsPrefabAsset: 0
 --- !u!223 &2049691887 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 223906119707660302, guid: 42640f15a6598de41b1d38e021f17f3a,

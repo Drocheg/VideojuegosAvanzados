@@ -11,7 +11,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	private NetworkAPI _networkAPI;
 	public string TestRemoteIp;
 	public int TestRemotePort;
-	private uint MaxPlayer;
+	public uint MaxPlayers;
 	public Transform RemotePlayerPrefab;
 	public Transform MainPlayerFab;
 	private LocalWorld _localWorld;
@@ -38,7 +38,6 @@ public class LocalNetworkManager : MonoBehaviour {
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		_localProjectileManager = GameObject.FindObjectOfType<LocalProjectileManager>();
 
-		MaxPlayer = (uint)_localWorld.MaxNumberOfPlayer;
 		SendReliable(new JoinCommand().Serialize);
 
 	}
@@ -73,9 +72,6 @@ public class LocalNetworkManager : MonoBehaviour {
 		}
 	}
 	
-
-	
-	
 	void ParseCommand(Packet packet) {
 		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
 		switch(commandType) {
@@ -83,7 +79,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				_localWorld.BulletCollision(packet.bitReader);
 				break;
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:
-				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayer);
+				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayers);
 				uint currentId = joinResponseCommand.playerId;
 				Debug.Log("JOIN RESPONSE my ID: " + currentId + "From endpoint: " + packet.endPoint);
 				//Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
@@ -99,7 +95,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				//Player = lce.gameObject;
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
-				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayer);
+				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayers);
 			//	Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
 				currentId = joinPlayerCommand.playerId;
 				Debug.Log("JOIN PLAYER with ID: " + currentId + "From endpoint: " + packet.endPoint);
