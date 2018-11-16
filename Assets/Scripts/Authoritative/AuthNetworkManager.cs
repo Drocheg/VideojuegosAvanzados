@@ -125,8 +125,11 @@ public class AuthNetworkManager : MonoBehaviour {
 		ace.Id = currentId;
 		ace.Init();
 		
+		// Enviar respuesta al que se conecto
 		SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
+		// Enviarle a los otros que se conecto uno nuevo
 		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
+		// Enviarle un packete por cada host que hay de antes al nuevo
 		foreach (var host in hosts)
 		{
 			SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
@@ -135,6 +138,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		//_networkAPI.Send(hosts[currentId].ReliableChannel, hosts[currentId]._sending_endpoint, );	TODO send ADD PLAYER COMMAND
 		return true;
 	}
+	
 	void ParseCommand(Packet packet) {
 		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, System.Enum.GetValues(typeof(NetworkCommand)).Length);
 
