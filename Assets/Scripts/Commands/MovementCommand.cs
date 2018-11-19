@@ -23,7 +23,7 @@ public class MoveCommand {
 		writer.WriteInt((uint)_moveCounter, 0, (uint)_maxMoves);
 		writer.WriteFloat(_strafe, -1, 1,_step);
 		writer.WriteFloat(_run, -1, 1, _step);
-		writer.WriteFloat(_rot, 0, 360, _rotStep);
+		writer.WriteFloat(_rot, -1, 360, _rotStep);
 		writer.WriteFloat(_delta, 0, _maxTime, _timeStep);
 	}
 
@@ -31,7 +31,7 @@ public class MoveCommand {
 		var moveCounter = reader.ReadInt(0, maxMoves);
 		var strafe = reader.ReadFloat(-1, 1, step);
 		var run = reader.ReadFloat(-1, 1, step);
-		var rot = reader.ReadFloat(0, 360, rotStep);
+		var rot = reader.ReadFloat(-1, 360, rotStep);
 		var delta = reader.ReadFloat(0, maxTime, timeStep);
 		return new MoveCommand(strafe, run, step, rot, rotStep, delta, maxTime, timeStep, moveCounter, maxMoves);
 	}

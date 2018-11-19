@@ -41,7 +41,7 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 		writer.WriteFloat(transform.position.z, _world.MinPosZ, _world.MaxPosZ, _world.Step);
 		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, _world.AnimationStep);
 		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, _world.AnimationStep);
-		writer.WriteFloat(transform.eulerAngles.y, 0, 360, _world.RotationStep);
+		writer.WriteFloat(transform.eulerAngles.y, -1, 360, _world.RotationStep);
 		writer.WriteInt(lastProcessedInput, 0, (uint) _world.MaxMoves);
 		writer.WriteFloat(Mathf.Max(_healthManager._hp, 0), 0, _world.MaxHP, 0.1f);
 	}

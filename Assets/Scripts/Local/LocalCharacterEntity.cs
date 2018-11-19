@@ -93,7 +93,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		Vector2 anim;
 		anim.x = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
 		anim.y = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
-		float rot = reader.ReadFloat(0, 360, _localWorld.RotationStep);
+		float rot = reader.ReadFloat(-1, 360, _localWorld.RotationStep);
 		int lastProcessedInput = reader.ReadInt(0, _localPlayer.MaxMoves);
 		_healthManager.SetHP(reader.ReadFloat(0, _localWorld.MaxHP, 0.1f));
 		QueueNextPosition(pos, anim, rot, lastProcessedInput);
