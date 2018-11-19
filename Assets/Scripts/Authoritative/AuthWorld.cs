@@ -53,7 +53,7 @@ public class AuthWorld : MonoBehaviour {
 		while(true) {
 			yield return new WaitForSecondsRealtime(_snapshotDelta);
 			if (_expectedEntities >= ExpectedEntities) {
-				_networkManager.SendAuthEventUnreliable(TakeSnapshot);
+				_networkManager.SendAuthSnapshotUnreliable(TakeSnapshot);
 			}
 		}	
 	}
@@ -71,7 +71,7 @@ public class AuthWorld : MonoBehaviour {
 	
 	public void RemoveEntity(uint id)
 	{
-		AuthCharacterEntity removedEntity = entities[id];
+		AuthEntity removedEntity = _entities[id];
 		if (removedEntity != null)
 		{
 			Destroy(removedEntity.gameObject);
@@ -81,7 +81,7 @@ public class AuthWorld : MonoBehaviour {
 	
 	public void RemoveReference(uint id)
 	{
-		entities[id] = null;
+		_entities[id] = null;
 	}
 
 	public void MovementCommand(int id, BitReader reader) {

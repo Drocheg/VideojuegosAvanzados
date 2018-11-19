@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class JoinResponseCommand
 {
 	public uint playerId;
@@ -7,6 +9,8 @@ public class JoinResponseCommand
 	{
 		this.playerId = playerId;
 		this.maxPlayers = maxPlayers;
+		
+		Debug.Log("Creating Join Response Command playerId: " + playerId);
 	}
 
 	public void Serialize(BitWriter writer) {

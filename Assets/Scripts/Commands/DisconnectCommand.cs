@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class DisconnectCommand {
 	
 	public uint playerId;
@@ -7,6 +9,8 @@ public class DisconnectCommand {
 	{
 		this.playerId = playerId;
 		this.maxPlayers = maxPlayers;
+		
+		Debug.Log("Creating Disconnect Command playerId: " + playerId);
 	}
 
 	public void Serialize(BitWriter writer) {

@@ -198,6 +198,7 @@ public class AuthNetworkManager : MonoBehaviour {
 				break;
 			}
 			case NetworkCommand.SHOOT_COMMAND: {
+				Debug.Log("Receive Shoot Command");
 				var Id = GetHostId(packet.endPoint);
 				if (Id == -1) {
 					Debug.Log("Could not match endpoint to id");
@@ -208,6 +209,7 @@ public class AuthNetworkManager : MonoBehaviour {
 			}
 			case NetworkCommand.DISCONNECT_COMMAND:
 			{
+				Debug.Log("Receive Disconnect Command");
 				var Id = GetHostId(packet.endPoint);
 				disconnectHost(Id);
 				break;
@@ -215,10 +217,24 @@ public class AuthNetworkManager : MonoBehaviour {
 			// TODO join command when connected?
 		}
 	}
-
-	public void SendAuthEventUnreliable(Serialize ev) {
+	
+	public void SendAuthSnapshotUnreliable(Serialize ev) {
 		foreach(var host in hosts) {
-			_networkAPI.Send(host.UnreliableChannel, host._sending_endpoint, ev);	
+			if (host != null)
+			{
+				_networkAPI.Send(host.UnreliableChannel, host._sending_endpoint, ev);	
+			}
+		}
+		//_networkAPI.UpdateSendQueues();
+		return;
+	}
+
+	private void SendAuthEventUnreliable(Serialize ev) {
+		foreach(var host in hosts) {
+			if (host != null)
+			{
+				_networkAPI.Send(host.UnreliableEnventChannel, host._sending_endpoint, ev);	
+			}
 		}
 		//_networkAPI.UpdateSendQueues();
 		return;
@@ -226,7 +242,11 @@ public class AuthNetworkManager : MonoBehaviour {
 	
 	public void SendAuthEventReliable(Serialize ev) {
 		foreach(var host in hosts) {
-			_networkAPI.Send(host.ReliableChannel, host._sending_endpoint, ev);	
+			if (host != null)
+			{
+				_networkAPI.Send(host.ReliableChannel, host._sending_endpoint, ev);	
+			}
+			
 		}
 		//_networkAPI.UpdateSendQueues();
 		return;
@@ -239,7 +259,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	}
 	
 	public void SendAuthEventUnreliableToSingleHost(RemoteHost host, Serialize ev) {
-		_networkAPI.Send(host.UnreliableChannel, host._sending_endpoint, ev);	
+		_networkAPI.Send(host.UnreliableEnventChannel, host._sending_endpoint, ev);	
 		//_networkAPI.UpdateSendQueues();
 		return;
 	}

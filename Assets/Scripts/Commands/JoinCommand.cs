@@ -1,7 +1,10 @@
+using UnityEngine;
+
 public class JoinCommand {
 	
 	
 	public JoinCommand() {
+		Debug.Log("Creating Join Command");
 	}
 
 	public void Serialize(BitWriter writer) {

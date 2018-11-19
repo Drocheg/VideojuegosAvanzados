@@ -120,7 +120,7 @@ public class LocalWorld : MonoBehaviour {
 
 	public void RemoveEntity(uint id)
 	{
-		LocalCharacterEntity removedEntity = entities[id];
+		LocalEntity removedEntity = _entities[id];
 		if (removedEntity != null)
 		{
 			Destroy(removedEntity.gameObject);

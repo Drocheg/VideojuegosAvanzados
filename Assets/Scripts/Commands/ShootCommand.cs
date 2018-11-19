@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class ShootCommand {
 	public float _cX, _cY, _cZ, _nX, _nY, _nZ, _minX, _maxX, _minY, _maxY, _minZ, _maxZ, _positionPrecision;
 	public float _damage;
@@ -16,6 +18,7 @@ public class ShootCommand {
 		_positionPrecision = positionPrecision;
 		_id = id;
 		_maxEntities = maxEntities;
+		Debug.Log("Creating Shoot Command");
 	}
 
 	public void Serialize(BitWriter writer) {

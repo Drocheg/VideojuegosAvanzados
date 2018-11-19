@@ -15,6 +15,7 @@ public class MoveCommand {
 		_timeStep = timeStep;
 		_moveCounter = moveCounter;
 		_maxMoves = maxMoves;
+		Debug.Log("Creating Move Command");
 	}
 
 	public void Serialize(BitWriter writer) {
