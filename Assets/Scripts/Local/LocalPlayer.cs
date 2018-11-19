@@ -57,14 +57,15 @@ public class LocalPlayer : MonoBehaviour {
 
 	public void Move(MoveCommand command) {
 		var eulerAngles = transform.eulerAngles;
+		var oldRot = eulerAngles.y;
 		eulerAngles.y = command._rot;
-		var rot = transform.rotation.eulerAngles - eulerAngles;
-		transform.Rotate(rot);
+		transform.eulerAngles = eulerAngles;
 		_characterController.Move(command._run * Speed * command._delta * transform.TransformDirection(Vector3.forward));
 		_characterController.Move(command._strafe * Speed * command._delta * transform.TransformDirection(Vector3.right));
 		_animator.SetFloat("Strafe", command._strafe);
 		_animator.SetFloat("Run", command._run);
-		transform.Rotate(-rot);
+		eulerAngles.y =  oldRot;
+		transform.eulerAngles = eulerAngles;
 	}
 
 	protected static ulong mod(long x, long m) {
