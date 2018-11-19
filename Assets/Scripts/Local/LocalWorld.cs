@@ -77,7 +77,7 @@ public class LocalWorld : MonoBehaviour {
 								e._previousRotation = e._nextRotation;
 								ulong lastProcessedInput;
 								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
-								if (e.IsLocalPlayer) {
+								if (e.IsLocalPlayer && e._nextPosition != null ) {
 									_localPlayer.AdjustPositionFromSnapshot(e._nextPosition.Value, lastProcessedInput);
 								}
 							}

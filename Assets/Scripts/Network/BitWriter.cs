@@ -41,7 +41,7 @@ public class BitWriter
         {
             throw new Exception("Value not in a valid range.");
         }
-        WriteBits(value, (int) Math.Log((double) (max - min), 2.0) + 1);
+        WriteBits(value, Utility.CountBits((int) (max - min)));
 		// WriteBits(value, 32);
     }
 
@@ -53,7 +53,7 @@ public class BitWriter
         }
         int floatBits = (int)((max - min) / step);
         ulong longVal = (ulong)((value - min) / step);
-        WriteBits(longVal, (int) Math.Log((double) floatBits, 2.0) + 1);
+        WriteBits(longVal, Utility.CountBits(floatBits));
     }
 
     public void WriteString(string value)

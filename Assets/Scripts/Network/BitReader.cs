@@ -5,6 +5,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+public class Utility {
+    public static int CountBits(int MaxNumber) {
+        int count = 0;
+        uint num = (uint) MaxNumber;
+        while (num > 0) {
+            count++;
+            num >>= 1;
+        }
+        return count;
+    }
+}
 
 public class BitReader {
     MemoryStream memoryStream;
@@ -44,7 +55,7 @@ public class BitReader {
             // Fill up 32 bits of the bits variable.
             var filledUpBytes = bitCount / 8;
             bits >>= filledUpBytes * 8;
-			var requiredNewBytes = (required - (bitsBufferLimit - bitCount) -1 ) / 8 + 1;
+			var requiredNewBytes = (required - (bitsBufferLimit - bitCount) -1 ) / 8;
 			var shiftedOldBitBufferLimit = bitsBufferLimit - filledUpBytes * 8;
 			bitsBufferLimit = shiftedOldBitBufferLimit + requiredNewBytes * 8;
             bitCount %= 8;
@@ -75,12 +86,12 @@ public class BitReader {
     public int ReadInt(int min, int max)
     {
 		// 
-        return (int) ReadBits((int) Math.Log((double) (max - min), 2.0) + 1);
+        return (int) ReadBits(Utility.CountBits(max - min));
     }
 
     public float ReadFloat(float _min, float _max, float _step)
     {
-        int floatBits = (int) (Math.Log((_max - _min) / _step, 2.0) + 1);
+        int floatBits = (int) Utility.CountBits((int) ((_max - _min) / _step));
         ulong longVal = ReadBits(floatBits);
         float ret = longVal * _step + _min;
         // Debug.Log("min: " + _min + "max: " + _max + "step: " + _step + "bits: " + floatBits + "logVall: " + longVal + "ret: " + ret);
