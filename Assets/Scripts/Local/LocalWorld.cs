@@ -51,7 +51,7 @@ public class LocalWorld : MonoBehaviour {
 					_currentTime = _previousTime;
 					foreach(var e in entities) {
 						if (e != null) {
-							int lastProcessedInput;
+							ulong lastProcessedInput;
 							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation, out lastProcessedInput);
 							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
 							e.UpdateEntity(0);
@@ -75,7 +75,7 @@ public class LocalWorld : MonoBehaviour {
 								e._previousPosition = e._nextPosition;
 								e._previousAnimation = e._nextAnimation;
 								e._previousRotation = e._nextRotation;
-								int lastProcessedInput;
+								ulong lastProcessedInput;
 								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
 								if (e.IsLocalPlayer) {
 									_localPlayer.AdjustPositionFromSnapshot(e._nextPosition.Value, lastProcessedInput);

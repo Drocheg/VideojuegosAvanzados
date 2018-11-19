@@ -194,7 +194,7 @@ public class NetworkAPI {
 			if (bytes > 0) {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
 				lock(readQueue) {
-					Debug.Log("RECV THREAD: " + readQueue.Count);
+					// Debug.Log("RECV THREAD: " + readQueue.Count);
 					readQueue.Enqueue(packet);
 				}
 			}

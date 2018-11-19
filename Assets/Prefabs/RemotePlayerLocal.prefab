@@ -589,7 +589,7 @@ GameObject:
   - component: {fileID: 82931244441621878}
   - component: {fileID: 143524868622519642}
   - component: {fileID: 114476256637368858}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RemotePlayerLocal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3098,15 +3098,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Id: 0
-  MinPosX: -1000
-  MaxPosX: 1000
-  MinPosY: -1000
-  MaxPosY: 1000
-  MinPosZ: -1000
-  MaxPosZ: 1000
-  Step: 0.001
-  RotationStep: 1
-  AnimationStep: 0.1
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
@@ -3165,6 +3156,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InitialHP: 100
+  _hp: 0
+  Dead: 0
 --- !u!114 &114956715962616414
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -46,8 +46,8 @@ public class LocalNetworkManager : MonoBehaviour {
 	void Update () {
 		
 		List<Packet> channelLess;
-		var packets = _networkAPI.Receive(out channelLess);
 		_networkAPI.UpdateSendQueues();
+		var packets = _networkAPI.Receive(out channelLess);
 
 
 		foreach (var packet in packets) {
