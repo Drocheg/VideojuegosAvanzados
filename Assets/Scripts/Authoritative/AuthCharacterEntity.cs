@@ -41,7 +41,7 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 		writer.WriteFloat(transform.position.z, _world.MinPosZ, _world.MaxPosZ, _world.Step);
 		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, _world.AnimationStep);
 		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, _world.AnimationStep);
-		writer.WriteFloat(transform.eulerAngles.y, 0, 360, _world.RotationStep);
+		writer.WriteFloat(transform.eulerAngles.y, -1, 360, _world.RotationStep);
 		writer.WriteInt(lastProcessedInput, 0, (uint) _world.MaxMoves);
 		writer.WriteFloat(Mathf.Max(_healthManager._hp, 0), 0, _world.MaxHP, 0.1f);
 	}
@@ -49,11 +49,13 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 	public void Move(MoveCommand command) {
 		var eulerAngles = transform.eulerAngles;
 		eulerAngles.y = command._rot;
-		transform.eulerAngles = eulerAngles;
+		var rot = transform.rotation.eulerAngles - eulerAngles;
+		transform.Rotate(rot);
 		_characterController.Move(command._run * Speed * command._delta * transform.TransformDirection(Vector3.forward));
 		_characterController.Move(command._strafe * Speed * command._delta * transform.TransformDirection(Vector3.right));
 		_animator.SetFloat("Strafe", command._strafe);
 		_animator.SetFloat("Run", command._run);
+		transform.Rotate(-rot);
 		lastProcessedInput = (uint) command._moveCounter;
 	}
 

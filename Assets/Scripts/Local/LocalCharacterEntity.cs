@@ -20,7 +20,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		public Vector3 pos;
 		public Vector2 animation;
 		public float rot;
-		public int lastProcessedInput;
+		public ulong lastProcessedInput;
 	}
 
 
@@ -40,7 +40,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		_localWorld.AddReference(Id, this);
 	}
 
-	public bool DequeNextPosition(out Vector3? deqPosition, out Vector2? animation, out float rot, out int lastProcessedInput)
+	public bool DequeNextPosition(out Vector3? deqPosition, out Vector2? animation, out float rot, out ulong lastProcessedInput)
 	{
 		if (_queuedPositions.Count > 0){
 			var wrapper = _queuedPositions.Dequeue();
@@ -53,7 +53,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		deqPosition = null;
 		animation = null;
 		rot = 0;
-		lastProcessedInput = -1;
+		lastProcessedInput = 0;
 		return false;
 	}
 
@@ -71,13 +71,14 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 			LerpAnimation(_previousAnimation.Value, _nextAnimation.Value, lerp);
 			if (!IsLocalPlayer) {
 				var euler = transform.eulerAngles;
-				euler.y = Mathf.Lerp(_previousRotation, _nextRotation, lerp);
-				transform.eulerAngles = euler;
+				var nextRot = Quaternion.Euler(euler.x, _nextRotation, euler.z);
+				var prevRot = Quaternion.Euler(euler.x, _previousRotation, euler.z);
+				transform.rotation = Quaternion.Slerp(prevRot, nextRot, lerp);
 			}
 		}
 	}
 
-	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, float rot, int lastProcessedInput)
+	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, float rot, ulong lastProcessedInput)
 	{
 		while (_queuedPositions.Count >= MaxQueuedPositions) {
 			_queuedPositions.Dequeue();
@@ -93,8 +94,8 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		Vector2 anim;
 		anim.x = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
 		anim.y = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
-		float rot = reader.ReadFloat(0, 360, _localWorld.RotationStep);
-		int lastProcessedInput = reader.ReadInt(0, _localPlayer.MaxMoves);
+		float rot = reader.ReadFloat(-1, 360, _localWorld.RotationStep);
+		ulong lastProcessedInput = (ulong)reader.ReadInt(0, (int) _localPlayer.MaxMoves);
 		_healthManager.SetHP(reader.ReadFloat(0, _localWorld.MaxHP, 0.1f));
 		QueueNextPosition(pos, anim, rot, lastProcessedInput);
 	} 
