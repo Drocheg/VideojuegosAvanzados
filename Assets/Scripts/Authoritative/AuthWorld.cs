@@ -68,6 +68,21 @@ public class AuthWorld : MonoBehaviour {
 		_expectedEntities++;
 		_entities[id] = auth;
 	}
+	
+	public void RemoveEntity(uint id)
+	{
+		AuthCharacterEntity removedEntity = entities[id];
+		if (removedEntity != null)
+		{
+			Destroy(removedEntity.gameObject);
+			RemoveReference(id);
+		}
+	}
+	
+	public void RemoveReference(uint id)
+	{
+		entities[id] = null;
+	}
 
 	public void MovementCommand(int id, BitReader reader) {
 		if (id < 0 || id >= _entities.Length) {

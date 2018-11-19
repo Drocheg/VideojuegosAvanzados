@@ -63,7 +63,8 @@ public class LocalNetworkManager : MonoBehaviour {
 					break;
 				}
 				case 2: {
-					// _localProjectileManager.NewSnapshot(packet.bitReader);
+					// UnreliableEnventChannel
+					ParseCommand(packet);
 					break;
 				}
 			}
@@ -105,7 +106,22 @@ public class LocalNetworkManager : MonoBehaviour {
 				lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
 				lce.Id = (int)currentId;
 				lce.Init();
-				
+				break;
+			case NetworkCommand.DISCONNECT_COMMAND:
+				DisconnectCommand disconnectCommand = DisconnectCommand.Deserialize(packet.bitReader, MaxPlayers);
+				lce = Player.GetComponent<LocalCharacterEntity>();
+				int playerId = lce.Id;
+				if (playerId == disconnectCommand.playerId)
+				{
+					// Disconnect the player
+					Debug.Log("YOU HAVE BEEN DISCONECTED");
+				}
+				else
+				{
+					// A player has been disconnected from the game
+					Debug.Log("PLAYER " + disconnectCommand.playerId + " HAS DISCONECTED");
+					_localWorld.RemoveEntity(disconnectCommand.playerId);
+				}
 				break;
 		}
 	}
@@ -115,11 +131,15 @@ public class LocalNetworkManager : MonoBehaviour {
 	}
 
 	public void SendUnreliable(Serialize serial) {
-		// _networkAPI.Send(2, _sending_endpoint, serial);
+		_networkAPI.Send(2, _sending_endpoint, serial);
 	}
 
 	void OnDisable() 
 	{
+		for (int i = 0; i < 10; i++)
+		{
+			SendUnreliable(new DisconnectCommand(0, MaxPlayers).Serialize);
+		}
 		_networkAPI.Close();
 	}
 }

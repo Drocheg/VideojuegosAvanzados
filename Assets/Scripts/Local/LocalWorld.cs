@@ -118,7 +118,17 @@ public class LocalWorld : MonoBehaviour {
 		_entities[id] = local;
 	}
 
-	public void RemoveReference(int id)
+	public void RemoveEntity(uint id)
+	{
+		LocalCharacterEntity removedEntity = entities[id];
+		if (removedEntity != null)
+		{
+			Destroy(removedEntity.gameObject);
+			RemoveReference(id);
+		}
+	}
+	
+	public void RemoveReference(uint id)
 	{
 		_entities[id] = null;
 		_entitiesCounter--;

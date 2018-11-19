@@ -63,7 +63,6 @@ public abstract class NetworkChannel : INetworkChannel {
 		return MapToModule(first, second, max) == max / 2;
 	}
 
-
 	protected ulong incSeq()
 	{
 		var oldSeq = maxSendSeq;

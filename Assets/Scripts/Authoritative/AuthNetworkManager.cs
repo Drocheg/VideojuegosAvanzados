@@ -7,14 +7,15 @@ public class AuthNetworkManager : MonoBehaviour {
 	public class RemoteHost {
 		public EndPoint _receiving_endpoint;
 		public EndPoint _sending_endpoint;
-		public uint UnreliableChannel, ReliableChannel, TimedChannel;
+		public uint UnreliableChannel, ReliableChannel, UnreliableEnventChannel;
 		public int Id; // The Id of the entity this host relates to.
 	}
 
 	public Transform RemotePlayerPrefab;
 	
 	private NetworkAPI _networkAPI;
-	private List<RemoteHost> hosts = new List<RemoteHost>();
+	private RemoteHost[] hosts;
+	private int _hostCount;
 	public string TestRemoteIp;
 	public int TestRemotePort2, TestReceiveRemotePort, LocalPort, SpinLockTime;
 	public uint MaxHosts;
@@ -30,6 +31,8 @@ public class AuthNetworkManager : MonoBehaviour {
 	void Start()
 	{
 		takenIds = new bool[MaxHosts];
+		hosts = new RemoteHost[MaxHosts];
+		_hostCount = 0;
 		takenIds[0] = true; // TODO delete this when host stop being a player.
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
@@ -77,7 +80,7 @@ public class AuthNetworkManager : MonoBehaviour {
 			var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
 			if (commandType == NetworkCommand.JOIN_COMMAND)
 			{
-				if (hosts.Count < MaxHosts)
+				if (_hostCount < MaxHosts)
 				{
 					addHost(packet);
 				}
@@ -88,7 +91,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	int GetHostId(EndPoint packetOrigin) {
 		int Id = -1;
 		foreach(var e in hosts) {
-			if (e._receiving_endpoint.Equals(packetOrigin)) {
+			if (e!=null && e._receiving_endpoint.Equals(packetOrigin)) {
 				Id = e.Id;
 				break;
 			}
@@ -104,7 +107,8 @@ public class AuthNetworkManager : MonoBehaviour {
 		//var port packet.bitReader.ReadInt()
 		IPEndPoint currentSendingEndPoint = new IPEndPoint(((IPEndPoint)currentReceivingEndpoint).Address, ((IPEndPoint) currentReceivingEndpoint).Port-1);
 		_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint);
-		if(!_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint, TimeoutEvents)) return false;
+		_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint, TimeoutEvents);
+		if(!_networkAPI.AddUnreliableChannel(2, currentReceivingEndpoint, currentSendingEndPoint)) return false;
 
 		
 		
@@ -117,7 +121,8 @@ public class AuthNetworkManager : MonoBehaviour {
 			_receiving_endpoint = currentReceivingEndpoint,
 			_sending_endpoint = currentSendingEndPoint,
 			UnreliableChannel = 0,
-			ReliableChannel = 1
+			ReliableChannel = 1,
+			UnreliableEnventChannel = 2
 		};
 		
 		Debug.Log("Adding HOST: " + packet.endPoint + "With ID: " + currentId);
@@ -134,13 +139,49 @@ public class AuthNetworkManager : MonoBehaviour {
 		// Enviarle un packete por cada host que hay de antes al nuevo
 		foreach (var host in hosts)
 		{
-			SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
+			if (host != null)
+			{
+				SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
+			}
 		}
 		SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand(0, MaxHosts).Serialize);
-		hosts.Add(newHost);
-		//_networkAPI.Send(hosts[currentId].ReliableChannel, hosts[currentId]._sending_endpoint, );	TODO send ADD PLAYER COMMAND
+		_hostCount += 1;
+		hosts[currentId] = newHost;
 		return true;
 	}
+
+	
+	private void disconnectHost(EndPoint ep)
+	{
+		disconnectHost(GetHostId(ep));
+	}
+	
+	private void disconnectHost(int hostID)
+	{
+		takenIds[hostID] = false;
+		RemoteHost removedHost = hosts[hostID];
+		hosts[hostID] = null;
+		SendAuthEventReliable(new DisconnectCommand((uint)hostID, MaxHosts).Serialize);
+		for (int i = 0; i < 10; i++)
+		{
+			SendAuthEventUnreliableToSingleHost(removedHost, new DisconnectCommand((uint)hostID, MaxHosts).Serialize);
+		}
+		_networkAPI.UpdateSendQueues();
+		removeChannels(removedHost);
+		Debug.Log("PLAYER " + hostID + " HAS DISCONECTED");
+		_authWorld.RemoveEntity((uint)hostID);
+	}
+
+	private void removeChannels(RemoteHost host)
+	{
+		removeChannels(host._receiving_endpoint);
+	}
+	
+	private void removeChannels(EndPoint endPoint)
+	{
+		_networkAPI.RemoveChannels(endPoint);
+	}
+
 	
 	void ParseCommand(Packet packet) {
 		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, System.Enum.GetValues(typeof(NetworkCommand)).Length);
@@ -165,6 +206,13 @@ public class AuthNetworkManager : MonoBehaviour {
 				_authWorld.Shoot(Id, packet.bitReader);
 				break;
 			}
+			case NetworkCommand.DISCONNECT_COMMAND:
+			{
+				var Id = GetHostId(packet.endPoint);
+				disconnectHost(Id);
+				break;
+			}
+			// TODO join command when connected?
 		}
 	}
 
@@ -189,10 +237,19 @@ public class AuthNetworkManager : MonoBehaviour {
 		//_networkAPI.UpdateSendQueues();
 		return;
 	}
+	
+	public void SendAuthEventUnreliableToSingleHost(RemoteHost host, Serialize ev) {
+		_networkAPI.Send(host.UnreliableChannel, host._sending_endpoint, ev);	
+		//_networkAPI.UpdateSendQueues();
+		return;
+	}
 
 	public void SendAuthProjectiles(Serialize ev) {
 		foreach(var host in hosts) {
-			_networkAPI.Send(2, host._sending_endpoint, ev);
+			if (host != null)
+			{
+				_networkAPI.Send(2, host._sending_endpoint, ev);
+			}
 		}
 		_networkAPI.UpdateSendQueues();
 	}
