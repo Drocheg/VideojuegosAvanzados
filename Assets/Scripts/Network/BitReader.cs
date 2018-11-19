@@ -13,7 +13,7 @@ public class Utility {
             count++;
             num >>= 1;
         }
-        return count;
+        return count - 1;
     }
 }
 
@@ -55,7 +55,7 @@ public class BitReader {
             // Fill up 32 bits of the bits variable.
             var filledUpBytes = bitCount / 8;
             bits >>= filledUpBytes * 8;
-			var requiredNewBytes = (required - (bitsBufferLimit - bitCount) -1 ) / 8;
+			var requiredNewBytes = (required - (bitsBufferLimit - bitCount) -1 ) / 8 + 1;
 			var shiftedOldBitBufferLimit = bitsBufferLimit - filledUpBytes * 8;
 			bitsBufferLimit = shiftedOldBitBufferLimit + requiredNewBytes * 8;
             bitCount %= 8;
@@ -86,12 +86,12 @@ public class BitReader {
     public int ReadInt(int min, int max)
     {
 		// 
-        return (int) ReadBits(Utility.CountBits(max - min));
+        return (int) ReadBits(Utility.CountBits(max - min) + 1);
     }
 
     public float ReadFloat(float _min, float _max, float _step)
     {
-        int floatBits = (int) Utility.CountBits((int) ((_max - _min) / _step));
+        int floatBits = (int) Utility.CountBits((int) ((_max - _min) / _step)) + 1;
         ulong longVal = ReadBits(floatBits);
         float ret = longVal * _step + _min;
         // Debug.Log("min: " + _min + "max: " + _max + "step: " + _step + "bits: " + floatBits + "logVall: " + longVal + "ret: " + ret);
