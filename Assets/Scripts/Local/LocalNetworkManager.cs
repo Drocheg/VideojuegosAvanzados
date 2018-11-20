@@ -152,6 +152,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	{
 		if (!_networkAPI.UpdateSendQueues())
 		{
+			Debug.Log("Sending queue is full. Disconnecting");
 			disconnect();
 		}
 	}
@@ -167,11 +168,14 @@ public class LocalNetworkManager : MonoBehaviour {
 
 	private void disconnect()
 	{
+		
 		_networkAPI.ClearSendQueue();
 		for (int i = 0; i < 10; i++)
 		{
 			SendUnreliable(new DisconnectCommand(0, MaxPlayers).Serialize);
 		}
 		_networkAPI.UpdateSendQueues();
+		System.Threading.Thread.Sleep(1000);
+		_networkAPI.Close();
 	}
 }
