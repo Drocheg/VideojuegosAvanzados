@@ -15,7 +15,6 @@ public class LocalNetworkManager : MonoBehaviour {
 	public Transform RemotePlayerPrefab;
 	public Transform MainPlayerFab;
 	private LocalWorld _localWorld;
-	private LocalProjectileManager _localProjectileManager;
 	private EndPoint _receiving_endpoint;
 	private EndPoint _sending_endpoint;
 	public float TimeoutEvents;
@@ -36,7 +35,6 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		// _networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
-		_localProjectileManager = GameObject.FindObjectOfType<LocalProjectileManager>();
 
 		SendReliable(new JoinCommand().Serialize);
 
@@ -78,6 +76,10 @@ public class LocalNetworkManager : MonoBehaviour {
 			case NetworkCommand.SHOOT_COMMAND: 
 				_localWorld.BulletCollision(packet.bitReader);
 				break;
+			case NetworkCommand.PROJECTILE_SHOOT_COMMAND: {
+				_localWorld.NewProjectileShootCommand(packet.bitReader);
+				break;
+			}
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:
 				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayers);
 				uint currentId = joinResponseCommand.playerId;
