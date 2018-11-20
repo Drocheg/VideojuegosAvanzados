@@ -887,14 +887,13 @@ MonoBehaviour:
   MaxTime: 10000
   TimePrecision: 0.001
   MaxMoves: 1024
-  NetworkManager: {fileID: 1175571462}
-  ExpectedEntities: 1
+  ExpectedEntities: 0
   SnapshotTickRate: 20
   MaxHP: 100
   SpawnTime: 4
   SpawnLocation: {fileID: 1203181107}
-  ProjectileOffset: 0
-  ExplosionMagnitude: 50
+  ProjectileOffset: 10
+  ExplosionMagnitude: 10
 --- !u!114 &1304344874
 MonoBehaviour:
   m_ObjectHideFlags: 0

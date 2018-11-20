@@ -27,13 +27,6 @@ public class AuthCharacterEntity : AuthEntity {
 	
 	public bool IsLocalPlayer;
 	public uint lastProcessedInput;
-	// Update is called once per frame
-	// public void UpdateEntity (float deltaTime) {
-	// 	if (!IsLocalPlayer && CharacterIsMoving) {
-	// 		transform.Translate(transform.forward * deltaTime * CurrentMovement.x);
-	// 		transform.Translate(transform.right * deltaTime * CurrentMovement.y);
-	// 	}
-	// }
 
 	public override void Serialize(BitWriter writer) {
 		writer.WriteFloat(transform.position.x, _world.MinPosX, _world.MaxPosX, _world.Step);

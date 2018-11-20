@@ -10,7 +10,7 @@ public class AuthWorld : MonoBehaviour {
 	public float MaxTime, TimePrecision;
 	public ulong MaxMoves;
 	private float _timestamp;
-	public AuthNetworkManager NetworkManager;
+	private AuthNetworkManager _networkManager;
 	private AuthEntity[] _entities;
 	private int _expectedEntities;
 	public int ExpectedEntities;
@@ -46,13 +46,14 @@ public class AuthWorld : MonoBehaviour {
 	void Start()
 	{
 		_entityTypes = System.Enum.GetValues(typeof (EntityType)).Length;
+		_networkManager = GameObject.FindObjectOfType<AuthNetworkManager>();
 	}
 
 	IEnumerator SnapshotLoop() {
 		while(true) {
 			yield return new WaitForSecondsRealtime(_snapshotDelta);
 			if (_expectedEntities >= ExpectedEntities) {
-				NetworkManager.SendAuthEventUnreliable(TakeSnapshot);
+				_networkManager.SendAuthEventUnreliable(TakeSnapshot);
 			}
 		}	
 	}
@@ -85,10 +86,6 @@ public class AuthWorld : MonoBehaviour {
 		}
 	}
 
-	public void Shoot(int id, BitReader reader) {
-		var comm = ShootCommand.Deserialize(reader, MaxEntities, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
-		Shoot(id, comm);
-	}
 
 	IEnumerator ReviveEntity(HealthManager entity) {
 		yield return new WaitForSeconds(SpawnTime);
@@ -100,6 +97,10 @@ public class AuthWorld : MonoBehaviour {
 
 	public void Revive(HealthManager entity) {
 		StartCoroutine(ReviveEntity(entity));
+	}
+	public void Shoot(int id, BitReader reader) {
+		var comm = ShootCommand.Deserialize(reader, MaxEntities, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
+		Shoot(id, comm);
 	}
 
 	public void Shoot(int id, ShootCommand comm) {
@@ -130,7 +131,7 @@ public class AuthWorld : MonoBehaviour {
 
 		// Send shoot info to all hosts.
 		var command = new ShootCommand(comm._damage, comm._id, MaxEntities, comm._cX, comm._cY, comm._cZ, comm._nX, comm._nY, comm._nZ, MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step);
-		NetworkManager.SendAuthEventReliable(command.Serialize);
+		_networkManager.SendAuthEventReliable(command.Serialize);
 	}
 
 	public void Explode(AuthProjectileEntity projectile, WithinExplosionRadius radius, float damage) {
@@ -153,6 +154,9 @@ public class AuthWorld : MonoBehaviour {
 				var dir = new Vector3(command._dirX, command._dirY, command._dirZ);
 				projectile.SetPositionAndForce(pos, dir);
 				_entities[i] = projectile;
+
+				command._id = i;
+				_networkManager.SendAuthEventReliable(command.Serialize);
 				break;
 			}
 		}
