@@ -7,7 +7,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	public class RemoteHost {
 		public EndPoint _receiving_endpoint;
 		public EndPoint _sending_endpoint;
-		public uint UnreliableChannel, ReliableChannel, UnreliableEnventChannel;
+		public uint UnreliableSnapshotChannel, ReliableChannel, UnreliableEventChannel;
 		public int Id; // The Id of the entity this host relates to.
 	}
 
@@ -71,6 +71,7 @@ public class AuthNetworkManager : MonoBehaviour {
 				}
 				case 2: {
 					// Unreliable events channel
+					ParseCommand(packet);
 					break;
 				}
 			}
@@ -120,9 +121,9 @@ public class AuthNetworkManager : MonoBehaviour {
 			Id = currentId,
 			_receiving_endpoint = currentReceivingEndpoint,
 			_sending_endpoint = currentSendingEndPoint,
-			UnreliableChannel = 0,
+			UnreliableSnapshotChannel = 0,
 			ReliableChannel = 1,
-			UnreliableEnventChannel = 2
+			UnreliableEventChannel = 2
 		};
 		
 		Debug.Log("Adding HOST: " + packet.endPoint + "With ID: " + currentId);
@@ -222,7 +223,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		foreach(var host in hosts) {
 			if (host != null)
 			{
-				_networkAPI.Send(host.UnreliableChannel, host._sending_endpoint, ev);	
+				_networkAPI.Send(host.UnreliableSnapshotChannel, host._sending_endpoint, ev);	
 			}
 		}
 		//_networkAPI.UpdateSendQueues();
@@ -233,7 +234,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		foreach(var host in hosts) {
 			if (host != null)
 			{
-				_networkAPI.Send(host.UnreliableEnventChannel, host._sending_endpoint, ev);	
+				_networkAPI.Send(host.UnreliableEventChannel, host._sending_endpoint, ev);	
 			}
 		}
 		//_networkAPI.UpdateSendQueues();
@@ -259,7 +260,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	}
 	
 	public void SendAuthEventUnreliableToSingleHost(RemoteHost host, Serialize ev) {
-		_networkAPI.Send(host.UnreliableEnventChannel, host._sending_endpoint, ev);	
+		_networkAPI.Send(host.UnreliableEventChannel, host._sending_endpoint, ev);	
 		//_networkAPI.UpdateSendQueues();
 		return;
 	}
