@@ -138,7 +138,7 @@ public class NetworkAPI {
 		return true;
 	}
 
-	public void UpdateSendQueues()
+	public bool UpdateSendQueues()
 	{
 		var packetList = new List<Packet>();
 		foreach (var channels in channelsMap.Values)
@@ -154,8 +154,13 @@ public class NetworkAPI {
 			foreach (var packet in packetList)
 			{
 				sendQueue.Enqueue(packet);
+				if (sendQueue.Count > _maxPacketsToSend)
+				{
+					return false;
+				}
 			}
 		}
+		return true;
 	}
 
 	public List<Packet> Receive(out List<Packet> channelLessPacketList) {
@@ -240,5 +245,13 @@ public class NetworkAPI {
 //				}
 //			}
 //		}
+	}
+
+	public void ClearSendQueue()
+	{
+		lock (sendQueue)
+		{
+			sendQueue.Clear();
+		}
 	}
 }

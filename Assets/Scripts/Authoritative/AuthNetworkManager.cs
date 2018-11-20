@@ -57,7 +57,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
 		
-		_networkAPI.UpdateSendQueues();
+		updateSendQueuesOrDisconnect();
 
 		foreach(var packet in packets) {
 			switch(packet.channelId) {
@@ -231,8 +231,6 @@ public class AuthNetworkManager : MonoBehaviour {
 				sendOrDisconnect(host.UnreliableSnapshotChannel, host._sending_endpoint, ev);	
 			}
 		}
-		//_networkAPI.UpdateSendQueues();
-		return;
 	}
 
 	private void SendAuthEventUnreliable(Serialize ev) {
@@ -242,8 +240,6 @@ public class AuthNetworkManager : MonoBehaviour {
 				sendOrDisconnect(host.UnreliableEventChannel, host._sending_endpoint, ev);
 			}
 		}
-		//_networkAPI.UpdateSendQueues();
-		return;
 	}
 	
 	public void SendAuthEventReliable(Serialize ev) {
@@ -254,20 +250,14 @@ public class AuthNetworkManager : MonoBehaviour {
 			}
 			
 		}
-		//_networkAPI.UpdateSendQueues();
-		return;
 	}
 	
 	public void SendAuthEventReliableToSingleHost(RemoteHost host, Serialize ev) {
 		sendOrDisconnect(host.ReliableChannel, host._sending_endpoint, ev);	
-		//_networkAPI.UpdateSendQueues();
-		return;
 	}
 	
 	public void SendAuthEventUnreliableToSingleHost(RemoteHost host, Serialize ev) {
 		sendOrDisconnect(host.UnreliableEventChannel, host._sending_endpoint, ev);
-		//_networkAPI.UpdateSendQueues();
-		return;
 	}
 
 	public void SendAuthProjectiles(Serialize ev) {
@@ -277,7 +267,6 @@ public class AuthNetworkManager : MonoBehaviour {
 				sendOrDisconnect(2, host._sending_endpoint, ev);
 			}
 		}
-		_networkAPI.UpdateSendQueues();
 	}
 
 	private void sendOrDisconnect(uint channel, EndPoint endPoint, Serialize serial)
@@ -286,6 +275,23 @@ public class AuthNetworkManager : MonoBehaviour {
 		{
 			Debug.Log("Channel does not exist or full. Disconnecting player." + endPoint);
 			disconnectHost(endPoint);
+		}
+	}
+	
+	private void updateSendQueuesOrDisconnect()
+	{
+		if (!_networkAPI.UpdateSendQueues())
+		{
+			Debug.Log("Sending queue is too full, disconnecting all players and terminating server");
+			_networkAPI.ClearSendQueue();
+			foreach (var host in hosts)
+			{
+				if (host != null)
+				{
+					disconnectHost(host.Id);
+				}
+			}
+			_networkAPI.Close();
 		}
 	}
 	

@@ -45,7 +45,6 @@ public class LocalNetworkManager : MonoBehaviour {
 	void Update () {
 		
 		List<Packet> channelLess;
-		_networkAPI.UpdateSendQueues();
 		var packets = _networkAPI.Receive(out channelLess);
 
 		if (Input.GetButtonDown("k"))
@@ -122,6 +121,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				{
 					// Disconnect the player
 					Debug.Log("YOU HAVE BEEN DISCONECTED");
+					_networkAPI.Close();
 				}
 				else
 				{
@@ -148,6 +148,14 @@ public class LocalNetworkManager : MonoBehaviour {
 		}
 	}
 
+	private void updateSendQueuesOrDisconnect()
+	{
+		if (!_networkAPI.UpdateSendQueues())
+		{
+			disconnect();
+		}
+	}
+
 	public void SendUnreliable(Serialize serial) {
 		sendOrDisconnect(2, _sending_endpoint, serial);
 	}
@@ -159,6 +167,7 @@ public class LocalNetworkManager : MonoBehaviour {
 
 	private void disconnect()
 	{
+		_networkAPI.ClearSendQueue();
 		for (int i = 0; i < 10; i++)
 		{
 			SendUnreliable(new DisconnectCommand(0, MaxPlayers).Serialize);
