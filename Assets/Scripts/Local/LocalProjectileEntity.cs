@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocalProjectileEntity : Entity {
+public class LocalProjectileEntity : LocalEntity {
 	public int Id;
 	// Use this for initialization
 
@@ -17,6 +17,7 @@ public class LocalProjectileEntity : Entity {
 		_qPositions = new Queue<Vector3>();
 		_queuedTimes = new Queue<float>();
 		_world = GameObject.FindObjectOfType<LocalWorld>();
+		Entity.EntitySizes[(int)EntityType.PROJECTILE] = SerializationSize();
 	}
 	
 	// Update is called once per frame
@@ -73,7 +74,7 @@ public class LocalProjectileEntity : Entity {
 		transform.position = Vector3.Lerp(_pPos.Value, _nPos.Value, lerp);
 	}
 
-	public void Deserialize(BitReader reader) {
+	public override void Deserialize(BitReader reader) {
 		Vector3 pos;
 		pos.x = reader.ReadFloat(_world.MinPosX, _world.MaxPosX, _world.Step);
 		pos.y = reader.ReadFloat(_world.MinPosY, _world.MaxPosY, _world.Step);
@@ -82,10 +83,17 @@ public class LocalProjectileEntity : Entity {
 		_qPositions.Enqueue(pos);
 	}
 
+	int SerializationSize() {
+		int count = 0;
+		count += Utility.CountBitsFloat(_world.MinPosX, _world.MaxPosX, _world.Step);
+		count += Utility.CountBitsFloat(_world.MinPosY, _world.MaxPosY, _world.Step);
+		count += Utility.CountBitsFloat(_world.MinPosZ, _world.MaxPosZ, _world.Step);
+		return count;
+	}
+
 	public override int GetId() {
 		return Id;
 	}
-
 	public override EntityType GetEntityType()
 	{
 		return EntityType.PROJECTILE;

@@ -15,6 +15,14 @@ public class Utility {
         }
         return count - 1;
     }
+
+    public static int CountBitsFloat(float min, float max, float step) {
+        return (int) Utility.CountBits((int) ((max - min) / step)) + 1;
+    }
+
+    public static int CountBitsInt(int min, int max) {
+        return Utility.CountBits(max - min) + 1;
+    }
 }
 
 public class BitReader {
@@ -83,19 +91,25 @@ public class BitReader {
         return (bits & mask) >> from;
     }
 
+    public void DiscardBits(int count) {
+        for (int i = 0; i < count; i++) {
+            ReadBit();
+        }
+    }
+
     public int ReadInt(int min, int max)
     {
 		// 
-        return (int) ReadBits(Utility.CountBits(max - min) + 1);
+        return (int) ReadBits(Utility.CountBitsInt(min, max));
     }
 
-    public float ReadFloat(float _min, float _max, float _step)
+    public float ReadFloat(float min, float max, float step)
     {
-        int floatBits = (int) Utility.CountBits((int) ((_max - _min) / _step)) + 1;
+        int floatBits = Utility.CountBitsFloat(min, max, step);
         ulong longVal = ReadBits(floatBits);
-        float ret = longVal * _step + _min;
+        float ret = longVal * step + min;
         // Debug.Log("min: " + _min + "max: " + _max + "step: " + _step + "bits: " + floatBits + "logVall: " + longVal + "ret: " + ret);
-        if (ret < _min || ret > _max)
+        if (ret < min || ret > max)
         {
             throw new Exception("Read a float not in between min and max.");
         }

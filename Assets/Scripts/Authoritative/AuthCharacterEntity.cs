@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AuthCharacterEntity : CharacterEntity, IAuth {
+public class AuthCharacterEntity : AuthEntity {
 	public int Id;
 	private Animator _animator;
 	private CharacterController _characterController;
@@ -35,7 +35,7 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 	// 	}
 	// }
 
-	public void Serialize(BitWriter writer) {
+	public override void Serialize(BitWriter writer) {
 		writer.WriteFloat(transform.position.x, _world.MinPosX, _world.MaxPosX, _world.Step);
 		writer.WriteFloat(transform.position.y, _world.MinPosY, _world.MaxPosY, _world.Step);
 		writer.WriteFloat(transform.position.z, _world.MinPosZ, _world.MaxPosZ, _world.Step);
@@ -58,4 +58,9 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 	}
 
 	public override int GetId(){return Id;}
+
+	public override EntityType GetEntityType()
+	{
+		return EntityType.CHARACTER;
+	}
 }

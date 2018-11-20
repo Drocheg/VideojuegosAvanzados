@@ -207,7 +207,7 @@ public class NetworkAPI {
 		{
 			Packet packet = null;
 			lock (sendQueue){
-				// Debug.Log("SEND THREAD: " + sendQueue.Count);
+				Debug.Log("SEND THREAD: " + sendQueue.Count);
 				if (sendQueue.Count > 0)
 				{
 					packet = sendQueue.Dequeue();
