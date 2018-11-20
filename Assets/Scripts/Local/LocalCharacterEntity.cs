@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocalCharacterEntity : CharacterEntity, ILocal {
+public class LocalCharacterEntity : Entity, ILocal {
 	public int Id;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	public Vector3? _previousPosition, _nextPosition;
@@ -32,6 +32,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
 		_healthManager = GetComponent<HealthManager>();
+		
 		StartCoroutine(DelayAddReference());
 	}
 
@@ -102,6 +103,11 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 
 	public override int GetId() {
 		return Id;
+	}
+
+	public override EntityType GetEntityType()
+	{
+		return EntityType.CHARACTER;
 	}
 }
 

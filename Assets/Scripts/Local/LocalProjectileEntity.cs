@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocalProjectileEntity : CharacterEntity {
+public class LocalProjectileEntity : Entity {
 	public int Id;
 	// Use this for initialization
 
@@ -84,5 +84,10 @@ public class LocalProjectileEntity : CharacterEntity {
 
 	public override int GetId() {
 		return Id;
+	}
+
+	public override EntityType GetEntityType()
+	{
+		return EntityType.PROJECTILE;
 	}
 }
