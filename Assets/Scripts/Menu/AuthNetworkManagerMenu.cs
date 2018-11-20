@@ -26,7 +26,8 @@ namespace Menu
 		public int TestRemotePort2, TestReceiveRemotePort, LocalPort, SpinLockTime;
 		public uint MaxHosts;
 		private bool[] takenIds;
-		public uint ChannelsPerHost;
+		public uint ChannelsPerHosts;
+		public uint MaxPacketsToSend;
 		public ulong MaxSeqPossible;
 		public float TimeoutEvents;
 		public float PacketLoss;
@@ -42,7 +43,7 @@ namespace Menu
 			takenIds[0] = true; // TODO delete this when host stop being a player.
 			_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 			_networkAPI = NetworkAPI.GetInstance();
-			_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss);
+			_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss, MaxPacketsToSend);
 		}
 
 
