@@ -23175,6 +23175,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LocalProjectile: {fileID: 114158941686848598, guid: 1117c0d6f400e074a85cf01aeaf78f6e,
     type: 2}
+  _projectiles: []
+  _currentState: 0
+  _world: {fileID: 0}
 --- !u!1 &1916200136
 GameObject:
   m_ObjectHideFlags: 0
@@ -23719,7 +23722,9 @@ MonoBehaviour:
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
   TargetQueuedPositions: 1
-  ExpectedEntities: 1
+  ExpectedEntities: 0
+  LocalProjectilePrefab: {fileID: 114158941686848598, guid: 1117c0d6f400e074a85cf01aeaf78f6e,
+    type: 2}
 --- !u!114 &2010554598
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -19,15 +19,16 @@ public class LocalWorld : MonoBehaviour {
 	private float _previousTime, _nextTime, _currentTime;
 	private float _timestamp;
 	private NetworkState _currentState;
-	private LocalCharacterEntity[] _entities;
+	private LocalEntity[] _entities;
 
 	int _entitiesCounter, _entityTypes;
 	public int ExpectedEntities;
 	private LocalPlayer _localPlayer;
+	public LocalProjectileEntity LocalProjectilePrefab;
 	private int _characterSerialSize, _projectileSerialSize;
 	// Use this for initialization
 	void Start() {
-		_entities = new LocalCharacterEntity[MaxEntities];
+		_entities = new LocalEntity[MaxEntities];
 		_queuedTimes = new Queue<float>();
 		_entitiesCounter = 0;
 		var pools = GetComponents<ParticlePool>();
@@ -56,9 +57,7 @@ public class LocalWorld : MonoBehaviour {
 					foreach(var e in _entities) {
 						if (e != null) {
 							// Interpol entity.
-							ulong lastProcessedInput;
-							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation, out lastProcessedInput);
-							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
+							e.NextInterval();
 							e.UpdateEntity(0);
 						}
 					}
@@ -78,14 +77,7 @@ public class LocalWorld : MonoBehaviour {
 						foreach(var e in _entities) {
 							// Interpol entity
 							if (e != null) {
-								e._previousPosition = e._nextPosition;
-								e._previousAnimation = e._nextAnimation;
-								e._previousRotation = e._nextRotation;
-								ulong lastProcessedInput;
-								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
-								if (e.IsLocalPlayer && e._nextPosition != null ) {
-									_localPlayer.AdjustPositionFromSnapshot(e._nextPosition.Value, lastProcessedInput);
-								}
+								e.NextInterval();
 							}
 						}
 						
@@ -158,7 +150,7 @@ public class LocalWorld : MonoBehaviour {
 					}
 					reader.DiscardBits(bitsToDiscard);
 				} else {
-					Debug.Log("Snapshot para id: " + e.Id);
+					Debug.Log("Snapshot para id: " + e.GetId());
 					Debug.Assert(e != null);
 					e.Deserialize(reader);
 				}
@@ -167,8 +159,18 @@ public class LocalWorld : MonoBehaviour {
 	}
 
 	public void NewProjectileShootCommand(BitReader reader) {
-		var command = ProjectileShootCommand.Deserialize(reader, MinPosX, MinPosY, MinPosZ, MaxPosX, MaxPosY, MaxPosZ, TimePrecision);
+		var command = ProjectileShootCommand.Deserialize(reader, MaxEntities, MinPosX, MinPosY, MinPosZ, MaxPosX, MaxPosY, MaxPosZ, TimePrecision);
 		
+		if (command._id < 0 || command._id >= MaxEntities) {
+			Debug.LogWarning("Recevied projectile shoot command with invalid id.");
+			return;
+		}
+
+		var projectile = Instantiate(LocalProjectilePrefab);
+		projectile.Id = command._id;
+		_entities[projectile.Id] = projectile;
+		var pos = new Vector3(command._x, command._y, command._z);
+		projectile.transform.position = pos;
 	}
 
 	int CharacterEntitySerialSize() {

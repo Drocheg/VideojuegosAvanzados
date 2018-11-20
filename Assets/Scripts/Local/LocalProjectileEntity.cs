@@ -9,68 +9,50 @@ public class LocalProjectileEntity : LocalEntity {
 	public Queue<Vector3> _qPositions;
 	public Vector3? _pPos, _nPos;
 	private LocalWorld _world;
-
-	private float _previousTime, _nextTime, _currentTime;
-	public Queue<float> _queuedTimes;
 	private NetworkState _currentState;
+	private bool _started;
 	void Awake () {
 		_qPositions = new Queue<Vector3>();
-		_queuedTimes = new Queue<float>();
 		_world = GameObject.FindObjectOfType<LocalWorld>();
 	}
-	
-	// Update is called once per frame
-	public void UpdateProjectile () {
-		switch(_currentState) {
-			case NetworkState.INITIAL: {
-				// Initial position arrived but not enough info to interpolate.
-				if (_queuedTimes.Count >= _world.MinQueuedPositions) {
-					Debug.Assert(_queuedTimes.Count >= 2);
-					_previousTime = _queuedTimes.Dequeue();
-					_nextTime = _queuedTimes.Dequeue();
-					_pPos = _qPositions.Dequeue();
-					_nPos = _qPositions.Dequeue();
-					_currentTime = _previousTime;
-					_currentState = NetworkState.NORMAL;
-				}
-				break;
-			}
-			case NetworkState.NORMAL: {
-				var timeMultiplier = _queuedTimes.Count > _world.TargetQueuedPositions ? 1.1f : 0.9f;
-				// Debug.Log("TimeM: " + timeMultiplier);
-				_currentTime += Time.deltaTime * timeMultiplier ;
-				if (_currentTime > _nextTime) {
-					if (_queuedTimes.Count > 0) {
-						_previousTime = _nextTime;
-						_nextTime = _queuedTimes.Dequeue();
-						_pPos = _nPos;
-						_nPos = _qPositions.Dequeue();
-						
-						if (_nextTime - _currentTime > _world.MaxAllowedDelay) {
-							// Hard reset
-							_currentState = NetworkState.INITIAL;
-							Debug.Log("Hard reset");
-							break;
-						}
-					} else {
-						LerpProjectile(1);
-						_currentState = NetworkState.INITIAL;
-						Debug.Log("Network problems");
-						break;
-					}
-				}
-				var d = (_currentTime - _previousTime) / (_nextTime - _previousTime);
-				LerpProjectile(d);
-				break;
-			}
-			case NetworkState.NETWORK_PROBLEMS: {
-				break;
-			}
+
+	public override void UpdateEntity(float lerp) {
+		if (_currentState == NetworkState.NORMAL) {
+			LerpProjectile(lerp);
 		}
 	}
-	
+
+	public override bool NextInterval()
+	{
+		switch(_currentState){
+			case NetworkState.INITIAL: {
+				if (_qPositions.Count > 2) {
+					_pPos = _qPositions.Dequeue();
+					_nPos = _qPositions.Dequeue();
+					_currentState = NetworkState.NORMAL;
+					return true;
+				}
+				return false;
+			}
+			case NetworkState.NORMAL: {
+				if (_qPositions.Count > 0) {
+					_pPos = _nPos;
+					_nPos = _qPositions.Dequeue();
+					return true;
+				}
+				_pPos = null;
+				_nPos = null;
+				_currentState = NetworkState.INITIAL;
+				return false;
+			}
+		}
+		return false;
+	}
+
 	public void LerpProjectile(float lerp) {
-		transform.position = Vector3.Lerp(_pPos.Value, _nPos.Value, lerp);
+		if (_pPos != null && _nPos != null) {
+			transform.position = Vector3.Lerp(_pPos.Value, _nPos.Value, lerp);
+		}
 	}
 
 	public override void Deserialize(BitReader reader) {

@@ -14,7 +14,7 @@ public class LocalCharacterEntity : LocalEntity {
 	public bool IsLocalPlayer;
 	private LocalWorld _localWorld;
 	private HealthManager _healthManager;
-
+	private NetworkState _currentState;
 	public class Vector3DeltaTime
 	{
 		public Vector3 pos;
@@ -40,20 +40,47 @@ public class LocalCharacterEntity : LocalEntity {
 		_localWorld.AddReference(Id, this);
 	}
 
-	public bool DequeNextPosition(out Vector3? deqPosition, out Vector2? animation, out float rot, out ulong lastProcessedInput)
+	public override bool NextInterval()
 	{
-		if (_queuedPositions.Count > 0){
-			var wrapper = _queuedPositions.Dequeue();
-			deqPosition = wrapper.pos;
-			animation = wrapper.animation;
-			rot = wrapper.rot;
-			lastProcessedInput = wrapper.lastProcessedInput;
-			return true;
+		switch(_currentState){
+			case NetworkState.INITIAL: {
+				if (_queuedPositions.Count > 1) {
+					var wrapper1 = _queuedPositions.Dequeue();
+					var wrapper2 = _queuedPositions.Dequeue();
+					_previousPosition = wrapper1.pos;
+					_previousAnimation = wrapper1.animation;
+					_previousRotation = wrapper1.rot;
+					_nextPosition = wrapper2.pos;
+					_nextAnimation = wrapper2.animation;
+					_nextRotation = wrapper2.rot;
+					var LastProcessedInput = wrapper1.lastProcessedInput;
+					if (IsLocalPlayer && _nextPosition != null ) {
+						_localPlayer.AdjustPositionFromSnapshot(_nextPosition.Value, LastProcessedInput);
+					}
+					_currentState = NetworkState.NORMAL;
+					return true;
+				}
+				return false;
+			}
+			case NetworkState.NORMAL: {
+				if (_queuedPositions.Count > 0) {
+					var wrapper = _queuedPositions.Dequeue();
+					_previousPosition = _nextPosition;
+					_nextPosition = wrapper.pos;
+					_previousAnimation = _nextAnimation;
+					_nextAnimation = wrapper.animation;
+					_previousRotation = _nextRotation;
+					_nextRotation = wrapper.rot;
+					var LastProcessedInput = wrapper.lastProcessedInput;
+					if (IsLocalPlayer && _nextPosition != null ) {
+						_localPlayer.AdjustPositionFromSnapshot(_nextPosition.Value, LastProcessedInput);
+					}
+					return true;
+				}
+				_currentState = NetworkState.INITIAL;
+				return false;
+			}
 		}
-		deqPosition = null;
-		animation = null;
-		rot = 0;
-		lastProcessedInput = 0;
 		return false;
 	}
 
@@ -65,7 +92,7 @@ public class LocalCharacterEntity : LocalEntity {
 		_chest = _animator.GetBoneTransform(HumanBodyBones.Chest);
 	}
 
-	public void UpdateEntity(float lerp) {
+	public override void UpdateEntity(float lerp) {
 		if((!IsLocalPlayer || !_localPlayer.Prediction) && _previousPosition != null && _nextPosition != null) {
 			transform.position = Vector3.Lerp(_previousPosition.Value, _nextPosition.Value, lerp);
 			LerpAnimation(_previousAnimation.Value, _nextAnimation.Value, lerp);

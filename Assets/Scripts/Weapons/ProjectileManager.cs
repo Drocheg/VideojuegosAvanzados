@@ -26,6 +26,8 @@ public class ProjectileManager : ShootManager {
 
 		var dir = Camera.transform.forward;
 		var command = new ProjectileShootCommand(
+			0,
+			_authWorld.MaxEntities,
 			transform.position.x,
 			transform.position.y,
 			transform.position.z,
