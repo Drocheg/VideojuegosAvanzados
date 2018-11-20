@@ -8,14 +8,6 @@ public enum EntityType: int {
 public abstract class Entity: MonoBehaviour {
 	public abstract int GetId();
 	public abstract EntityType GetEntityType();
-	public static int[] EntitySizes = new int[System.Enum.GetValues(typeof(EntityType)).Length];
-
-	public static int GetSerialBits(int type) {
-		if (type < 0 || type >= EntitySizes.Length) {
-			return 0;
-		}
-		return EntitySizes[type];
-	}
 }
 
 public abstract class AuthEntity : Entity, IAuth

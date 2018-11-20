@@ -32,7 +32,6 @@ public class LocalCharacterEntity : LocalEntity {
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
 		_healthManager = GetComponent<HealthManager>();
-		Entity.EntitySizes[(int) EntityType.CHARACTER] = SerializationSize();
 		StartCoroutine(DelayAddReference());
 	}
 
@@ -100,22 +99,6 @@ public class LocalCharacterEntity : LocalEntity {
 		_healthManager.SetHP(reader.ReadFloat(0, _localWorld.MaxHP, 0.1f));
 		QueueNextPosition(pos, anim, rot, lastProcessedInput);
 	}
-
-
-
-	int SerializationSize() {
-		int count = 0;
-		count += Utility.CountBitsFloat(_localWorld.MinPosX, _localWorld.MaxPosX, _localWorld.Step);
-		count += Utility.CountBitsFloat(_localWorld.MinPosY, _localWorld.MaxPosY, _localWorld.Step);
-		count += Utility.CountBitsFloat(_localWorld.MinPosZ, _localWorld.MaxPosZ, _localWorld.Step);
-		count += Utility.CountBitsFloat(-1, 1, _localWorld.AnimationStep);
-		count += Utility.CountBitsFloat(-1, 1, _localWorld.AnimationStep);
-		count += Utility.CountBitsFloat(-1, 360, _localWorld.RotationStep);
-		count += Utility.CountBitsInt(0, (int)_localPlayer.MaxMoves);
-		count += Utility.CountBitsFloat(0, _localWorld.MaxHP, 0.1f);
-		return count;
-	}
-
 	public override int GetId() {
 		return Id;
 	}

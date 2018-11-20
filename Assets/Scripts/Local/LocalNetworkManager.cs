@@ -78,6 +78,10 @@ public class LocalNetworkManager : MonoBehaviour {
 			case NetworkCommand.SHOOT_COMMAND: 
 				_localWorld.BulletCollision(packet.bitReader);
 				break;
+			case NetworkCommand.PROJECTILE_SHOOT_COMMAND: {
+				_localWorld.NewProjectileShootCommand(packet.bitReader);
+				break;
+			}
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:
 				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayers);
 				uint currentId = joinResponseCommand.playerId;

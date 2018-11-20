@@ -17,7 +17,6 @@ public class LocalProjectileEntity : LocalEntity {
 		_qPositions = new Queue<Vector3>();
 		_queuedTimes = new Queue<float>();
 		_world = GameObject.FindObjectOfType<LocalWorld>();
-		Entity.EntitySizes[(int)EntityType.PROJECTILE] = SerializationSize();
 	}
 	
 	// Update is called once per frame
@@ -83,17 +82,10 @@ public class LocalProjectileEntity : LocalEntity {
 		_qPositions.Enqueue(pos);
 	}
 
-	int SerializationSize() {
-		int count = 0;
-		count += Utility.CountBitsFloat(_world.MinPosX, _world.MaxPosX, _world.Step);
-		count += Utility.CountBitsFloat(_world.MinPosY, _world.MaxPosY, _world.Step);
-		count += Utility.CountBitsFloat(_world.MinPosZ, _world.MaxPosZ, _world.Step);
-		return count;
-	}
-
 	public override int GetId() {
 		return Id;
 	}
+
 	public override EntityType GetEntityType()
 	{
 		return EntityType.PROJECTILE;

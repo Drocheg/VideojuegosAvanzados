@@ -1120,7 +1120,7 @@ MonoBehaviour:
   Prediction: 1
   Speed: 6
   MaxMoves: 1024
-  MaxMoveQueueSize: 600
+  MaxMoveQueueSize: 100
   MaxTime: 1000
   TimePrecision: 0.001
   MovePrecision: 0.01
