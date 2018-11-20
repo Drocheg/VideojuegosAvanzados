@@ -19,20 +19,21 @@ public class LocalWorld : MonoBehaviour {
 	private float _previousTime, _nextTime, _currentTime;
 	private float _timestamp;
 	private NetworkState _currentState;
-	private LocalCharacterEntity[] entities;
+	private LocalCharacterEntity[] _entities;
 
-	int _entitiesCounter;
+	int _entitiesCounter, _entityTypes;
 	public int ExpectedEntities;
 	private LocalPlayer _localPlayer;
 	// Use this for initialization
 	void Start() {
-		entities = new LocalCharacterEntity[MaxEntities];
+		_entities = new LocalCharacterEntity[MaxEntities];
 		_queuedTimes = new Queue<float>();
 		_entitiesCounter = 0;
 		var pools = GetComponents<ParticlePool>();
 		_sparksPool = pools[0];
 		_bloodPool = pools[1];
 		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
+		_entityTypes = System.Enum.GetValues(typeof(EntityType)).Length;
 	}
 	
 	// Update is called once per frame
@@ -49,8 +50,9 @@ public class LocalWorld : MonoBehaviour {
 					_previousTime = _queuedTimes.Dequeue();
 					_nextTime = _queuedTimes.Dequeue();
 					_currentTime = _previousTime;
-					foreach(var e in entities) {
+					foreach(var e in _entities) {
 						if (e != null) {
+							// Interpol entity.
 							ulong lastProcessedInput;
 							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation, out lastProcessedInput);
 							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
@@ -70,7 +72,8 @@ public class LocalWorld : MonoBehaviour {
 					if (_queuedTimes.Count > 0) {
 						_previousTime = _nextTime;
 						_nextTime = _queuedTimes.Dequeue();
-						foreach(var e in entities) {
+						foreach(var e in _entities) {
+							// Interpol entity
 							if (e != null) {
 								e._previousPosition = e._nextPosition;
 								e._previousAnimation = e._nextAnimation;
@@ -90,7 +93,7 @@ public class LocalWorld : MonoBehaviour {
 							break;
 						}
 					} else {
-						foreach(var e in entities) {
+						foreach(var e in _entities) {
 							if (e != null ) {
 								e.UpdateEntity(1);
 							}
@@ -101,7 +104,7 @@ public class LocalWorld : MonoBehaviour {
 					}
 				}
 				var d = (_currentTime - _previousTime) / (_nextTime - _previousTime);
-				foreach(var e in entities) {
+				foreach(var e in _entities) {
 					if (e != null) {
 						e.UpdateEntity(d);
 					}
@@ -117,12 +120,12 @@ public class LocalWorld : MonoBehaviour {
 	public void AddReference(int id, LocalCharacterEntity local)
 	{
 		_entitiesCounter++;
-		entities[id] = local;
+		_entities[id] = local;
 	}
 
 	public void RemoveReference(int id)
 	{
-		entities[id] = null;
+		_entities[id] = null;
 		_entitiesCounter--;
 	}
 
@@ -133,12 +136,18 @@ public class LocalWorld : MonoBehaviour {
 		}
 		QueueNextSnapshot(reader.ReadFloat(0, MaxTime, TimePrecision));
 		
-		foreach(var e in entities) {
+		foreach(var e in _entities) {
 			var b = reader.ReadBit();
 			if (b) {
-				Debug.Log("Snapshot para id: " + e.Id);
-				Debug.Assert(e != null);
-				e.Deserialize(reader);
+				int entityType = reader.ReadInt(0, _entityTypes);
+				if (e == null) {
+					Debug.Log("Update received for unknown entity");
+					reader.DiscardBits(Entity.GetSerialBits(entityType));
+				} else {
+					Debug.Log("Snapshot para id: " + e.Id);
+					Debug.Assert(e != null);
+					e.Deserialize(reader);
+				}
 			} 
 		}
 	}
