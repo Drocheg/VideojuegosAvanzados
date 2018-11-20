@@ -33,8 +33,9 @@ public class NetworkAPI {
 	uint _channelsPerHost;
 	ulong _maxSeqPossible;
 	Thread _sendThread, _recvThread;
+	uint _maxPacketsToSend;
 
-	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible, float packetLoss) {
+	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible, float packetLoss, uint maxPacketsToSend) {
 		_udpClient = new UdpClient(localPort);
 		_udpSendingClient = new UdpClient(localPort+1);
 		_spinLockSleepTime = spinLockTime;
@@ -49,6 +50,7 @@ public class NetworkAPI {
 		_recvThread = new Thread(new ThreadStart(RecvThread));
 		_sendThread.Start();
 		_recvThread.Start();
+		_maxPacketsToSend = maxPacketsToSend;
 	}
 
 	public void Close()
@@ -97,11 +99,11 @@ public class NetworkAPI {
 			switch (type)
 			{
 				case ChanelType.UNRELIABLE:
-					newChannel = new UnreliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible);
+					newChannel = new UnreliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible, _maxPacketsToSend);
 					break;
 				case ChanelType.RELIABLE:
 				case ChanelType.TIMED:
-					newChannel = new ReliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible, timeout);
+					newChannel = new ReliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible, timeout, _maxPacketsToSend);
 					break;
 			}
 			channelsSending.Add(id, newChannel);
@@ -120,19 +122,18 @@ public class NetworkAPI {
 		return false;
 	}
 
-	public bool Send(uint channel, EndPoint enpPoint, Serialize serial) 
+	public bool Send(uint channel, EndPoint endPoint, Serialize serial) 
 	{
 		NetworkChannel networkChannel;
-		if (!getChannel(channel, enpPoint, out networkChannel)) return false;
-		networkChannel.SendPacket(serial);
-		return true;
+		if (!getChannel(channel, endPoint, out networkChannel)) return false;
+		return networkChannel.SendPacket(serial);
 	}
 
-	public bool getChannel(uint channel, EndPoint enpPoint, out NetworkChannel networkChannel) // TODO only public for tests
+	public bool getChannel(uint channel, EndPoint endPoint, out NetworkChannel networkChannel) // TODO only public for tests
 	{
 		networkChannel = null;
 		Dictionary<uint, NetworkChannel> channels;
-		if (!channelsMap.TryGetValue(enpPoint, out channels)) return false;
+		if (!channelsMap.TryGetValue(endPoint, out channels)) return false;
 		if (!channels.TryGetValue(channel, out networkChannel)) return false;
 		return true;
 	}
@@ -207,7 +208,7 @@ public class NetworkAPI {
 		{
 			Packet packet = null;
 			lock (sendQueue){
-				//Debug.Log("SEND THREAD: " + sendQueue.Count);
+				Debug.Log("SEND THREAD: " + sendQueue.Count);
 				if (sendQueue.Count > 0)
 				{
 					packet = sendQueue.Dequeue();

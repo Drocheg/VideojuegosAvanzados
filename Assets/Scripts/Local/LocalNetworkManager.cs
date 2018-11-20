@@ -19,6 +19,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	private EndPoint _sending_endpoint;
 	public float TimeoutEvents;
 	public float PacketLoss;
+	public uint MaxPacketsToSend;
 	private int _commandsCount;
 	public GameObject Player;
 	
@@ -26,7 +27,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	void Start () {
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
-		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss, MaxPacketsToSend);
 		_sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		_receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort+1);
 		_networkAPI.AddUnreliableChannel(0, _receiving_endpoint, _sending_endpoint);
@@ -47,6 +48,10 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.UpdateSendQueues();
 		var packets = _networkAPI.Receive(out channelLess);
 
+		if (Input.GetButtonDown("k"))
+		{
+			disconnect();
+		}
 
 		foreach (var packet in packets) {
 			switch(packet.channelId) {
@@ -63,6 +68,7 @@ public class LocalNetworkManager : MonoBehaviour {
 					break;
 				}
 				case 2: {
+					Debug.Log("Using unreliable event channel");
 					// UnreliableEnventChannel
 					ParseCommand(packet);
 					break;
@@ -108,6 +114,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				lce.Init();
 				break;
 			case NetworkCommand.DISCONNECT_COMMAND:
+				Debug.Log("Receive DISCONNECT COMMAND");
 				DisconnectCommand disconnectCommand = DisconnectCommand.Deserialize(packet.bitReader, MaxPlayers);
 				lce = Player.GetComponent<LocalCharacterEntity>();
 				int playerId = lce.Id;
@@ -126,20 +133,36 @@ public class LocalNetworkManager : MonoBehaviour {
 		}
 	}
 
-	public void SendReliable(Serialize serial) {
-		_networkAPI.Send(1, _sending_endpoint, serial);
+	public void SendReliable(Serialize serial)
+	{
+		sendOrDisconnect(1, _sending_endpoint, serial);
+		
+	}
+
+	private void sendOrDisconnect(uint channel, EndPoint endPoint, Serialize serial)
+	{
+		if (!_networkAPI.Send(channel, endPoint, serial))
+		{
+			Debug.Log("Channel does not exist or full. Disconnecting");
+			disconnect();
+		}
 	}
 
 	public void SendUnreliable(Serialize serial) {
-		_networkAPI.Send(2, _sending_endpoint, serial);
+		sendOrDisconnect(2, _sending_endpoint, serial);
 	}
 
 	void OnDisable() 
+	{
+		_networkAPI.Close();
+	}
+
+	private void disconnect()
 	{
 		for (int i = 0; i < 10; i++)
 		{
 			SendUnreliable(new DisconnectCommand(0, MaxPlayers).Serialize);
 		}
-		_networkAPI.Close();
+		_networkAPI.UpdateSendQueues();
 	}
 }

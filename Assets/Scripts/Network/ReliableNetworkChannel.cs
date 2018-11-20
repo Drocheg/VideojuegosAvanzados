@@ -16,7 +16,7 @@ public class ReliableNetworkChannel : NetworkChannel {
 	private readonly Queue<Packet> auxReceiveQueue;
 	private Queue<Packet> actualSendQueue;
 
-	public ReliableNetworkChannel(uint id, ChanelType type, EndPoint receiving_endpoint, EndPoint sending_endpoint, uint totalChannels, ulong maxSeqPossible, float timeout) : base(id, type, receiving_endpoint, sending_endpoint, totalChannels, maxSeqPossible)
+	public ReliableNetworkChannel(uint id, ChanelType type, EndPoint receiving_endpoint, EndPoint sending_endpoint, uint totalChannels, ulong maxSeqPossible, float timeout, uint maxPacketsToSend) : base(id, type, receiving_endpoint, sending_endpoint, totalChannels, maxSeqPossible, maxPacketsToSend)
 	{
 		this.timeout = timeout;
 		auxReceiveQueue = new Queue<Packet>();
@@ -136,8 +136,13 @@ public class ReliableNetworkChannel : NetworkChannel {
 		auxReceiveQueue.Enqueue(packet);
 	}
 	
-	public override void SendPacket(Serialize serializable) {
-		sendQueue.Enqueue(Packet.WritePacket(id, incSeq(), serializable, totalChannels, (uint)maxSeqPossible, SendingEndPoint, PacketType.DATA));
+	public override bool SendPacket(Serialize serializable) {
+		if (sendQueue.Count < MaxPacketsToSend && actualSendQueue.Count < MaxPacketsToSend)
+		{
+			sendQueue.Enqueue(Packet.WritePacket(id, incSeq(), serializable, totalChannels, (uint)maxSeqPossible, SendingEndPoint, PacketType.DATA));
+			return true;
+		}
+		return false;
 	}
 	
 	
