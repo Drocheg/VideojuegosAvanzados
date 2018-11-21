@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7256,6 +7256,7 @@ MonoBehaviour:
     type: 2}
   TimeoutEvents: 0
   PacketLoss: 0
+  MaxPacketsToSend: 100000
   Player: {fileID: 512930488}
 --- !u!1 &1193047986
 GameObject:
@@ -23173,11 +23174,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81e14643e70a7e94a89207ff9c9ff0d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LocalProjectile: {fileID: 114158941686848598, guid: 1117c0d6f400e074a85cf01aeaf78f6e,
-    type: 2}
-  _projectiles: []
-  _currentState: 0
-  _world: {fileID: 0}
 --- !u!1 &1916200136
 GameObject:
   m_ObjectHideFlags: 0
@@ -23704,7 +23700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1640a529f64753046a8649cbb3607736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxEntities: 10
+  MaxEntities: 20
   MaxProjectiles: 10
   MaxTime: 10000
   TimePrecision: 0.001
