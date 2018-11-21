@@ -32,8 +32,8 @@ public class LocalCharacterEntity : LocalEntity {
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
 		_healthManager = GetComponent<HealthManager>();
-		_localWorld.AddReference(Id, this);
-		//StartCoroutine(DelayAddReference());
+		//_localWorld.AddReference(Id, this);
+		StartCoroutine(DelayAddReference());
 	}
 
 	IEnumerator DelayAddReference() {

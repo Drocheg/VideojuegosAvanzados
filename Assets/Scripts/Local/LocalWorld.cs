@@ -156,12 +156,17 @@ public class LocalWorld : MonoBehaviour {
 					switch(entityType) {
 						case (int)EntityType.CHARACTER: {
 							bitsToDiscard = _characterSerialSize;
+							Debug.Log("Discarding character bits: " + bitsToDiscard);
 							break;
 						}
 						case (int)EntityType.PROJECTILE: {
 							bitsToDiscard = _projectileSerialSize;
+							Debug.Log("Discarding projectile bits: " + bitsToDiscard);
 							break;
 						}
+						default:
+							Debug.Log("Unknown entity, discarding 0 bits");
+							break;
 					}
 					reader.DiscardBits(bitsToDiscard);
 				} else {
