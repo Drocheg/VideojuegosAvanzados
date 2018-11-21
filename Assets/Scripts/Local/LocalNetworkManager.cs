@@ -39,9 +39,10 @@ public class LocalNetworkManager : MonoBehaviour {
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		SendReliable(new JoinCommand().Serialize);
 		
-		if(MenuVariables.MenuName != "") playerName	= MenuVariables.MenuName;
+		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
 		if(MenuVariables.MenuPort != 0) TestRemotePort = MenuVariables.MenuPort;
-		if(MenuVariables.MenuIP != "") TestRemoteIp	= MenuVariables.MenuIP;
+		if(!string.IsNullOrEmpty(MenuVariables.MenuIP)) TestRemoteIp	= MenuVariables.MenuIP;
+		Debug.Log("MenuIP: " + MenuVariables.MenuIP);
 	}
 	
 	// Update is called once per frame
