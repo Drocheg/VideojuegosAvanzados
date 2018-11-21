@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -792,7 +792,7 @@ MonoBehaviour:
     type: 2}
   TestRemoteIp: 127.0.0.1
   TestRemotePort2: 0
-  TestReceiveRemotePort: 33333
+  TestReceiveRemotePort: 0
   LocalPort: 40000
   SpinLockTime: 50
   MaxHosts: 10
@@ -800,7 +800,9 @@ MonoBehaviour:
   MaxSeqPossible: 2000
   TimeoutEvents: 0
   PacketLoss: 0
-  AuthPlayer: {fileID: 2097685998}
+  MaxPacketsToSend: 100000
+  MaxIdleTimeBeforeDisconnect: 10
+  AuthPlayer: {fileID: 1426321185}
 --- !u!1 &1203181106
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,18 +884,18 @@ MonoBehaviour:
   AnimationStep: 0.1
   AuthProjectile: {fileID: 114804668641806502, guid: 802e418516e320745a49d1a78b983a23,
     type: 2}
-  MaxEntities: 10
+  MaxEntities: 20
   MaxProjectiles: 10
   MaxTime: 10000
   TimePrecision: 0.001
-  MaxMoves: 1024
-  ExpectedEntities: 0
+  MaxMoves: 10000
+  ExpectedEntities: 1
   SnapshotTickRate: 20
   MaxHP: 100
   SpawnTime: 4
   SpawnLocation: {fileID: 1203181107}
-  ProjectileOffset: 10
-  ExplosionMagnitude: 10
+  ProjectileOffset: 0
+  ExplosionMagnitude: 50
 --- !u!114 &1304344874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1121,6 +1123,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1426321185 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114220166766431302, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+    type: 2}
+  m_PrefabInternal: {fileID: 1331360681}
+  m_Script: {fileID: 11500000, guid: 961388b112dd1ec47880d61cd846ae8a, type: 3}
 --- !u!1 &1489717152
 GameObject:
   m_ObjectHideFlags: 0
@@ -1547,12 +1555,6 @@ Canvas:
   m_CorrespondingSourceObject: {fileID: 223906119707660302, guid: 42640f15a6598de41b1d38e021f17f3a,
     type: 2}
   m_PrefabInternal: {fileID: 772480903}
---- !u!114 &2097685998 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114220166766431302, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-    type: 2}
-  m_PrefabInternal: {fileID: 1331360681}
-  m_Script: {fileID: 11500000, guid: 961388b112dd1ec47880d61cd846ae8a, type: 3}
 --- !u!1 &2098020079
 GameObject:
   m_ObjectHideFlags: 0
