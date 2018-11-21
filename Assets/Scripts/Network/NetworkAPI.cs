@@ -210,6 +210,7 @@ public class NetworkAPI {
 				if (sendQueue.Count > 0)
 				{
 					packet = sendQueue.Dequeue();
+					Debug.Log("Packet" + packet.endPoint);
 				}
 			}
 			if(packet!=null){

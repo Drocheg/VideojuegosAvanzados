@@ -117,6 +117,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		EndPoint currentReceivingEndpoint = packet.endPoint;
 		
 		//var port packet.bitReader.ReadInt()
+		Debug.Log(packet.endPoint);
 		IPEndPoint currentSendingEndPoint = new IPEndPoint(((IPEndPoint)currentReceivingEndpoint).Address, ((IPEndPoint) currentReceivingEndpoint).Port-1);
 
 		int currentId = GetHostId(currentReceivingEndpoint);

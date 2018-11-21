@@ -158,6 +158,18 @@ public class AuthWorld : MonoBehaviour {
 			return;
 		}
 		_entities[projectile.GetId()] = null;
+		// send Explosion command.
+		var command = new ProjectileExplodeCommand() {
+			pos = projectile.transform.position,
+			nor = projectile.transform.up,
+			minPos = new Vector3(MinPosX, MinPosY, MinPosZ),
+			maxPos = new Vector3(MaxPosX, MaxPosY, MaxPosZ),
+			minDir = new Vector3(MinPosX, MinPosY, MinPosZ),
+			maxDir = new Vector3(MaxPosX, MaxPosY, MaxPosZ),
+			id = id,
+			maxId = MaxEntities,
+		};
+		_networkManager.SendAuthEventReliable(command.Serialize);
 	}
 
 	public void NewProjectile(ProjectileShootCommand command) {
