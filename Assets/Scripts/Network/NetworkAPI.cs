@@ -110,14 +110,7 @@ public class NetworkAPI {
 			channelsReceiving.Add(id, newChannel);
 			return true;
 		}
-		//if (channelsReceiving.ContainsKey(id) && channelsSending.ContainsKey(id))
-		//{
-		//	NetworkChannel nc;
-		//	channelsReceiving.TryGetValue(id, out nc);
-		//	if(nc != null) nc.clear();
-		//	channelsSending.TryGetValue(id, out nc);
-		//	if(nc != null) nc.clear();
-		//}
+		
 		
 		return false;
 	}

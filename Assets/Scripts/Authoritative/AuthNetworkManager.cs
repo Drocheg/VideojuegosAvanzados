@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
@@ -122,51 +123,76 @@ public class AuthNetworkManager : MonoBehaviour {
 
 	private bool addHost(Packet packet)
 	{
+		var command = JoinCommand.Deserialize(); // TODO add port for server responses in join packet. Handle change of ports.
 		EndPoint currentReceivingEndpoint = packet.endPoint;
 		
 		//var port packet.bitReader.ReadInt()
 		IPEndPoint currentSendingEndPoint = new IPEndPoint(((IPEndPoint)currentReceivingEndpoint).Address, ((IPEndPoint) currentReceivingEndpoint).Port-1);
-		_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint);
-		_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint, TimeoutEvents);
-		if(!_networkAPI.AddUnreliableChannel(2, currentReceivingEndpoint, currentSendingEndPoint)) return false;
 
+		int currentId = GetHostId(currentReceivingEndpoint);
 		
-		
-		var currentId = 0;
-		
-		while (takenIds[currentId]) currentId++;
-		RemoteHost newHost = new RemoteHost()
+		if (currentId < 0)
 		{
-			Id = currentId,
-			_receiving_endpoint = currentReceivingEndpoint,
-			_sending_endpoint = currentSendingEndPoint,
-			UnreliableSnapshotChannel = 0,
-			ReliableChannel = 1,
-			UnreliableEventChannel = 2
-		};
+			// New Host
+			
+			// Add channels
+			if (!_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint) ||
+			    !_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint,
+				    TimeoutEvents) ||
+			    !_networkAPI.AddUnreliableChannel(2, currentReceivingEndpoint, currentSendingEndPoint))
+			{
+				return false;
+			}
+			// Get new ID
+			currentId = 0;
+			while (takenIds[currentId]) currentId++;
+			// Create Host
+			RemoteHost newHost = new RemoteHost()
+			{
+				Id = currentId,
+				_receiving_endpoint = currentReceivingEndpoint,
+				_sending_endpoint = currentSendingEndPoint,
+				UnreliableSnapshotChannel = 0,
+				ReliableChannel = 1,
+				UnreliableEventChannel = 2
+			};
+			Debug.Log("Adding HOST: " + packet.endPoint + "With ID: " + currentId);
+			takenIds[currentId] = true;
+			Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
+			AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
+			ace.Id = currentId;
+			ace.Init();	
+			
+			// Enviarle a los otros que se conecto uno nuevo
+			SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
+			
+			_hostCount += 1;
+			hosts[currentId] = newHost;		
+		}
+		else
+		{
+			Debug.Log("Host already existed");
+			_networkAPI.ClearSendQueue();
+			_networkAPI.ClearChannels(hosts[currentId]._sending_endpoint);
+		}
 		
-		Debug.Log("Adding HOST: " + packet.endPoint + "With ID: " + currentId);
-		takenIds[currentId] = true;
-		Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
-		AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
-		ace.Id = currentId;
-		ace.Init();
+		
+		RemoteHost connectedHost = hosts[currentId];
+		
 		
 		// Enviar respuesta al que se conecto
-		SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
-		// Enviarle a los otros que se conecto uno nuevo
-		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
+		SendAuthEventReliableToSingleHost(connectedHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
+	
 		// Enviarle un packete por cada host que hay de antes al nuevo
 		foreach (var host in hosts)
 		{
-			if (host != null)
+			if (host != null && host != connectedHost)
 			{
-				SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
+				SendAuthEventReliableToSingleHost(connectedHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
 			}
-		}
-		SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand(0, MaxHosts).Serialize);
-		_hostCount += 1;
-		hosts[currentId] = newHost;
+		} 
+		SendAuthEventReliableToSingleHost(connectedHost, new JoinPlayerCommand(0, MaxHosts).Serialize);
+		
 		return true;
 	}
 
@@ -241,7 +267,12 @@ public class AuthNetworkManager : MonoBehaviour {
 				disconnectHost(packet.endPoint);
 				break;
 			}
-			// TODO join command when connected?
+			case NetworkCommand.JOIN_COMMAND:
+			{
+				Debug.Log("Receive Join Command");
+				addHost(packet);
+				break;
+			}
 		}
 	}
 	
