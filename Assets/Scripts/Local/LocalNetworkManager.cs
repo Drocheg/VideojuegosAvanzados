@@ -42,7 +42,8 @@ public class LocalNetworkManager : MonoBehaviour {
 	void Update () {
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
-
+		updateSendQueuesOrDisconnect();
+		
 		if (Input.GetButtonDown("k"))
 		{
 			disconnect();
