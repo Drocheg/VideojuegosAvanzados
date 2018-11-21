@@ -246,6 +246,22 @@ public class NetworkAPI {
 //			}
 //		}
 	}
+	
+	public bool ClearChannel(EndPoint sendingEndpoint, uint channelId)
+	{
+		NetworkChannel networkChannel;
+		if (!getChannel(channelId, sendingEndpoint, out networkChannel)) return false;
+		networkChannel.clear();
+		return true;
+	}
+
+	public void ClearChannels(EndPoint sendingEndpoint)
+	{
+		for (uint i = 0; i < _channelsPerHost; i++)
+		{
+			ClearChannel(sendingEndpoint, i);
+		}
+	}
 
 	public void ClearSendQueue()
 	{

@@ -36,14 +36,12 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		// _networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
-
 		SendReliable(new JoinCommand().Serialize);
-
 	}
+	
 	
 	// Update is called once per frame
 	void Update () {
-		
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
 
@@ -92,25 +90,14 @@ public class LocalNetworkManager : MonoBehaviour {
 				Debug.Log("JOIN RESPONSE my ID: " + currentId + "From endpoint: " + packet.endPoint);
 				//Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
 				//LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
-				//lce.Id = (int)currentId;
-				//lce.Init();
 				LocalCharacterEntity lce = Player.GetComponent<LocalCharacterEntity>();
-				//_localWorld.RemoveReference(lce.Id);
 				lce.Id = (int)currentId;
-				//_localWorld.AddReference((int)currentId, lce);
 				lce.Init();
-				
-				//Player = lce.gameObject;
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
 				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayers);
-			//	Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
-				currentId = joinPlayerCommand.playerId;
-				Debug.Log("JOIN PLAYER with ID: " + currentId + "From endpoint: " + packet.endPoint);
-				Transform localPlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
-				lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
-				lce.Id = (int)currentId;
-				lce.Init();
+				addPlayer(joinPlayerCommand.playerId);
+				Debug.Log("JOIN PLAYER with ID: " + joinPlayerCommand.playerId + "From endpoint: " + packet.endPoint);
 				break;
 			case NetworkCommand.DISCONNECT_COMMAND:
 				Debug.Log("Receive DISCONNECT COMMAND");
@@ -120,7 +107,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				if (playerId == disconnectCommand.playerId)
 				{
 					// Disconnect the player
-					Debug.Log("YOU HAVE BEEN DISCONECTED");
+					Debug.Log("YOU HAVE BEEN DISCONECTED"); //TODO load menu scene
 					_networkAPI.Close();
 				}
 				else
@@ -130,6 +117,17 @@ public class LocalNetworkManager : MonoBehaviour {
 					_localWorld.RemoveEntity(disconnectCommand.playerId);
 				}
 				break;
+		}
+	}
+
+	private void addPlayer(uint playerId)
+	{
+		if (_localWorld.GetCharacterEntity(playerId) == null)
+		{
+			Transform localPlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(playerId*3, 0, 0), Quaternion.identity); // TODO initial position.
+			LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
+			lce.Id = (int)playerId;
+			lce.Init();
 		}
 	}
 

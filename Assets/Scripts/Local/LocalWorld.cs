@@ -112,6 +112,11 @@ public class LocalWorld : MonoBehaviour {
 		}
 	}
 
+	public LocalEntity GetCharacterEntity(uint id)
+	{
+		return _entities[id];
+	}
+
 	public void AddReference(int id, LocalCharacterEntity local)
 	{
 		_entitiesCounter++;
