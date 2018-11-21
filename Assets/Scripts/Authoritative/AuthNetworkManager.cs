@@ -9,6 +9,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		public EndPoint _sending_endpoint;
 		public uint UnreliableSnapshotChannel, ReliableChannel, UnreliableEventChannel;
 		public int Id; // The Id of the entity this host relates to.
+		public float lastReceiveTime = Time.realtimeSinceStartup;
 	}
 
 	public Transform RemotePlayerPrefab;
@@ -25,6 +26,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	public float TimeoutEvents;
 	public float PacketLoss;
 	public uint MaxPacketsToSend;
+	public float MaxIdleTimeBeforeDisconnect;
 	private int _commandsCount;
 	private AuthWorld _authWorld;
 	public AuthCharacterEntity AuthPlayer;
@@ -59,7 +61,13 @@ public class AuthNetworkManager : MonoBehaviour {
 		
 		updateSendQueuesOrDisconnect();
 
-		foreach(var packet in packets) {
+		foreach(var packet in packets)
+		{
+			int hostId = GetHostId(packet.endPoint);
+			if (hostId >= 0 && hosts[hostId]!=null)
+			{
+				hosts[hostId].lastReceiveTime = Time.realtimeSinceStartup;
+			}
 			switch(packet.channelId) {
 				case 0: {
 					// Snapshot channel;
@@ -88,9 +96,19 @@ public class AuthNetworkManager : MonoBehaviour {
 				}
 			}
 		}
+
+		foreach (var host in hosts)
+		{
+			if (host != null && Time.realtimeSinceStartup - host.lastReceiveTime  > MaxIdleTimeBeforeDisconnect)
+			{
+				Debug.Log("Host with id: " + host.Id + " was idle, disconnecting");
+				disconnectHost(host.Id);
+			}
+		}
 	}
 
 	int GetHostId(EndPoint packetOrigin) {
+		// TODO esto podria ser orden 1
 		int Id = -1;
 		foreach(var e in hosts) {
 			if (e!=null && e._receiving_endpoint.Equals(packetOrigin)) {
@@ -167,20 +185,24 @@ public class AuthNetworkManager : MonoBehaviour {
 		takenIds[hostID] = false;
 		RemoteHost removedHost = hosts[hostID];
 		hosts[hostID] = null;
-		SendAuthEventReliable(new DisconnectCommand((uint)hostID, MaxHosts).Serialize);
-		for (int i = 0; i < 10; i++)
+		if (removedHost != null)
 		{
-			SendAuthEventUnreliableToSingleHost(removedHost, new DisconnectCommand((uint)hostID, MaxHosts).Serialize);
+			SendAuthEventReliable(new DisconnectCommand((uint)hostID, MaxHosts).Serialize);
+			for (int i = 0; i < 10; i++)
+			{
+				SendAuthEventUnreliableToSingleHost(removedHost, new DisconnectCommand((uint)hostID, MaxHosts).Serialize);
+			}
+			_networkAPI.UpdateSendQueues();
+			removeChannels(removedHost);
+			Debug.Log("PLAYER " + hostID + " HAS DISCONECTED");
+			_authWorld.RemoveEntity((uint)hostID);
 		}
-		_networkAPI.UpdateSendQueues();
-		removeChannels(removedHost);
-		Debug.Log("PLAYER " + hostID + " HAS DISCONECTED");
-		_authWorld.RemoveEntity((uint)hostID);
 	}
 
 	private void removeChannels(RemoteHost host)
 	{
 		removeChannels(host._receiving_endpoint);
+		removeChannels(host._sending_endpoint);
 	}
 	
 	private void removeChannels(EndPoint endPoint)
@@ -216,8 +238,7 @@ public class AuthNetworkManager : MonoBehaviour {
 			case NetworkCommand.DISCONNECT_COMMAND:
 			{
 				Debug.Log("Receive Disconnect Command");
-				var Id = GetHostId(packet.endPoint);
-				disconnectHost(Id);
+				disconnectHost(packet.endPoint);
 				break;
 			}
 			// TODO join command when connected?
