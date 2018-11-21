@@ -884,18 +884,18 @@ MonoBehaviour:
   AnimationStep: 0.1
   AuthProjectile: {fileID: 114804668641806502, guid: 802e418516e320745a49d1a78b983a23,
     type: 2}
-  MaxEntities: 20
+  MaxEntities: 10
   MaxProjectiles: 10
   MaxTime: 10000
   TimePrecision: 0.001
-  MaxMoves: 10000
-  ExpectedEntities: 1
+  MaxMoves: 1024
+  ExpectedEntities: 0
   SnapshotTickRate: 20
   MaxHP: 100
   SpawnTime: 4
   SpawnLocation: {fileID: 1203181107}
-  ProjectileOffset: 0
-  ExplosionMagnitude: 50
+  ProjectileOffset: 10
+  ExplosionMagnitude: 10
 --- !u!114 &1304344874
 MonoBehaviour:
   m_ObjectHideFlags: 0
