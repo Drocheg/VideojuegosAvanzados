@@ -226,18 +226,6 @@ public class NetworkAPI {
 	public void RemoveChannels(EndPoint endPoint)
 	{
 		channelsMap.Remove(endPoint);
-//		if (channelsMap.ContainsKey(endPoint))
-//		{
-//			Dictionary<uint, NetworkChannel> channels;
-//			channelsMap.TryGetValue(endPoint, out channels);
-//			if (channels != null)
-//			{
-//				for (int i = 0; i < _channelsPerHost; i++)
-//				{
-//					channelsMap.Remove(endPoint);
-//				}
-//			}
-//		}
 	}
 	
 	public bool ClearChannel(EndPoint sendingEndpoint, uint channelId)

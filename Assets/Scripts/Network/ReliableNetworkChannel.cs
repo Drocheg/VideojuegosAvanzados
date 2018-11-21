@@ -95,13 +95,11 @@ public class ReliableNetworkChannel : NetworkChannel {
 				if (isBiggerThan(newPacket.seq, maxACK, maxSeqPossible))
 				{
 					maxACK = newPacket.seq;
-					Debug.Log("maxACK: " + maxACK);
-					Debug.Log("maxSendSeq: " + maxSendSeq);
 					if (isBiggerThan(maxACK, maxSendSeq, maxSeqPossible))
 					{
 						// If I get an ACK that is bigget that the seq I'm sending then I should update the seq number
 						maxSendSeq = maxACK;
-						Debug.Log("new MaxSeq: " + maxACK);
+						Debug.Log("maxSendSeq was old, new value: " + maxACK);
 					}
 				}
 				

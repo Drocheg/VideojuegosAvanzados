@@ -34,11 +34,9 @@ public class LocalNetworkManager : MonoBehaviour {
 
 		_networkAPI.AddTimeoutReliableChannel(1, _receiving_endpoint, _sending_endpoint, TimeoutEvents);
 		_networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
-		// _networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		SendReliable(new JoinCommand().Serialize);
 	}
-	
 	
 	// Update is called once per frame
 	void Update () {
