@@ -682,12 +682,6 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 772480903}
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
---- !u!114 &1095808263 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114176493401748314, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 772480903}
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 --- !u!1 &1157635588
 GameObject:
   m_ObjectHideFlags: 0
@@ -1011,21 +1005,6 @@ Prefab:
       propertyPath: HealthBar
       value: 
       objectReference: {fileID: 214874634}
-    - target: {fileID: 114763752862373632, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: RemainingBulletsUI
-      value: 
-      objectReference: {fileID: 2112908009}
-    - target: {fileID: 114763752862373632, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ClipBulletsUI
-      value: 
-      objectReference: {fileID: 1095808263}
-    - target: {fileID: 114763752862373632, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: BulletsCanvas
-      value: 
-      objectReference: {fileID: 1508585261}
     - target: {fileID: 114692876634565250, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
         type: 2}
       propertyPath: Crosshairs
@@ -1036,26 +1015,6 @@ Prefab:
       propertyPath: Crosshairs
       value: 
       objectReference: {fileID: 685897263}
-    - target: {fileID: 114524337371568196, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: RemainingBulletsUI
-      value: 
-      objectReference: {fileID: 2112908009}
-    - target: {fileID: 114524337371568196, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ClipBulletsUI
-      value: 
-      objectReference: {fileID: 1095808263}
-    - target: {fileID: 114524337371568196, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: BulletsCanvas
-      value: 
-      objectReference: {fileID: 1508585261}
-    - target: {fileID: 114207538743343062, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ShootingTimeout
-      value: 0.3
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef, type: 2}
   m_IsPrefabAsset: 0
@@ -1239,11 +1198,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!223 &1508585261 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 223239928216101118, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 772480903}
 --- !u!1 &1633303629
 GameObject:
   m_ObjectHideFlags: 0
@@ -1660,9 +1614,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2112908009 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114246228875450170, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 772480903}
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
