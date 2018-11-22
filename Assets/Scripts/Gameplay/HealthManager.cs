@@ -21,15 +21,21 @@ public class HealthManager : MonoBehaviour {
 
 	private void DeathAnimation()
 	{
-		_animator.SetBool("Dead", true);
-		_animator.SetLayerWeight(1, 0);
+		if (_animator != null)
+		{
+			_animator.SetBool("Dead", true);
+			_animator.SetLayerWeight(1, 0);
+		}
 		Dead = true;
 	}
 
 	private void AliveAnimation()
 	{
-		_animator.SetBool("Dead", false);
-		_animator.SetLayerWeight(1, 0.8f);
+		if (_animator != null)
+		{
+			_animator.SetBool("Dead", false);
+			_animator.SetLayerWeight(1, 0.8f);
+		}
 		Dead = false;
 	}
 

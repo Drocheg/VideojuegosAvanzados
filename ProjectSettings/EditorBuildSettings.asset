@@ -9,9 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: c11817d3ec36036459ecbdabafdee337
   - enabled: 1
-    path: Assets/Scenes/LocalScene.unity
-    guid: df76c83015fa4ff4e8a75044e95816ac
-  - enabled: 1
     path: Assets/Scenes/ServerCube.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/LocalScene.unity
+    guid: df76c83015fa4ff4e8a75044e95816ac
   m_configObjects: {}
