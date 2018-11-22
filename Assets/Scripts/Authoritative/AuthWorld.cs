@@ -40,6 +40,7 @@ public class AuthWorld : MonoBehaviour {
 		_bloodPool = pools[1];
 		_snapshotDelta = 1 / SnapshotTickRate;
 		StartCoroutine(SnapshotLoop());
+		StartCoroutine(GameStateLoop());
 	}
 	
 	void Start()

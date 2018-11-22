@@ -903,11 +903,11 @@ MonoBehaviour:
     type: 2}
   MaxEntities: 10
   MaxProjectiles: 10
-  MaxKills: 0
-  MaxDeaths: 0
+  MaxKills: 100
+  MaxDeaths: 100
   MaxTime: 10000
   TimePrecision: 0.001
-  GameStateDelta: 0
+  GameStateDelta: 5
   MaxMoves: 1024
   ExpectedEntities: 0
   SnapshotTickRate: 20
