@@ -261,7 +261,7 @@ GameObject:
   - component: {fileID: 82611274823270092}
   - component: {fileID: 143633369657247054}
   - component: {fileID: 114246778939809546}
-  m_Layer: 12
+  m_Layer: 2
   m_Name: AuthCharacterEntity
   m_TagString: Untagged
   m_Icon: {fileID: 0}

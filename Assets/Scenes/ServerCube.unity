@@ -788,7 +788,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669d374be9229964dab8f432a8852b10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RemotePlayerPrefab: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef,
+  RemotePlayerPrefab: {fileID: 4331550167715726, guid: a85e722557b66554ba80960de6a77585,
     type: 2}
   TestRemoteIp: 192.168.0.249
   TestRemotePort2: 0
@@ -803,6 +803,7 @@ MonoBehaviour:
   MaxPacketsToSend: 100000
   MaxIdleTimeBeforeDisconnect: 10
   AuthPlayer: {fileID: 1426321185}
+  playerName: 
 --- !u!1 &1203181106
 GameObject:
   m_ObjectHideFlags: 0
@@ -1028,6 +1029,11 @@ Prefab:
       propertyPath: ReloadImage
       value: 
       objectReference: {fileID: 1818068657}
+    - target: {fileID: 20048802620839744, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: m_CullingMask.m_Bits
+      value: 7447
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef, type: 2}
   m_IsPrefabAsset: 0

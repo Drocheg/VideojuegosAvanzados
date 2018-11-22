@@ -576,7 +576,7 @@ GameObject:
   - component: {fileID: 82766131313130156}
   - component: {fileID: 143413222022875676}
   - component: {fileID: 114521308717107652}
-  m_Layer: 12
+  m_Layer: 2
   m_Name: RemotePlayerAuth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
