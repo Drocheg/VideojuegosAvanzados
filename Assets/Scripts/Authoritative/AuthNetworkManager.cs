@@ -50,6 +50,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss, MaxPacketsToSend, Latency);
 		AuthPlayer.Init();
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
+		_authWorld.AddPlayerName(0, playerName);
 	}
 
 

@@ -114,6 +114,7 @@ public class LocalNetworkManager : MonoBehaviour {
 				LocalCharacterEntity lce = Player.GetComponent<LocalCharacterEntity>();
 				lce.Id = (int)currentId;
 				lce.Init();
+				_localWorld.AddPlayerName((int)currentId, playerName);
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
 				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayers);
