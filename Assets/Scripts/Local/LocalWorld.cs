@@ -26,6 +26,7 @@ public class LocalWorld : MonoBehaviour {
 	private LocalPlayer _localPlayer;
 	public LocalProjectileEntity LocalProjectilePrefab;
 	private int _characterSerialSize, _projectileSerialSize;
+	private LocalNetworkManager _networkManager;
 	// Use this for initialization
 	void Start() {
 		_entities = new LocalEntity[MaxEntities];
@@ -38,6 +39,7 @@ public class LocalWorld : MonoBehaviour {
 		_entityTypes = System.Enum.GetValues(typeof(EntityType)).Length;
 		_characterSerialSize = CharacterEntitySerialSize();
 		_projectileSerialSize = ProjectileEntitySerialSize();
+		_networkManager = FindObjectOfType<LocalNetworkManager>();
 	}
 	
 	// Update is called once per frame
@@ -170,7 +172,6 @@ public class LocalWorld : MonoBehaviour {
 					}
 					reader.DiscardBits(bitsToDiscard);
 				} else {
-					Debug.Log("Snapshot para id: " + e.GetId());
 					Debug.Assert(e != null);
 					e.Deserialize(reader);
 				}
@@ -179,7 +180,17 @@ public class LocalWorld : MonoBehaviour {
 	}
 
 	public void NewProjectileShootCommand(BitReader reader) {
-		var command = ProjectileShootCommand.Deserialize(reader, MaxEntities, MinPosX, MinPosY, MinPosZ, MaxPosX, MaxPosY, MaxPosZ, TimePrecision);
+		var command = ProjectileShootCommand.Deserialize(
+			reader, 
+			MaxEntities, 
+			MinPosX, 
+			MinPosY, 
+			MinPosZ, 
+			MaxPosX, 
+			MaxPosY, 
+			MaxPosZ, 
+			Step
+		);
 		
 		if (command._id < 0 || command._id >= MaxEntities) {
 			Debug.LogWarning("Recevied projectile shoot command with invalid id.");
@@ -191,6 +202,32 @@ public class LocalWorld : MonoBehaviour {
 		_entities[projectile.Id] = projectile;
 		var pos = new Vector3(command._x, command._y, command._z);
 		projectile.transform.position = pos;
+	}
+
+	public void ProjectileExplosion(BitReader reader) {
+		var command = ProjectileExplodeCommand.Deserialize(
+			reader, 
+			MaxEntities,
+			Step,
+			Step, 
+			new Vector3(MinPosX, MinPosY, MinPosZ), 
+			new Vector3(MaxPosX, MaxPosY, MaxPosZ),
+			new Vector3(MinPosX, MinPosY, MinPosZ), 
+			new Vector3(MaxPosX, MaxPosY, MaxPosZ)
+		);
+		Debug.Log("Command " + command);
+		if (command.id < 0 || command.id >= MaxEntities) {
+			Debug.LogWarning("Received explosion with invalid id.");
+			return;
+		}
+		var projectile = _entities[command.id];
+		var p = projectile.GetComponent<Projectile>();
+		if (p == null) {
+			Debug.LogWarning("Tried to explode but there was no projectile.");
+		} else {
+			_entities[command.id] = null;
+			p.Explode();
+		}
 	}
 
 	int CharacterEntitySerialSize() {
@@ -237,5 +274,26 @@ public class LocalWorld : MonoBehaviour {
 		}
 		ps.transform.SetPositionAndRotation(commPos, Quaternion.LookRotation(commNor));
 		ps.Play();
+	}
+
+	public void ShootProjectile(Vector3 pos, Vector3 dir) {
+		var command = new ProjectileShootCommand(
+				0, 
+				MaxEntities,
+				pos.x,
+				pos.y,
+				pos.z,
+				dir.x,
+				dir.y,
+				dir.z,
+				MinPosX,
+				MaxPosX,
+				MinPosY,
+				MaxPosY,
+				MinPosZ,
+				MaxPosZ, 
+				Step);
+
+		_networkManager.SendReliable(command.Serialize);
 	}
 }

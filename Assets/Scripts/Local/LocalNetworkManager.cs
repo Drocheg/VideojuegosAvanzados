@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System;
+using Common;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -22,6 +23,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	public uint MaxPacketsToSend;
 	private int _commandsCount;
 	public GameObject Player;
+	public string playerName;
 	
 	// Use this for initialization
 	void Start () {
@@ -36,6 +38,11 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		SendReliable(new JoinCommand().Serialize);
+		
+		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
+		if(MenuVariables.MenuPort != 0) TestRemotePort = MenuVariables.MenuPort;
+		if(!string.IsNullOrEmpty(MenuVariables.MenuIP)) TestRemoteIp	= MenuVariables.MenuIP;
+		Debug.Log("MenuIP: " + MenuVariables.MenuIP);
 	}
 	
 	// Update is called once per frame
@@ -80,7 +87,12 @@ public class LocalNetworkManager : MonoBehaviour {
 				_localWorld.BulletCollision(packet.bitReader);
 				break;
 			case NetworkCommand.PROJECTILE_SHOOT_COMMAND: {
+				Debug.Log("Projectile arrived");
 				_localWorld.NewProjectileShootCommand(packet.bitReader);
+				break;
+			}
+			case NetworkCommand.PROJECTILE_EXPLODE_COMMAND: {
+				_localWorld.ProjectileExplosion(packet.bitReader);
 				break;
 			}
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:

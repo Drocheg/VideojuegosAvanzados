@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using Common;
+using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 
 public class AuthNetworkManager : MonoBehaviour {
@@ -31,6 +33,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	private int _commandsCount;
 	private AuthWorld _authWorld;
 	public AuthCharacterEntity AuthPlayer;
+	public string playerName;
 	
 	void Start()
 	{
@@ -43,6 +46,8 @@ public class AuthNetworkManager : MonoBehaviour {
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss, MaxPacketsToSend);
 		AuthPlayer.Init();
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
+		if(MenuVariables.MenuName != "") playerName	= MenuVariables.MenuName;
+		if(MenuVariables.MenuPort != 0) LocalPort = MenuVariables.MenuPort;
 	}
 
 
@@ -124,7 +129,7 @@ public class AuthNetworkManager : MonoBehaviour {
 
 		if (currentId >= 0)
 		{
-			Debug.Log("Host already exist");
+			Debug.Log("Host already exist:" +hosts[currentId]);
 			return false;
 		}
 		// New Host

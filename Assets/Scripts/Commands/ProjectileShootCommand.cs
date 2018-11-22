@@ -22,7 +22,6 @@ public class ProjectileShootCommand {
 		_positionPrecision = positionPrecision;
 		_id = id;
 		_maxId = maxId;
-		Debug.Log("Creating Projectile Shoot Command");
 	}
 
 	public void Serialize(BitWriter writer) {

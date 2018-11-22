@@ -33,7 +33,7 @@ public class ShootManager : IGenericWeaponManager {
 		_bloodPool = particlePools[1];
 		_aimManager = GetComponent<AimManager>();
 		_weaponManager = GetComponent<WeaponManager>();
-		_mask = LayerMask.GetMask("Default", "Zombie", "Door");
+		_mask = LayerMask.GetMask("Default", "CharacterCollision");
 		_reloadManager = GetComponent<ReloadManager>();
 		_audioSource = GetComponent<AudioSource>();
 	}
