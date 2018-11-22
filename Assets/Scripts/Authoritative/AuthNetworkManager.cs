@@ -13,6 +13,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		public uint UnreliableSnapshotChannel, ReliableChannel, UnreliableEventChannel, TimedChannel;
 		public int Id; // The Id of the entity this host relates to.
 		public float lastReceiveTime = Time.realtimeSinceStartup;
+		public string name;
 	}
 
 	public Transform RemotePlayerPrefab;
@@ -47,7 +48,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss, MaxPacketsToSend, Latency);
 		AuthPlayer.Init();
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
-		if(MenuVariables.MenuName != "") playerName	= MenuVariables.MenuName;
+		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
 		if(MenuVariables.MenuPort != 0) LocalPort = MenuVariables.MenuPort;
 	}
 
@@ -172,7 +173,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		_authWorld.AddPlayer((uint)ace.Id);
 		// Enviarle a los otros que se conecto uno nuevo
 		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
-
+		
 		_hostCount += 1;
 		hosts[currentId] = newHost;
 
@@ -188,7 +189,8 @@ public class AuthNetworkManager : MonoBehaviour {
 			}
 		}
 		SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand(0, MaxHosts).Serialize);
-
+		SendAuthEventReliableToSingleHost(newHost, new PlayerInfoCommand(playerName, 0, MaxHosts).Serialize); //TODO timed
+		
 		return true;
 	}
 
@@ -276,6 +278,28 @@ public class AuthNetworkManager : MonoBehaviour {
 					break;
 				}
 				_authWorld.NewProjectile(Id, packet.bitReader);
+				break;
+			}
+			case NetworkCommand.PLAYER_INFO_COMMAND:
+			{
+				PlayerInfoCommand playerInfoCommand = PlayerInfoCommand.Deserialize(packet.bitReader, MaxHosts);
+				int hostId = GetHostId(packet.endPoint);
+				Debug.Log("PlayerInfoCommand: HostId: " + hostId);
+				if(hostId >= 0)
+				{
+					hosts[hostId].name = playerInfoCommand.Name;
+					_authWorld.AddPlayerName((uint) hostId, playerInfoCommand.Name);
+					Debug.Log("PlayerId: " + hostId + "PlayerName: " + playerInfoCommand.Name);
+					foreach (var host in hosts)
+					{
+						if (host != null && host.Id != hostId)
+						{
+							SendAuthEventReliableToSingleHost(host, new PlayerInfoCommand(host.name, (uint)host.Id, MaxHosts).Serialize); //TODO timed
+						}
+					}
+				}
+				
+				
 				break;
 			}
 		}
