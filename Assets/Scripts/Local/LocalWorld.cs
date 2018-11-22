@@ -298,7 +298,6 @@ public class LocalWorld : MonoBehaviour {
 	public void ShootProjectile(Vector3 pos, Vector3 dir) {
 		var command = new ProjectileShootCommand(
 				0, 
-				0,
 				MaxEntities,
 				pos.x,
 				pos.y,
