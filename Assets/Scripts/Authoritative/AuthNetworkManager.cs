@@ -225,7 +225,6 @@ public class AuthNetworkManager : MonoBehaviour {
 
 		switch(commandType) {
 			case NetworkCommand.MOVE_COMMAND: {
-				Debug.Log("Movement from: " + packet.endPoint);
 				var Id = GetHostId(packet.endPoint);
 				if (Id == -1) {
 					Debug.Log("Could not match endpoint to id");
@@ -235,7 +234,6 @@ public class AuthNetworkManager : MonoBehaviour {
 				break;
 			}
 			case NetworkCommand.SHOOT_COMMAND: {
-				Debug.Log("Receive Shoot Command");
 				var Id = GetHostId(packet.endPoint);
 				if (Id == -1) {
 					Debug.Log("Could not match endpoint to id");
@@ -254,6 +252,11 @@ public class AuthNetworkManager : MonoBehaviour {
 			{
 				Debug.Log("Receive Join Command");
 				addHost(packet);
+				break;
+			}
+			case NetworkCommand.PROJECTILE_SHOOT_COMMAND:
+			{
+				_authWorld.NewProjectile(packet.bitReader);
 				break;
 			}
 		}

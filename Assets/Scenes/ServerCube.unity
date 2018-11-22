@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -790,7 +790,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RemotePlayerPrefab: {fileID: 4932346556638526, guid: d5e5bc5308c224841a9ed85c498cfeef,
     type: 2}
-  TestRemoteIp: 127.0.0.1
+  TestRemoteIp: 192.168.0.249
   TestRemotePort2: 0
   TestReceiveRemotePort: 0
   LocalPort: 40000
@@ -963,76 +963,71 @@ Prefab:
       propertyPath: m_RootOrder
       value: 12
       objectReference: {fileID: 0}
-    - target: {fileID: 114844454676465914, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ReloadCanvas
-      value: 
-      objectReference: {fileID: 2049691887}
-    - target: {fileID: 114844454676465914, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ReloadImage
-      value: 
-      objectReference: {fileID: 1818068657}
-    - target: {fileID: 114524337371568196, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: RemainingBulletsUI
-      value: 
-      objectReference: {fileID: 2112908009}
-    - target: {fileID: 114524337371568196, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ClipBulletsUI
-      value: 
-      objectReference: {fileID: 1095808263}
-    - target: {fileID: 114524337371568196, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: BulletsCanvas
-      value: 
-      objectReference: {fileID: 1508585261}
-    - target: {fileID: 114299448756263228, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: Crosshairs
-      value: 
-      objectReference: {fileID: 685897263}
-    - target: {fileID: 114692876634565250, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: Crosshairs
-      value: 
-      objectReference: {fileID: 685897263}
-    - target: {fileID: 114843492900124066, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ReloadCanvas
-      value: 
-      objectReference: {fileID: 2049691887}
-    - target: {fileID: 114843492900124066, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ReloadImage
-      value: 
-      objectReference: {fileID: 1818068657}
-    - target: {fileID: 114763752862373632, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: RemainingBulletsUI
-      value: 
-      objectReference: {fileID: 2112908009}
-    - target: {fileID: 114763752862373632, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ClipBulletsUI
-      value: 
-      objectReference: {fileID: 1095808263}
-    - target: {fileID: 114763752862373632, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: BulletsCanvas
-      value: 
-      objectReference: {fileID: 1508585261}
     - target: {fileID: 114425466349415322, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
         type: 2}
       propertyPath: HealthBar
       value: 
       objectReference: {fileID: 214874634}
-    - target: {fileID: 114207538743343062, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+    - target: {fileID: 114763752862373632, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
         type: 2}
-      propertyPath: IsAuth
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: RemainingBulletsUI
+      value: 
+      objectReference: {fileID: 2112908009}
+    - target: {fileID: 114763752862373632, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: ClipBulletsUI
+      value: 
+      objectReference: {fileID: 1095808263}
+    - target: {fileID: 114763752862373632, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: BulletsCanvas
+      value: 
+      objectReference: {fileID: 1508585261}
+    - target: {fileID: 114843492900124066, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: ReloadCanvas
+      value: 
+      objectReference: {fileID: 2049691887}
+    - target: {fileID: 114843492900124066, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: ReloadImage
+      value: 
+      objectReference: {fileID: 1818068657}
+    - target: {fileID: 114692876634565250, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: Crosshairs
+      value: 
+      objectReference: {fileID: 685897263}
+    - target: {fileID: 114299448756263228, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: Crosshairs
+      value: 
+      objectReference: {fileID: 685897263}
+    - target: {fileID: 114524337371568196, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: RemainingBulletsUI
+      value: 
+      objectReference: {fileID: 2112908009}
+    - target: {fileID: 114524337371568196, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: ClipBulletsUI
+      value: 
+      objectReference: {fileID: 1095808263}
+    - target: {fileID: 114524337371568196, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: BulletsCanvas
+      value: 
+      objectReference: {fileID: 1508585261}
+    - target: {fileID: 114844454676465914, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: ReloadCanvas
+      value: 
+      objectReference: {fileID: 2049691887}
+    - target: {fileID: 114844454676465914, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: ReloadImage
+      value: 
+      objectReference: {fileID: 1818068657}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef, type: 2}
   m_IsPrefabAsset: 0

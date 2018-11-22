@@ -19,8 +19,8 @@ TagManager:
   - PostProcessing
   - PlayerOcclussion
   - ProjectileExplosion
-  - 
-  - 
+  - ProjectileCollision
+  - CharacterCollision
   - 
   - 
   - 

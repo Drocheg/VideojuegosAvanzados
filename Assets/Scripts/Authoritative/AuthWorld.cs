@@ -14,12 +14,6 @@ public class AuthWorld : MonoBehaviour {
 	private AuthEntity[] _entities;
 	private int _expectedEntities;
 	public int ExpectedEntities;
-
-
-	//public AuthCharacterEntity e0;
-	//public AuthCharacterEntity e1;
-	//public AuthCharacterEntity e2;
-	
 	public float SnapshotTickRate;
 	public float MaxHP, SpawnTime;
 	public Transform SpawnLocation;
@@ -157,6 +151,7 @@ public class AuthWorld : MonoBehaviour {
 			Debug.LogWarning("Projectile id out of boundaries.");
 			return;
 		}
+		Debug.Log("Erasing projectile " + projectile.GetId());
 		_entities[projectile.GetId()] = null;
 		// send Explosion command.
 		var command = new ProjectileExplodeCommand() {
@@ -168,8 +163,26 @@ public class AuthWorld : MonoBehaviour {
 			maxDir = new Vector3(MaxPosX, MaxPosY, MaxPosZ),
 			id = id,
 			maxId = MaxEntities,
+			directionPrecision = Step,
+			positionPrecision = Step,
 		};
 		_networkManager.SendAuthEventReliable(command.Serialize);
+	}
+
+	public void NewProjectile(BitReader reader) {
+		var command = ProjectileShootCommand.Deserialize(
+			reader,
+			MaxEntities,
+			MinPosX,
+			MaxPosX,
+			MinPosY,
+			MaxPosY,
+			MinPosZ,
+			MaxPosZ,
+			Step
+		);
+
+		NewProjectile(command);
 	}
 
 	public void NewProjectile(ProjectileShootCommand command) {
@@ -179,9 +192,9 @@ public class AuthWorld : MonoBehaviour {
 				projectile.Id = i;
 				var pos = new Vector3(command._x, command._y, command._z);
 				var dir = new Vector3(command._dirX, command._dirY, command._dirZ);
-				projectile.SetPositionAndForce(pos, dir);
+				projectile.SetPositionAndForce(pos, dir.normalized);
 				_entities[i] = projectile;
-
+				Debug.Log("Projectile dir " + dir);
 				command._id = i;
 				_networkManager.SendAuthEventReliable(command.Serialize);
 				break;
@@ -194,7 +207,6 @@ public class AuthWorld : MonoBehaviour {
 		writer.WriteFloat(_timestamp, 0, MaxTime, TimePrecision);
 		foreach(var entity in _entities) {
 			if (entity != null) {
-				Debug.Log("Creando snapshot para id: " + entity.GetId());
 				writer.WriteBit(true);
 				writer.WriteInt((ulong) entity.GetEntityType(), 0, (uint) _entityTypes);
 				entity.Serialize(writer);

@@ -500,7 +500,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 398230ffd6de8874daefa9d48348c0b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProjectileManager: {fileID: 0}
 --- !u!114 &114382250916470024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -517,6 +516,7 @@ MonoBehaviour:
   IsAuth: 1
   DestroyDelay: 3
   Damage: 0.1
+  ExplosionTime: 0
 --- !u!114 &114874331663557004
 MonoBehaviour:
   m_ObjectHideFlags: 1

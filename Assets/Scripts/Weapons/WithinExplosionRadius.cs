@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class WithinExplosionRadius : MonoBehaviour {
 	private HashSet<LimbManager> _limbSet = new HashSet<LimbManager>();
-	public ProjectileManager ProjectileManager;
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 	
 	public void Explode(float damage, AuthWorld authWorld) {
 		foreach(var limb in _limbSet) {
