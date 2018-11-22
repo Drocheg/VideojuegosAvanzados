@@ -528,7 +528,6 @@ GameObject:
   - component: {fileID: 82444820265339930}
   - component: {fileID: 114728695018507534}
   - component: {fileID: 114726915083742734}
-  - component: {fileID: 114844454676465914}
   - component: {fileID: 114524337371568196}
   - component: {fileID: 114299448756263228}
   - component: {fileID: 114207538743343062}
@@ -594,7 +593,6 @@ GameObject:
   - component: {fileID: 4806551466141562}
   - component: {fileID: 82455897544089714}
   - component: {fileID: 114763752862373632}
-  - component: {fileID: 114843492900124066}
   - component: {fileID: 114166069608322762}
   - component: {fileID: 114664808223965928}
   - component: {fileID: 114692876634565250}
@@ -2871,7 +2869,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 3351
+    m_Bits: 7447
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -4254,36 +4252,6 @@ MonoBehaviour:
   RecoilSmoothness: 0.1
   FOVAdjustment: 60
   GunCameraAdjustmentAngle: 0
---- !u!114 &114843492900124066
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1385695232640400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 367666a0e8494874eb11ba231b33873a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ReloadCanvas: {fileID: 0}
-  ReloadImage: {fileID: 0}
-  Reload: {fileID: 8300000, guid: 3c5c1d4d7b9307c458890a4beb12e4ae, type: 3}
-  ReloadFillPerSecond: 0.33
---- !u!114 &114844454676465914
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1359976217076138}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 367666a0e8494874eb11ba231b33873a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ReloadCanvas: {fileID: 0}
-  ReloadImage: {fileID: 0}
-  Reload: {fileID: 8300000, guid: 3c5c1d4d7b9307c458890a4beb12e4ae, type: 3}
-  ReloadFillPerSecond: 0.33
 --- !u!114 &114914174838280064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4311,7 +4279,7 @@ MonoBehaviour:
     smooth: 0
     smoothTime: 5
     lockCursor: 1
-  m_UseFovKick: 1
+  m_UseFovKick: 0
   m_FovKick:
     Camera: {fileID: 20048802620839744}
     originalFov: 0
@@ -4324,7 +4292,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  m_UseHeadBob: 1
+  m_UseHeadBob: 0
   m_HeadBob:
     HorizontalBobRange: 0.02
     VerticalBobRange: 0.02

@@ -43,7 +43,7 @@ public class ShootManager : IGenericWeaponManager {
 	void LateUpdate () {
 		_timeSinceLastShot += Time.deltaTime;
 		_aimManager.UpdateAim();
-		if (Input.GetButton("Shoot") && !_reloadManager.IsReloading()) {
+		if (Input.GetButton("Shoot")) {
 			if (_timeSinceLastShot >= ShootingTimeout) {
 				Shoot();
 			}
@@ -129,7 +129,7 @@ public class ShootManager : IGenericWeaponManager {
 			GunCamera.fieldOfView = _oldFOV;
 		_playerAnimator.SetLayerWeight(AnimationLayer, 0);
 		_weaponManager.TurnOffGUI();
-		_reloadManager.StopReload();
+		// _reloadManager.StopReload();
 		_aimManager.ResetAiming();
 		GunCamera.transform.Rotate(GunCameraAdjustment, -GunCameraAdjustmentAngle);
 	}

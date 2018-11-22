@@ -1015,16 +1015,6 @@ Prefab:
       propertyPath: BulletsCanvas
       value: 
       objectReference: {fileID: 1508585261}
-    - target: {fileID: 114843492900124066, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ReloadCanvas
-      value: 
-      objectReference: {fileID: 2049691887}
-    - target: {fileID: 114843492900124066, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ReloadImage
-      value: 
-      objectReference: {fileID: 1818068657}
     - target: {fileID: 114692876634565250, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
         type: 2}
       propertyPath: Crosshairs
@@ -1050,31 +1040,6 @@ Prefab:
       propertyPath: BulletsCanvas
       value: 
       objectReference: {fileID: 1508585261}
-    - target: {fileID: 114844454676465914, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ReloadCanvas
-      value: 
-      objectReference: {fileID: 2049691887}
-    - target: {fileID: 114844454676465914, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: ReloadImage
-      value: 
-      objectReference: {fileID: 1818068657}
-    - target: {fileID: 20048802620839744, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: m_CullingMask.m_Bits
-      value: 7447
-      objectReference: {fileID: 0}
-    - target: {fileID: 114914174838280064, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: m_UseHeadBob
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114914174838280064, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
-        type: 2}
-      propertyPath: m_UseFovKick
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef, type: 2}
   m_IsPrefabAsset: 0
@@ -1412,12 +1377,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1818068657 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114741739115506434, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 772480903}
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 --- !u!1 &1916200136
 GameObject:
   m_ObjectHideFlags: 0
@@ -1598,11 +1557,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!223 &2049691887 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 223906119707660302, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 772480903}
 --- !u!1 &2098020079
 GameObject:
   m_ObjectHideFlags: 0
