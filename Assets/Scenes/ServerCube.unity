@@ -546,6 +546,16 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 114246228875450170, guid: 42640f15a6598de41b1d38e021f17f3a,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114246228875450170, guid: 42640f15a6598de41b1d38e021f17f3a,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 114724707427642950, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_havePropertiesChanged
@@ -556,22 +566,22 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114176493401748314, guid: 42640f15a6598de41b1d38e021f17f3a,
+    - target: {fileID: 114012162774993118, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_havePropertiesChanged
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114176493401748314, guid: 42640f15a6598de41b1d38e021f17f3a,
+    - target: {fileID: 114012162774993118, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114246228875450170, guid: 42640f15a6598de41b1d38e021f17f3a,
+    - target: {fileID: 114176493401748314, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_havePropertiesChanged
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114246228875450170, guid: 42640f15a6598de41b1d38e021f17f3a,
+    - target: {fileID: 114176493401748314, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
@@ -917,6 +927,7 @@ MonoBehaviour:
   ProjectileOffset: 10
   ExplosionMagnitude: 10
   GameStateText: {fileID: 953327772}
+  TimerGUI: {fileID: 1946163624}
 --- !u!114 &1304344874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1484,6 +1495,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1946163624 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114012162774993118, guid: 42640f15a6598de41b1d38e021f17f3a,
+    type: 2}
+  m_PrefabInternal: {fileID: 772480903}
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 --- !u!1 &2010223616
 GameObject:
   m_ObjectHideFlags: 0

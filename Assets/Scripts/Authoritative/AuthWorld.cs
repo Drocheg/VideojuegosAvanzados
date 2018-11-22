@@ -29,7 +29,7 @@ public class AuthWorld : MonoBehaviour {
 	public float ExplosionMagnitude;
 	private uint _maxPlayers;
 	private List<PlayerGameState> _playerStates;
-	public TextMeshProUGUI GameStateText;
+	public TextMeshProUGUI GameStateText, TimerGUI;
 
 	// Use this for initialization
 	void Awake () {
@@ -112,8 +112,14 @@ public class AuthWorld : MonoBehaviour {
 	void Update () {
 		_timestamp += Time.deltaTime;
 
-		var state = "";
+		int totalSeconds = (int)_timestamp;
+		int seconds = totalSeconds % 60;
+		int minutes = totalSeconds / 60;
+		string time = minutes + ":" + seconds;
+		TimerGUI.text = time;
 
+
+		var state = "";
 		if (Input.GetButtonDown("GameState")) {
 			foreach(var playerState in _playerStates) {
 				state += string.Format("Player {0}\t{1}K\t{2}D\n", playerState.id, playerState.kills, playerState.deaths);
