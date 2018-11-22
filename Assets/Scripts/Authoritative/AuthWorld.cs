@@ -202,16 +202,7 @@ public class AuthWorld : MonoBehaviour {
 				healthManager.TakeDamage(comm._damage);
 				if (healthManager.Dead) {
 					// entity was killed. Revive it.
-					var killer = _playerStates.Find((x) => x.id == id);
-					Debug.Log("Killed");
-					if (killer != null) {
-						killer.kills++;
-						
-					}
-					var victim = _playerStates.Find((x) => x.id == comm._id);
-					if (victim != null) {
-						victim.deaths++;
-					}
+					AccountPlayerKill(id, comm._id);
 					Revive(healthManager);
 				}
 			} else {
@@ -255,7 +246,7 @@ public class AuthWorld : MonoBehaviour {
 		_networkManager.SendAuthEventReliable(command.Serialize);
 	}
 
-	public void NewProjectile(BitReader reader) {
+	public void NewProjectile(int shooterId, BitReader reader) {
 		var command = ProjectileShootCommand.Deserialize(
 			reader,
 			MaxEntities,
@@ -268,7 +259,7 @@ public class AuthWorld : MonoBehaviour {
 			Step
 		);
 
-		NewProjectile(new Vector3(
+		NewProjectile(shooterId, new Vector3(
 			command._x,
 			command._y,
 			command._z
@@ -279,7 +270,7 @@ public class AuthWorld : MonoBehaviour {
 		));
 	}
 
-	public void NewProjectile(Vector3 pos, Vector3 dir) {
+	public void NewProjectile(int shooterId, Vector3 pos, Vector3 dir) {
 		var command = new ProjectileShootCommand(
 				0, 
 				MaxEntities,
@@ -300,6 +291,7 @@ public class AuthWorld : MonoBehaviour {
 			if (_entities[i] == null) {
 				var projectile = Instantiate(AuthProjectile);
 				projectile.Id = i;
+				projectile.ShooterId = shooterId;
 				projectile.SetPositionAndForce(pos, dir);
 				_entities[i] = projectile;
 				command._id = i;
@@ -320,6 +312,18 @@ public class AuthWorld : MonoBehaviour {
 			} else {
 				writer.WriteBit(false);
 			}
+		}
+	}
+
+	public void AccountPlayerKill(int killerId, int victimId) {
+		var killer = _playerStates.Find((x) => x.id == killerId);
+		if (killer != null) {
+			killer.kills++;
+			
+		}
+		var victim = _playerStates.Find((x) => x.id == victimId);
+		if (victim != null) {
+			victim.deaths++;
 		}
 	}
 

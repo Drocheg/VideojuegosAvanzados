@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AuthProjectileEntity : AuthEntity {
-	public int Id;
+	public int Id, ShooterId;
 	AuthWorld _authWorld;
 	Rigidbody _rb;
 

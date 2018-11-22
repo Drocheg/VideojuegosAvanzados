@@ -462,6 +462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 398230ffd6de8874daefa9d48348c0b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _projectile: {fileID: 114804668641806502}
 --- !u!114 &114688802977257364
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -491,6 +492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Id: 0
+  ShooterId: 0
 --- !u!135 &135214378707501456
 SphereCollider:
   m_ObjectHideFlags: 1

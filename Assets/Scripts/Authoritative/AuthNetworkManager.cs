@@ -262,7 +262,12 @@ public class AuthNetworkManager : MonoBehaviour {
 			}
 			case NetworkCommand.PROJECTILE_SHOOT_COMMAND:
 			{
-				_authWorld.NewProjectile(packet.bitReader);
+				var Id = GetHostId(packet.endPoint);
+				if (Id == -1) {
+					Debug.Log("Could not match endpoint to id");
+					break;
+				}
+				_authWorld.NewProjectile(Id, packet.bitReader);
 				break;
 			}
 		}

@@ -31,7 +31,7 @@ public class ProjectileManager : ShootManager {
 
 		var dir = Camera.transform.forward;
 		if (IsAuth) {
-			_authWorld.NewProjectile(transform.position, dir);
+			_authWorld.NewProjectile(0, transform.position, dir);
 		} else {
 			// Send ProjectileShootCommand
 			_localWorld.ShootProjectile(transform.position, dir);
