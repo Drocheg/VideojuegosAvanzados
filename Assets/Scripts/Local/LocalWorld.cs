@@ -87,8 +87,9 @@ public class LocalWorld : MonoBehaviour {
 				break;
 			}
 			case NetworkState.NORMAL: {
-				var timeMultiplier = _queuedTimes.Count > TargetQueuedPositions ? 1.1f : 0.9f;
+				var timeMultiplier = _queuedTimes.Count > TargetQueuedPositions ? 1.1f : 1f;
 				// Debug.Log("TimeM: " + timeMultiplier);
+				Debug.Log("time multiplier " + timeMultiplier);
 				_currentTime += Time.deltaTime * timeMultiplier ;
 				if (_currentTime > _nextTime) {
 					if (_queuedTimes.Count > 0) {

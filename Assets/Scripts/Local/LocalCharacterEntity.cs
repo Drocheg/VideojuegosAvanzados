@@ -45,7 +45,7 @@ public class LocalCharacterEntity : LocalEntity {
 	{
 		switch(_currentState){
 			case NetworkState.INITIAL: {
-				if (_queuedPositions.Count > 1) {
+				if (_queuedPositions.Count > _localWorld.MinQueuedPositions) {
 					var wrapper1 = _queuedPositions.Dequeue();
 					var wrapper2 = _queuedPositions.Dequeue();
 					_previousPosition = wrapper1.pos;

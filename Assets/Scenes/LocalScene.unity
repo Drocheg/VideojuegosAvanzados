@@ -23127,11 +23127,6 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 224255629964835108, guid: 42640f15a6598de41b1d38e021f17f3a,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 83.2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 42640f15a6598de41b1d38e021f17f3a, type: 2}
   m_IsPrefabAsset: 0
@@ -23690,7 +23685,7 @@ MonoBehaviour:
   AnimationStep: 0.1
   MinQueuedPositions: 2
   MaxQueuedPositions: 4
-  TargetQueuedPositions: 1
+  TargetQueuedPositions: 3
   ExpectedEntities: 0
   LocalProjectilePrefab: {fileID: 114174029438511432, guid: 1117c0d6f400e074a85cf01aeaf78f6e,
     type: 2}

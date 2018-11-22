@@ -26,7 +26,7 @@ public class LocalProjectileEntity : LocalEntity {
 	{
 		switch(_currentState){
 			case NetworkState.INITIAL: {
-				if (_qPositions.Count > 2) {
+				if (_qPositions.Count > _world.MinQueuedPositions) {
 					_pPos = _qPositions.Dequeue();
 					_nPos = _qPositions.Dequeue();
 					_currentState = NetworkState.NORMAL;
