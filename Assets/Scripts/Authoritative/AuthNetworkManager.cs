@@ -28,6 +28,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	public ulong MaxSeqPossible;
 	public float TimeoutEvents;
 	public float PacketLoss;
+	public float Latency;
 	public uint MaxPacketsToSend;
 	public float MaxIdleTimeBeforeDisconnect;
 	private int _commandsCount;
@@ -43,7 +44,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		takenIds[0] = true; // TODO delete this when host stop being a player.
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
-		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss, MaxPacketsToSend);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss, MaxPacketsToSend, Latency);
 		AuthPlayer.Init();
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
 		if(MenuVariables.MenuName != "") playerName	= MenuVariables.MenuName;

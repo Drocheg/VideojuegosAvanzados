@@ -20,6 +20,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	private EndPoint _sending_endpoint;
 	public float TimeoutEvents;
 	public float PacketLoss;
+	public float Latency;
 	public uint MaxPacketsToSend;
 	private int _commandsCount;
 	public GameObject Player;
@@ -29,7 +30,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	void Start () {
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
-		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss, MaxPacketsToSend);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss, MaxPacketsToSend, Latency);
 		_sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		_receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort+1);
 		_networkAPI.AddUnreliableChannel(0, _receiving_endpoint, _sending_endpoint);
