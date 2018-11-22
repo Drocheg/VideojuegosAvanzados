@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2319,12 +2319,6 @@ Transform:
   m_Father: {fileID: 1371610699}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1095808263 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114176493401748314, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 1899862995}
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 --- !u!1 &1101594945
 GameObject:
   m_ObjectHideFlags: 0
@@ -7255,6 +7249,7 @@ MonoBehaviour:
   MainPlayerFab: {fileID: 4834306638117020, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
     type: 2}
   TimeoutEvents: 0
+  TimedChannelTimout: 1
   PacketLoss: 0
   MaxPacketsToSend: 100000
   Player: {fileID: 512930488}
@@ -7770,9 +7765,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialBullets: 20
   BulletClipSize: 10
-  RemainingBulletsUI: {fileID: 2112908009}
-  ClipBulletsUI: {fileID: 1095808263}
-  BulletsCanvas: {fileID: 1508585261}
 --- !u!82 &1398201023
 AudioSource:
   m_ObjectHideFlags: 0
@@ -8216,11 +8208,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!223 &1508585261 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 223239928216101118, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 1899862995}
 --- !u!1 &1524075450
 GameObject:
   m_ObjectHideFlags: 0
@@ -23087,16 +23074,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 114176493401748314, guid: 42640f15a6598de41b1d38e021f17f3a,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114176493401748314, guid: 42640f15a6598de41b1d38e021f17f3a,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 114012162774993118, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_havePropertiesChanged
@@ -23113,16 +23090,6 @@ Prefab:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114724707427642950, guid: 42640f15a6598de41b1d38e021f17f3a,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114246228875450170, guid: 42640f15a6598de41b1d38e021f17f3a,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114246228875450170, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
@@ -23905,12 +23872,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2112908009 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114246228875450170, guid: 42640f15a6598de41b1d38e021f17f3a,
-    type: 2}
-  m_PrefabInternal: {fileID: 1899862995}
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 --- !u!1 &2124099910
 GameObject:
   m_ObjectHideFlags: 0
@@ -24177,9 +24138,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialBullets: 100
   BulletClipSize: 4
-  RemainingBulletsUI: {fileID: 2112908009}
-  ClipBulletsUI: {fileID: 1095808263}
-  BulletsCanvas: {fileID: 1508585261}
 --- !u!114 &2135269227
 MonoBehaviour:
   m_ObjectHideFlags: 0

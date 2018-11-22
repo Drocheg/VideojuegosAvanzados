@@ -10,13 +10,13 @@ public class AuthNetworkManager : MonoBehaviour {
 	public class RemoteHost {
 		public EndPoint _receiving_endpoint;
 		public EndPoint _sending_endpoint;
-		public uint UnreliableSnapshotChannel, ReliableChannel, UnreliableEventChannel;
+		public uint UnreliableSnapshotChannel, ReliableChannel, UnreliableEventChannel, TimedChannel;
 		public int Id; // The Id of the entity this host relates to.
 		public float lastReceiveTime = Time.realtimeSinceStartup;
 	}
 
 	public Transform RemotePlayerPrefab;
-	
+
 	private NetworkAPI _networkAPI;
 	private RemoteHost[] hosts;
 	private int _hostCount;
@@ -26,7 +26,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	private bool[] takenIds;
 	public uint ChannelsPerHost;
 	public ulong MaxSeqPossible;
-	public float TimeoutEvents;
+	public float TimeoutEvents, TimedChannelTimeout;
 	public float PacketLoss;
 	public float Latency;
 	public uint MaxPacketsToSend;
@@ -35,7 +35,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	private AuthWorld _authWorld;
 	public AuthCharacterEntity AuthPlayer;
 	public string playerName;
-	
+
 	void Start()
 	{
 		takenIds = new bool[MaxHosts];
@@ -55,7 +55,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	void Update() {
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
-		
+
 		updateSendQueuesOrDisconnect();
 
 		foreach(var packet in packets)
@@ -77,6 +77,11 @@ public class AuthNetworkManager : MonoBehaviour {
 				}
 				case 2: {
 					// Unreliable events channel
+					ParseCommand(packet);
+					break;
+				}
+				case 3: {
+					// Reliable timed channel
 					ParseCommand(packet);
 					break;
 				}
@@ -113,7 +118,7 @@ public class AuthNetworkManager : MonoBehaviour {
 				break;
 			}
 		}
-		
+
 		return Id;
 	}
 
@@ -121,7 +126,7 @@ public class AuthNetworkManager : MonoBehaviour {
 	{
 		var command = JoinCommand.Deserialize(); // TODO add port for server responses in join packet. Handle change of ports.
 		EndPoint currentReceivingEndpoint = packet.endPoint;
-		
+
 		//var port packet.bitReader.ReadInt()
 		Debug.Log(packet.endPoint);
 		IPEndPoint currentSendingEndPoint = new IPEndPoint(((IPEndPoint)currentReceivingEndpoint).Address, ((IPEndPoint) currentReceivingEndpoint).Port-1);
@@ -134,12 +139,13 @@ public class AuthNetworkManager : MonoBehaviour {
 			return false;
 		}
 		// New Host
-			
+
 		// Add channels
 		if (!_networkAPI.AddUnreliableChannel(0, currentReceivingEndpoint, currentSendingEndPoint) ||
 			!_networkAPI.AddTimeoutReliableChannel(1, currentReceivingEndpoint, currentSendingEndPoint,
 				TimeoutEvents) ||
-			!_networkAPI.AddUnreliableChannel(2, currentReceivingEndpoint, currentSendingEndPoint))
+			!_networkAPI.AddUnreliableChannel(2, currentReceivingEndpoint, currentSendingEndPoint) ||
+			!_networkAPI.AddTimeoutReliableChannel(3, currentReceivingEndpoint, currentSendingEndPoint, TimedChannelTimeout))
 		{
 			return false;
 		}
@@ -154,24 +160,25 @@ public class AuthNetworkManager : MonoBehaviour {
 			_sending_endpoint = currentSendingEndPoint,
 			UnreliableSnapshotChannel = 0,
 			ReliableChannel = 1,
-			UnreliableEventChannel = 2
+			UnreliableEventChannel = 2,
+			TimedChannel = 3
 		};
 		Debug.Log("Adding HOST: " + packet.endPoint + "With ID: " + currentId);
 		takenIds[currentId] = true;
 		Transform remotePlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
 		AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
 		ace.Id = currentId;
-		ace.Init();	
+		ace.Init();
 		_authWorld.AddPlayer((uint)ace.Id);
 		// Enviarle a los otros que se conecto uno nuevo
 		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
-		
+
 		_hostCount += 1;
-		hosts[currentId] = newHost;		
-		
+		hosts[currentId] = newHost;
+
 		// Enviar respuesta al que se conecto
 		SendAuthEventReliableToSingleHost(newHost, new JoinResponseCommand((uint)currentId, MaxHosts).Serialize);
-	
+
 		// Enviarle un packete por cada host que hay de antes al nuevo
 		foreach (var host in hosts)
 		{
@@ -179,13 +186,13 @@ public class AuthNetworkManager : MonoBehaviour {
 			{
 				SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand((uint)host.Id, MaxHosts).Serialize);
 			}
-		} 
+		}
 		SendAuthEventReliableToSingleHost(newHost, new JoinPlayerCommand(0, MaxHosts).Serialize);
-		
+
 		return true;
 	}
 
-	
+
 	private void disconnectHost(EndPoint ep)
 	{
 		int playerId = GetHostId(ep);
@@ -194,7 +201,7 @@ public class AuthNetworkManager : MonoBehaviour {
 			disconnectHost(playerId);
 		}
 	}
-	
+
 	private void disconnectHost(int hostID)
 	{
 		takenIds[hostID] = false;
@@ -220,13 +227,13 @@ public class AuthNetworkManager : MonoBehaviour {
 		removeChannels(host._receiving_endpoint);
 		removeChannels(host._sending_endpoint);
 	}
-	
+
 	private void removeChannels(EndPoint endPoint)
 	{
 		_networkAPI.RemoveChannels(endPoint);
 	}
 
-	
+
 	void ParseCommand(Packet packet) {
 		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, System.Enum.GetValues(typeof(NetworkCommand)).Length);
 
@@ -273,12 +280,12 @@ public class AuthNetworkManager : MonoBehaviour {
 			}
 		}
 	}
-	
+
 	public void SendAuthSnapshotUnreliable(Serialize ev) {
 		foreach(var host in hosts) {
 			if (host != null)
 			{
-				sendOrDisconnect(host.UnreliableSnapshotChannel, host._sending_endpoint, ev);	
+				sendOrDisconnect(host.UnreliableSnapshotChannel, host._sending_endpoint, ev);
 			}
 		}
 	}
@@ -291,21 +298,21 @@ public class AuthNetworkManager : MonoBehaviour {
 			}
 		}
 	}
-	
+
 	public void SendAuthEventReliable(Serialize ev) {
 		foreach(var host in hosts) {
 			if (host != null)
 			{
-				sendOrDisconnect(host.ReliableChannel, host._sending_endpoint, ev);	
+				sendOrDisconnect(host.ReliableChannel, host._sending_endpoint, ev);
 			}
-			
+
 		}
 	}
-	
+
 	public void SendAuthEventReliableToSingleHost(RemoteHost host, Serialize ev) {
-		sendOrDisconnect(host.ReliableChannel, host._sending_endpoint, ev);	
+		sendOrDisconnect(host.ReliableChannel, host._sending_endpoint, ev);
 	}
-	
+
 	public void SendAuthEventUnreliableToSingleHost(RemoteHost host, Serialize ev) {
 		sendOrDisconnect(host.UnreliableEventChannel, host._sending_endpoint, ev);
 	}
@@ -327,7 +334,7 @@ public class AuthNetworkManager : MonoBehaviour {
 			disconnectHost(endPoint);
 		}
 	}
-	
+
 	private void updateSendQueuesOrDisconnect()
 	{
 		if (!_networkAPI.UpdateSendQueues())
@@ -344,7 +351,7 @@ public class AuthNetworkManager : MonoBehaviour {
 			_networkAPI.Close();
 		}
 	}
-	
+
 	void OnDisable()
 	{
 		_networkAPI.Close();
