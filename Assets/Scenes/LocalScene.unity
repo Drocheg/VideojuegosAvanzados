@@ -23097,22 +23097,22 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114473341340278758, guid: 42640f15a6598de41b1d38e021f17f3a,
+    - target: {fileID: 114012162774993118, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_havePropertiesChanged
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114473341340278758, guid: 42640f15a6598de41b1d38e021f17f3a,
+    - target: {fileID: 114012162774993118, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114458277167615630, guid: 42640f15a6598de41b1d38e021f17f3a,
+    - target: {fileID: 114724707427642950, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_havePropertiesChanged
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114458277167615630, guid: 42640f15a6598de41b1d38e021f17f3a,
+    - target: {fileID: 114724707427642950, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
@@ -23127,15 +23127,10 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114341873672965154, guid: 42640f15a6598de41b1d38e021f17f3a,
+    - target: {fileID: 224255629964835108, guid: 42640f15a6598de41b1d38e021f17f3a,
         type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114341873672965154, guid: 42640f15a6598de41b1d38e021f17f3a,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
+      propertyPath: m_AnchoredPosition.y
+      value: 83.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 42640f15a6598de41b1d38e021f17f3a, type: 2}
@@ -23143,6 +23138,12 @@ Prefab:
 --- !u!114 &1899862996 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114724707427642950, guid: 42640f15a6598de41b1d38e021f17f3a,
+    type: 2}
+  m_PrefabInternal: {fileID: 1899862995}
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+--- !u!114 &1899862997 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114012162774993118, guid: 42640f15a6598de41b1d38e021f17f3a,
     type: 2}
   m_PrefabInternal: {fileID: 1899862995}
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
@@ -23696,6 +23697,7 @@ MonoBehaviour:
   MaxDeaths: 100
   MaxKills: 100
   GameStateGUI: {fileID: 1899862996}
+  TimerGUI: {fileID: 1899862997}
 --- !u!114 &2010554598
 MonoBehaviour:
   m_ObjectHideFlags: 0
