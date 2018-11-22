@@ -8,7 +8,7 @@ public enum NetworkState {
 	NORMAL,
 	NETWORK_PROBLEMS,
 }
-	
+
 public class LocalWorld : MonoBehaviour {
 	public int MaxEntities, MaxProjectiles;
 	public float MaxTime, TimePrecision, MaxAllowedDelay;
@@ -29,6 +29,7 @@ public class LocalWorld : MonoBehaviour {
 	private LocalNetworkManager _networkManager;
 	public uint MaxDeaths, MaxKills;
 	public TextMeshProUGUI GameStateGUI, TimerGUI;
+	SpritePool _bulletPool;
 	string _gameStateString = "";
 	// Use this for initialization
 	void Start() {
@@ -43,8 +44,9 @@ public class LocalWorld : MonoBehaviour {
 		_characterSerialSize = CharacterEntitySerialSize();
 		_projectileSerialSize = ProjectileEntitySerialSize();
 		_networkManager = FindObjectOfType<LocalNetworkManager>();
+		_bulletPool = FindObjectOfType<SpritePool>();
 	}
-	
+
 	void Update() {
 		int totalSeconds = (int) _currentTime;
 		int seconds = totalSeconds % 60;
@@ -54,7 +56,7 @@ public class LocalWorld : MonoBehaviour {
 
 		if (Input.GetButtonDown("GameState")) {
 			GameStateGUI.text = _gameStateString;
-		}	
+		}
 		if (Input.GetButtonUp("GameState")) {
 			GameStateGUI.text = "";
 		}
@@ -81,7 +83,7 @@ public class LocalWorld : MonoBehaviour {
 							e.UpdateEntity(0);
 						}
 					}
-					
+
 					_currentState = NetworkState.NORMAL;
 				}
 				break;
@@ -101,7 +103,7 @@ public class LocalWorld : MonoBehaviour {
 								e.NextInterval();
 							}
 						}
-						
+
 						if (_nextTime - _currentTime > MaxAllowedDelay) {
 							// Hard reset
 							_currentState = NetworkState.INITIAL;
@@ -153,7 +155,7 @@ public class LocalWorld : MonoBehaviour {
 			RemoveReference(id);
 		}
 	}
-	
+
 	public void RemoveReference(uint id)
 	{
 		_entities[id] = null;
@@ -166,7 +168,7 @@ public class LocalWorld : MonoBehaviour {
 			return;
 		}
 		QueueNextSnapshot(reader.ReadFloat(0, MaxTime, TimePrecision));
-		
+
 		foreach(var e in _entities) {
 			var b = reader.ReadBit();
 			if (b) {
@@ -194,23 +196,23 @@ public class LocalWorld : MonoBehaviour {
 					Debug.Assert(e != null);
 					e.Deserialize(reader);
 				}
-			} 
+			}
 		}
 	}
 
 	public void NewProjectileShootCommand(BitReader reader) {
 		var command = ProjectileShootCommand.Deserialize(
-			reader, 
-			MaxEntities, 
-			MinPosX, 
-			MinPosY, 
-			MinPosZ, 
-			MaxPosX, 
-			MaxPosY, 
-			MaxPosZ, 
+			reader,
+			MaxEntities,
+			MinPosX,
+			MinPosY,
+			MinPosZ,
+			MaxPosX,
+			MaxPosY,
+			MaxPosZ,
 			Step
 		);
-		
+
 		if (command._id < 0 || command._id >= MaxEntities) {
 			Debug.LogWarning("Recevied projectile shoot command with invalid id.");
 			return;
@@ -225,13 +227,13 @@ public class LocalWorld : MonoBehaviour {
 
 	public void ProjectileExplosion(BitReader reader) {
 		var command = ProjectileExplodeCommand.Deserialize(
-			reader, 
+			reader,
 			MaxEntities,
 			Step,
-			Step, 
-			new Vector3(MinPosX, MinPosY, MinPosZ), 
+			Step,
+			new Vector3(MinPosX, MinPosY, MinPosZ),
 			new Vector3(MaxPosX, MaxPosY, MaxPosZ),
-			new Vector3(MinPosX, MinPosY, MinPosZ), 
+			new Vector3(MinPosX, MinPosY, MinPosZ),
 			new Vector3(MaxPosX, MaxPosY, MaxPosZ)
 		);
 		Debug.Log("Command " + command);
@@ -290,6 +292,9 @@ public class LocalWorld : MonoBehaviour {
 		} else {
 			ps = _sparksPool.GetParticleSystem();
 			_sparksPool.ReleaseParticleSystem(ps);
+
+			var bullet = _bulletPool.GetSprite();
+			bullet.transform.SetPositionAndRotation(commPos + commNor * 0.001f, Quaternion.LookRotation(commNor));
 		}
 		ps.transform.SetPositionAndRotation(commPos, Quaternion.LookRotation(commNor));
 		ps.Play();
@@ -297,7 +302,7 @@ public class LocalWorld : MonoBehaviour {
 
 	public void ShootProjectile(Vector3 pos, Vector3 dir) {
 		var command = new ProjectileShootCommand(
-				0, 
+				0,
 				MaxEntities,
 				pos.x,
 				pos.y,
@@ -310,7 +315,7 @@ public class LocalWorld : MonoBehaviour {
 				MinPosY,
 				MaxPosY,
 				MinPosZ,
-				MaxPosZ, 
+				MaxPosZ,
 				Step);
 
 		_networkManager.SendReliable(command.Serialize);
@@ -327,9 +332,9 @@ public class LocalWorld : MonoBehaviour {
 		_gameStateString = "";
 		for(int i = 0; i < state.TotalPlayers; i++) {
 			_gameStateString += string.Format(
-				"Player {0}\t{1}K\t{2}D\n", 
-				state.Ids[i], 
-				state.Kills[i], 
+				"Player {0}\t{1}K\t{2}D\n",
+				state.Ids[i],
+				state.Kills[i],
 				state.Deaths[i]
 				);
 		}

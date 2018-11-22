@@ -25,6 +25,7 @@ public class ShootManager : IGenericWeaponManager {
 	public Vector3 GunCameraAdjustment;
 	protected AudioSource _audioSource;
 	public float DamageMultiplier;
+	private SpritePool _bulletPool;
 	// Use this for initialization
 	public void Start () {
 		_playerAnimator = PlayerManager.GetComponent<Animator>();
@@ -36,8 +37,9 @@ public class ShootManager : IGenericWeaponManager {
 		_mask = LayerMask.GetMask("Default", "CharacterCollision");
 		_reloadManager = GetComponent<ReloadManager>();
 		_audioSource = GetComponent<AudioSource>();
+		_bulletPool = FindObjectOfType<SpritePool>();
 	}
-	
+
 
 	// Update is called once per frame
 	void LateUpdate () {
@@ -47,7 +49,7 @@ public class ShootManager : IGenericWeaponManager {
 			if (_timeSinceLastShot >= ShootingTimeout) {
 				Shoot();
 			}
-		} 
+		}
 		if (Input.GetButtonUp("Shoot")) {
 			_playerAnimator.SetBool("Shooting", false);
 		}
@@ -61,11 +63,11 @@ public class ShootManager : IGenericWeaponManager {
 
 	}
 
-	protected virtual void Shoot() 
+	protected virtual void Shoot()
 	{
 		if (!_weaponManager.ShootIfAble()) {
 			if (!_audioSource.isPlaying) {
-				Play(ClipEmpty);	
+				Play(ClipEmpty);
 			}
 			return;
 		}
@@ -89,6 +91,10 @@ public class ShootManager : IGenericWeaponManager {
 				particlePool = _bloodPool;
 			} else {
 				particlePool = _sparklesPool;
+
+				var bullet = _bulletPool.GetSprite();
+				bullet.transform.SetPositionAndRotation(hit.point + hit.normal * 0.001f, Quaternion.LookRotation(hit.normal));
+				bullet.transform.SetParent(hit.collider.transform);
 			}
 
 			RegisterHit(hit.point, hit.normal, damage, id);
@@ -118,7 +124,7 @@ public class ShootManager : IGenericWeaponManager {
 		GunCamera.fieldOfView = FOVAdjustment;
 	}
 
-	protected void Play(AudioClip clip) 
+	protected void Play(AudioClip clip)
 	{
 		_audioSource.clip = clip;
 		_audioSource.Play();

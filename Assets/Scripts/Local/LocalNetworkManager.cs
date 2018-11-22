@@ -5,6 +5,8 @@ using System;
 using Common;
 using JetBrains.Annotations;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class LocalNetworkManager : MonoBehaviour {
 	public int LocalPort, SpinLockTime;
@@ -25,6 +27,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	private int _commandsCount;
 	public GameObject Player;
 	public string playerName;
+	public TextMeshProUGUI _disconnectMessage;
 
 	// Use this for initialization
 	void Start () {
@@ -40,11 +43,13 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.AddTimeoutReliableChannel(3, _receiving_endpoint, _sending_endpoint, TimedChannelTimout);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		SendReliable(new JoinCommand().Serialize);
+		
 
 		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
 		if(MenuVariables.MenuPort != 0) TestRemotePort = MenuVariables.MenuPort;
 		if(!string.IsNullOrEmpty(MenuVariables.MenuIP)) TestRemoteIp	= MenuVariables.MenuIP;
 		Debug.Log("MenuIP: " + MenuVariables.MenuIP);
+		SendReliable(new PlayerInfoCommand(playerName, 0, MaxPlayers).Serialize);
 	}
 
 	// Update is called once per frame
@@ -139,6 +144,12 @@ public class LocalNetworkManager : MonoBehaviour {
 				_localWorld.UpdateGameState(packet.bitReader);
 				break;
 			}
+			case NetworkCommand.PLAYER_INFO_COMMAND:
+			{
+				PlayerInfoCommand playerInfoCommand = PlayerInfoCommand.Deserialize(packet.bitReader, MaxPlayers);
+				Debug.Log("PlayerId: " + playerInfoCommand.playerId + "PlayerName: " + playerInfoCommand.Name);
+				break;
+			}
 		}
 	}
 
@@ -188,7 +199,7 @@ public class LocalNetworkManager : MonoBehaviour {
 
 	private void disconnect()
 	{
-
+		_disconnectMessage.enabled = true;
 		_networkAPI.ClearSendQueue();
 		for (int i = 0; i < 10; i++)
 		{
@@ -197,5 +208,7 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.UpdateSendQueues();
 		System.Threading.Thread.Sleep(1000);
 		_networkAPI.Close();
+
+		SceneManager.LoadScene("MainMenu");
 	}
 }

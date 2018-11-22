@@ -22,7 +22,7 @@ public class AuthWorld : MonoBehaviour {
 	public float SnapshotTickRate;
 	public float MaxHP, SpawnTime;
 	public Transform SpawnLocation;
-	private float _snapshotDelta; 
+	private float _snapshotDelta;
 	private ParticlePool _sparksPool, _bloodPool;
 	public int ProjectileOffset;
 	private int _entityTypes;
@@ -30,11 +30,12 @@ public class AuthWorld : MonoBehaviour {
 	private uint _maxPlayers;
 	private List<PlayerGameState> _playerStates;
 	public TextMeshProUGUI GameStateText, TimerGUI;
+	SpritePool _bulletPool;
 
 	// Use this for initialization
 	void Awake () {
 		_entities = new AuthEntity[MaxEntities];
-		_timestamp = 0; 
+		_timestamp = 0;
 		var pools = GetComponents<ParticlePool>();
 		_projectiles = GetComponent<AuthProjectilePool>();
 		_sparksPool = pools[0];
@@ -43,7 +44,7 @@ public class AuthWorld : MonoBehaviour {
 		StartCoroutine(SnapshotLoop());
 		StartCoroutine(GameStateLoop());
 	}
-	
+
 	void Start()
 	{
 		_entityTypes = System.Enum.GetValues(typeof (EntityType)).Length;
@@ -51,6 +52,7 @@ public class AuthWorld : MonoBehaviour {
 		_maxPlayers = _networkManager.MaxHosts + 1;
 		_playerStates = new List<PlayerGameState>();
 		AddPlayer(0); // Add host as player.
+		_bulletPool = FindObjectOfType<SpritePool>();
 	}
 
 	public void AddPlayer(uint id) {
@@ -76,7 +78,7 @@ public class AuthWorld : MonoBehaviour {
 			if (_expectedEntities >= ExpectedEntities) {
 				_networkManager.SendAuthSnapshotUnreliable(TakeSnapshot);
 			}
-		}	
+		}
 	}
 
 	void CreateArraysFromGameStateList(List<PlayerGameState> list, out uint[] ids, out uint[] kills, out uint[] deaths) {
@@ -106,7 +108,7 @@ public class AuthWorld : MonoBehaviour {
 				TotalPlayers = (uint) _playerStates.Count
 			};
 			_networkManager.SendAuthEventReliable(comm.Serialize);
-		}	
+		}
 	}
 
 	// Update is called once per frame
@@ -137,7 +139,7 @@ public class AuthWorld : MonoBehaviour {
 		_expectedEntities++;
 		_entities[id] = auth;
 	}
-	
+
 	public void RemoveEntity(uint id)
 	{
 		AuthEntity removedEntity = _entities[id];
@@ -147,7 +149,7 @@ public class AuthWorld : MonoBehaviour {
 			RemoveReference(id);
 		}
 	}
-	
+
 	public void RemoveReference(uint id)
 	{
 		_entities[id] = null;
@@ -177,7 +179,7 @@ public class AuthWorld : MonoBehaviour {
 		if (entity != null)
 		{
 			entity.SetHP(MaxHP);
-			entity.transform.SetPositionAndRotation(SpawnLocation.position, SpawnLocation.rotation);	
+			entity.transform.SetPositionAndRotation(SpawnLocation.position, SpawnLocation.rotation);
 		}
 	}
 
@@ -212,6 +214,8 @@ public class AuthWorld : MonoBehaviour {
 		} else {
 			ps = _sparksPool.GetParticleSystem();
 			_sparksPool.ReleaseParticleSystem(ps);
+			var bullet = _bulletPool.GetSprite();
+			bullet.transform.SetPositionAndRotation(commPos + commNor * 0.001f, Quaternion.LookRotation(commNor));
 		}
 		ps.transform.SetPositionAndRotation(commPos, Quaternion.LookRotation(commNor));
 		ps.Play();
@@ -277,7 +281,7 @@ public class AuthWorld : MonoBehaviour {
 			return;
 		}
 		var command = new ProjectileShootCommand(
-				0, 
+				0,
 				MaxEntities,
 				pos.x,
 				pos.y,
@@ -290,7 +294,7 @@ public class AuthWorld : MonoBehaviour {
 				MinPosY,
 				MaxPosY,
 				MinPosZ,
-				MaxPosZ, 
+				MaxPosZ,
 				Step);
 		for(int i = 0; i < _entities.Length; i++) {
 			if (_entities[i] == null) {
@@ -323,7 +327,7 @@ public class AuthWorld : MonoBehaviour {
 		var killer = _playerStates.Find((x) => x.id == killerId);
 		if (killer != null) {
 			killer.kills++;
-			
+
 		}
 		var victim = _playerStates.Find((x) => x.id == victimId);
 		if (victim != null) {
