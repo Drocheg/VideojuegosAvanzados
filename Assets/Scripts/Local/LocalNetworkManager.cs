@@ -80,7 +80,12 @@ public class LocalNetworkManager : MonoBehaviour {
 				_localWorld.BulletCollision(packet.bitReader);
 				break;
 			case NetworkCommand.PROJECTILE_SHOOT_COMMAND: {
+				Debug.Log("Projectile arrived");
 				_localWorld.NewProjectileShootCommand(packet.bitReader);
+				break;
+			}
+			case NetworkCommand.PROJECTILE_EXPLODE_COMMAND: {
+				_localWorld.ProjectileExplosion(packet.bitReader);
 				break;
 			}
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:

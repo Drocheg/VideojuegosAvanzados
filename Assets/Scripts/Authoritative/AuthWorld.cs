@@ -172,16 +172,29 @@ public class AuthWorld : MonoBehaviour {
 		_networkManager.SendAuthEventReliable(command.Serialize);
 	}
 
-	public void NewProjectile(ProjectileShootCommand command) {
+	public void NewProjectile(Vector3 pos, Vector3 dir) {
+		var command = new ProjectileShootCommand(
+				0, 
+				MaxEntities,
+				pos.x,
+				pos.y,
+				pos.z,
+				dir.x,
+				dir.y,
+				dir.z,
+				MinPosX,
+				MaxPosX,
+				MinPosY,
+				MaxPosY,
+				MinPosZ,
+				MaxPosZ, 
+				Step);
 		for(int i = 0; i < _entities.Length; i++) {
 			if (_entities[i] == null) {
 				var projectile = Instantiate(AuthProjectile);
 				projectile.Id = i;
-				var pos = new Vector3(command._x, command._y, command._z);
-				var dir = new Vector3(command._dirX, command._dirY, command._dirZ);
 				projectile.SetPositionAndForce(pos, dir);
 				_entities[i] = projectile;
-
 				command._id = i;
 				_networkManager.SendAuthEventReliable(command.Serialize);
 				break;
