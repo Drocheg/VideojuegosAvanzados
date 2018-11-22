@@ -1,11 +1,24 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using UnityEngine;
 
 public delegate void Serialize(BitWriter writer);
+
+public class WrapperPacket
+{
+	public Packet p;
+	public float t;
+
+	public WrapperPacket(Packet p, float t)
+	{
+		this.p = p;
+		this.t = t;
+	}
+}
 
 public class NetworkAPI {
 	private static NetworkAPI _instance;
@@ -25,8 +38,10 @@ public class NetworkAPI {
 
 	private Queue<Packet> readQueue;
 	private Queue<Packet> sendQueue;
+	private Queue<WrapperPacket> latencyQueue;
 	private Dictionary<EndPoint, Dictionary<uint, NetworkChannel>> channelsMap; //TODO check if two EndPoint are equals
 	private float _packetLoss;
+	private float _latency;
 	
 	int _spinLockSleepTime;
 	// uint _totalChannels;
@@ -35,7 +50,7 @@ public class NetworkAPI {
 	Thread _sendThread, _recvThread;
 	uint _maxPacketsToSend;
 
-	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible, float packetLoss, uint maxPacketsToSend) {
+	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible, float packetLoss, uint maxPacketsToSend, float latency) {
 		_udpClient = new UdpClient(localPort);
 		_udpSendingClient = new UdpClient(localPort+1);
 		_spinLockSleepTime = spinLockTime;
@@ -43,8 +58,10 @@ public class NetworkAPI {
 		_maxSeqPossible = maxSeqPossible;
 		readQueue = new Queue<Packet>();
 		sendQueue = new Queue<Packet>();
+		latencyQueue = new Queue<WrapperPacket>();
 		_Random = new System.Random();
 		_packetLoss = packetLoss;
+		_latency = latency;
 		channelsMap = new Dictionary<EndPoint, Dictionary<uint, NetworkChannel>>();
 		_sendThread = new Thread(new ThreadStart(SendThread));
 		_recvThread = new Thread(new ThreadStart(RecvThread));
@@ -159,8 +176,21 @@ public class NetworkAPI {
 	public List<Packet> Receive(out List<Packet> channelLessPacketList) {
 		channelLessPacketList = new List<Packet>();
 		lock(readQueue) {
-			while (readQueue.Count > 0) {
-				var packet = readQueue.Dequeue();
+			while (readQueue.Count>0)
+			{
+			/*
+				Packet p = readQueue.Dequeue();
+				latencyQueue.Enqueue(new WrapperPacket(p, Time.realtimeSinceStartup));
+			}
+			
+			while (true)
+			{
+				if(readQueue.Count <= 0) break;
+				if (latencyQueue.Peek().t + _latency < Time.realtimeSinceStartup) break;
+				var wrapperPacket = latencyQueue.Dequeue();
+				var packet = wrapperPacket.p;
+			*/
+				Packet packet = readQueue.Dequeue();
 				NetworkChannel channel;
 				if (!getChannel(packet.channelId, packet.endPoint, out channel))
 				{
@@ -250,4 +280,6 @@ public class NetworkAPI {
 			sendQueue.Clear();
 		}
 	}
+
+
 }
