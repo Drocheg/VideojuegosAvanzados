@@ -178,19 +178,16 @@ public class NetworkAPI {
 		lock(readQueue) {
 			while (readQueue.Count>0)
 			{
-			/*
 				Packet p = readQueue.Dequeue();
 				latencyQueue.Enqueue(new WrapperPacket(p, Time.realtimeSinceStartup));
 			}
 			
 			while (true)
 			{
-				if(readQueue.Count <= 0) break;
-				if (latencyQueue.Peek().t + _latency < Time.realtimeSinceStartup) break;
+				if(latencyQueue.Count <= 0) break;
+				if (latencyQueue.Peek().t + _latency > Time.realtimeSinceStartup) break;
 				var wrapperPacket = latencyQueue.Dequeue();
 				var packet = wrapperPacket.p;
-			*/
-				Packet packet = readQueue.Dequeue();
 				NetworkChannel channel;
 				if (!getChannel(packet.channelId, packet.endPoint, out channel))
 				{
