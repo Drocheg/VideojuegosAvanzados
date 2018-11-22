@@ -288,6 +288,7 @@ public class AuthNetworkManager : MonoBehaviour {
 				if(hostId >= 0)
 				{
 					hosts[hostId].name = playerInfoCommand.Name;
+					_authWorld.AddPlayerName((uint) hostId, playerInfoCommand.Name);
 					Debug.Log("PlayerId: " + hostId + "PlayerName: " + playerInfoCommand.Name);
 					foreach (var host in hosts)
 					{

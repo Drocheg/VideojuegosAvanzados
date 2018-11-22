@@ -5,6 +5,7 @@ using TMPro;
 
 public class PlayerGameState {
 	public uint id, kills, deaths;
+	public string name;
 }
 
 public class AuthWorld : MonoBehaviour {
@@ -61,6 +62,12 @@ public class AuthWorld : MonoBehaviour {
 			kills = 0,
 			deaths = 0,
 		});
+	}
+
+	public void AddPlayerName(uint id, string name)
+	{
+		PlayerGameState player = _playerStates.Find(x => x.id == id);
+		if (player != null) player.name = name;
 	}
 
 	public void RemovePlayer(uint id) {
@@ -125,7 +132,14 @@ public class AuthWorld : MonoBehaviour {
 		var state = "";
 		if (Input.GetButtonDown("GameState")) {
 			foreach(var playerState in _playerStates) {
-				state += string.Format("Player {0}\t{1}K\t{2}D\n", playerState.id, playerState.kills, playerState.deaths);
+				if (string.IsNullOrEmpty(playerState.name))
+				{
+					state += string.Format("Player {0}\t{1}K\t{2}D\n", playerState.id, playerState.kills, playerState.deaths);
+				}
+				else
+				{
+					state += string.Format("{0}\t{1}K\t{2}D\n", playerState.name, playerState.kills, playerState.deaths);
+				}
 			}
 			GameStateText.text = state;
 		}
