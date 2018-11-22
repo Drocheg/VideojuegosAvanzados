@@ -18,14 +18,14 @@ public class LocalNetworkManager : MonoBehaviour {
 	private LocalWorld _localWorld;
 	private EndPoint _receiving_endpoint;
 	private EndPoint _sending_endpoint;
-	public float TimeoutEvents;
+	public float TimeoutEvents, TimedChannelTimout;
 	public float PacketLoss;
 	public float Latency;
 	public uint MaxPacketsToSend;
 	private int _commandsCount;
 	public GameObject Player;
 	public string playerName;
-	
+
 	// Use this for initialization
 	void Start () {
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
@@ -37,21 +37,22 @@ public class LocalNetworkManager : MonoBehaviour {
 
 		_networkAPI.AddTimeoutReliableChannel(1, _receiving_endpoint, _sending_endpoint, TimeoutEvents);
 		_networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
+		_networkAPI.AddTimeoutReliableChannel(3, _receiving_endpoint, _sending_endpoint, TimedChannelTimout);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		SendReliable(new JoinCommand().Serialize);
-		
+
 		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
 		if(MenuVariables.MenuPort != 0) TestRemotePort = MenuVariables.MenuPort;
 		if(!string.IsNullOrEmpty(MenuVariables.MenuIP)) TestRemoteIp	= MenuVariables.MenuIP;
 		Debug.Log("MenuIP: " + MenuVariables.MenuIP);
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
 		updateSendQueuesOrDisconnect();
-		
+
 		if (Input.GetButtonDown("k"))
 		{
 			disconnect();
@@ -77,14 +78,18 @@ public class LocalNetworkManager : MonoBehaviour {
 					ParseCommand(packet);
 					break;
 				}
+				case 3: {
+					ParseCommand(packet);
+					break;
+				}
 			}
 		}
 	}
-	
+
 	void ParseCommand(Packet packet) {
 		var commandType = (NetworkCommand) packet.bitReader.ReadInt(0, _commandsCount);
 		switch(commandType) {
-			case NetworkCommand.SHOOT_COMMAND: 
+			case NetworkCommand.SHOOT_COMMAND:
 				_localWorld.BulletCollision(packet.bitReader);
 				break;
 			case NetworkCommand.PROJECTILE_SHOOT_COMMAND: {
@@ -151,7 +156,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	public void SendReliable(Serialize serial)
 	{
 		sendOrDisconnect(1, _sending_endpoint, serial);
-		
+
 	}
 
 	private void sendOrDisconnect(uint channel, EndPoint endPoint, Serialize serial)
@@ -176,14 +181,14 @@ public class LocalNetworkManager : MonoBehaviour {
 		sendOrDisconnect(2, _sending_endpoint, serial);
 	}
 
-	void OnDisable() 
+	void OnDisable()
 	{
 		_networkAPI.Close();
 	}
 
 	private void disconnect()
 	{
-		
+
 		_networkAPI.ClearSendQueue();
 		for (int i = 0; i < 10; i++)
 		{
