@@ -7,17 +7,19 @@ public class MainOption : MonoBehaviour {
 
 	public Canvas ConnectCanvas;
 	private Canvas _mainCanvas;
-	private Button _button; 
+	private Button _button;
 	// Use this for initialization
 	void Start () {
 		_button = GetComponent<Button>();
 		_button.onClick.AddListener(OnClickCallback);
 		_mainCanvas = GetComponentInParent<Canvas>();
+		Cursor.visible = true;
+		Cursor.lockState = CursorLockMode.None;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
 
 	void OnClickCallback() {
