@@ -18,7 +18,6 @@ public class LocalWorld : MonoBehaviour {
 	private Queue<float> _queuedTimes;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	private float _previousTime, _nextTime, _currentTime;
-	private float _timestamp;
 	private NetworkState _currentState;
 	private LocalEntity[] _entities;
 
@@ -29,7 +28,7 @@ public class LocalWorld : MonoBehaviour {
 	private int _characterSerialSize, _projectileSerialSize;
 	private LocalNetworkManager _networkManager;
 	public uint MaxDeaths, MaxKills;
-	public TextMeshProUGUI GameStateGUI;
+	public TextMeshProUGUI GameStateGUI, TimerGUI;
 	string _gameStateString = "";
 	// Use this for initialization
 	void Start() {
@@ -47,6 +46,12 @@ public class LocalWorld : MonoBehaviour {
 	}
 	
 	void Update() {
+		int totalSeconds = (int) _currentTime;
+		int seconds = totalSeconds % 60;
+		int minutes = totalSeconds / 60;
+		string time = minutes + ":" + seconds;
+		TimerGUI.text = time;
+
 		if (Input.GetButtonDown("GameState")) {
 			GameStateGUI.text = _gameStateString;
 		}	
