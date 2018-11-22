@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using UnityEngine;
@@ -35,8 +36,9 @@ public class NetworkAPI {
 	private NetworkAPI(){}
 	
 
-	private Queue<WrapperPacket> readQueue;
+	private Queue<Packet> readQueue;
 	private Queue<Packet> sendQueue;
+	private Queue<WrapperPacket> latencyQueue;
 	private Dictionary<EndPoint, Dictionary<uint, NetworkChannel>> channelsMap; //TODO check if two EndPoint are equals
 	private float _packetLoss;
 	private float _latency;
@@ -54,8 +56,9 @@ public class NetworkAPI {
 		_spinLockSleepTime = spinLockTime;
 		_channelsPerHost = channelsPerHost;
 		_maxSeqPossible = maxSeqPossible;
-		readQueue = new Queue<WrapperPacket>();
+		readQueue = new Queue<Packet>();
 		sendQueue = new Queue<Packet>();
+		latencyQueue = new Queue<WrapperPacket>();
 		_Random = new System.Random();
 		_packetLoss = packetLoss;
 		_latency = latency;
@@ -173,11 +176,17 @@ public class NetworkAPI {
 	public List<Packet> Receive(out List<Packet> channelLessPacketList) {
 		channelLessPacketList = new List<Packet>();
 		lock(readQueue) {
+			while (readQueue.Count>0)
+			{
+				Packet p = readQueue.Dequeue();
+				latencyQueue.Enqueue(new WrapperPacket(p, Time.realtimeSinceStartup));
+			}
+			
 			while (true)
 			{
 				if(readQueue.Count <= 0) break;
-				if (readQueue.Peek().t + _latency < Time.realtimeSinceStartup) break;
-				var wrapperPacket = readQueue.Dequeue();
+				if (latencyQueue.Peek().t + _latency < Time.realtimeSinceStartup) break;
+				var wrapperPacket = latencyQueue.Dequeue();
 				var packet = wrapperPacket.p;
 				NetworkChannel channel;
 				if (!getChannel(packet.channelId, packet.endPoint, out channel))
@@ -212,7 +221,7 @@ public class NetworkAPI {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
 				lock(readQueue) {
 					// Debug.Log("RECV THREAD: " + readQueue.Count);
-					readQueue.Enqueue(new WrapperPacket(packet, Time.realtimeSinceStartup));
+					readQueue.Enqueue(packet);
 				}
 			}
 		}
