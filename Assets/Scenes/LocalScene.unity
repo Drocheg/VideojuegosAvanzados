@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1121,7 +1121,7 @@ MonoBehaviour:
   Prediction: 1
   Speed: 6
   MaxMoves: 1024
-  MaxMoveQueueSize: 100
+  MaxMoveQueueSize: 1024
   MaxTime: 10000
   TimePrecision: 0.001
   MovePrecision: 0.01
@@ -7241,7 +7241,7 @@ MonoBehaviour:
   SpinLockTime: 10
   ChannelsPerHosts: 4
   MaxSeqPossible: 2000
-  TestRemoteIp: 127.0.0.1
+  TestRemoteIp: 10.17.70.6
   TestRemotePort: 40000
   MaxPlayers: 10
   RemotePlayerPrefab: {fileID: 4537889672831052, guid: 83322e05aac25af4d817cc087413af28,
@@ -7251,6 +7251,7 @@ MonoBehaviour:
   TimeoutEvents: 0
   TimedChannelTimout: 1
   PacketLoss: 0
+  Latency: 0
   MaxPacketsToSend: 100000
   Player: {fileID: 512930488}
   playerName: 
