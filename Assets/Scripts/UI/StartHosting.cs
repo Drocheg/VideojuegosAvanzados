@@ -45,7 +45,7 @@ public class StartHosting : MonoBehaviour {
 					_button.GetComponentInChildren<Text>().text = "Started";
 					MenuVariables.MenuName = PlayerName.text;
 					MenuVariables.MenuPort = Int32.Parse(Port.text);
-					SceneManager.LoadScene("scenes/NiceSceneServer");
+					SceneManager.LoadScene("scenes/NiceLevelServer");
 					//_button.GetComponentInChildren<Text>().text = "Listening";
 					//StartCoroutine(WaitTillConnect()); // TODO could be changed to wait for players.
 				}
