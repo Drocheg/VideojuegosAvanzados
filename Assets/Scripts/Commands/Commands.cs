@@ -8,5 +8,6 @@ public enum NetworkCommand: uint {
 	DISCONNECT_COMMAND = 6,
 	PROJECTILE_EXPLODE_COMMAND = 7,
 	GAME_STATE_COMMAND = 8,
+	PLAYER_INFO_COMMAND = 9,
 }
 

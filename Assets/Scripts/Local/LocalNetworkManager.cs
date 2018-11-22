@@ -43,11 +43,13 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.AddTimeoutReliableChannel(3, _receiving_endpoint, _sending_endpoint, TimedChannelTimout);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		SendReliable(new JoinCommand().Serialize);
+		
 
 		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
 		if(MenuVariables.MenuPort != 0) TestRemotePort = MenuVariables.MenuPort;
 		if(!string.IsNullOrEmpty(MenuVariables.MenuIP)) TestRemoteIp	= MenuVariables.MenuIP;
 		Debug.Log("MenuIP: " + MenuVariables.MenuIP);
+		SendReliable(new PlayerInfoCommand(playerName, 0, MaxPlayers).Serialize);
 	}
 
 	// Update is called once per frame
@@ -140,6 +142,12 @@ public class LocalNetworkManager : MonoBehaviour {
 			case NetworkCommand.GAME_STATE_COMMAND: {
 				Debug.Log("Game state arrived");
 				_localWorld.UpdateGameState(packet.bitReader);
+				break;
+			}
+			case NetworkCommand.PLAYER_INFO_COMMAND:
+			{
+				PlayerInfoCommand playerInfoCommand = PlayerInfoCommand.Deserialize(packet.bitReader, MaxPlayers);
+				Debug.Log("PlayerId: " + playerInfoCommand.playerId + "PlayerName: " + playerInfoCommand.Name);
 				break;
 			}
 		}
