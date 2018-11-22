@@ -52,7 +52,7 @@ public class ConnectConfirm : MonoBehaviour {
 				MenuVariables.MenuName = PlayerName.text;
 				MenuVariables.MenuPort = Int32.Parse(Port.text);
 				MenuVariables.MenuIP = IpAddress.text;
-				SceneManager.LoadScene("scenes/LocalScene");
+				SceneManager.LoadScene("scenes/NiceSceneClient");
 				break;
 			}
 		}	
