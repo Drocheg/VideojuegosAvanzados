@@ -1361,6 +1361,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1789587686602304
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4336141621593384}
+  - component: {fileID: 114353719322925250}
+  m_Layer: 0
+  m_Name: BulletPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1790561167128728
 GameObject:
   m_ObjectHideFlags: 1
@@ -2214,7 +2230,7 @@ Transform:
   - {fileID: 4910138248586698}
   - {fileID: 4407931558078780}
   m_Father: {fileID: 4284261760996190}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4268207313159236
 Transform:
@@ -2266,6 +2282,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4336141621593384}
   - {fileID: 224435242977871640}
   - {fileID: 4267492478204654}
   - {fileID: 4376839030591416}
@@ -2353,6 +2370,19 @@ Transform:
   m_Father: {fileID: 4147593235073684}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4336141621593384
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1789587686602304}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4284261760996190}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4359867371093320
 Transform:
   m_ObjectHideFlags: 1
@@ -2392,7 +2422,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4284261760996190}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4379846798326956
 Transform:
@@ -4549,8 +4579,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsWalking: 0
-  m_WalkSpeed: 1.5
-  m_RunSpeed: 3
+  m_WalkSpeed: 0
+  m_RunSpeed: 0
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 0.1
   m_StickToGroundForce: 10
@@ -4848,6 +4878,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LimbDamage: 10
   HealthManager: {fileID: 114228131801595506}
+--- !u!114 &114353719322925250
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1789587686602304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ab2c77dc4869ba4897583e09a392e92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PoolSize: 100
+  SpritePrefab: {fileID: 212878626596164634, guid: b188294aaa9b6a4488381b311e613016,
+    type: 2}
 --- !u!114 &114360932374553134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5023,7 +5067,7 @@ MonoBehaviour:
   GameStateDelta: 5
   MaxMoves: 1024
   ExpectedEntities: 0
-  SnapshotTickRate: 60
+  SnapshotTickRate: 20
   MaxHP: 100
   SpawnTime: 4
   SpawnLocation: {fileID: 0}
@@ -24547,7 +24591,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 94}
+  m_AnchoredPosition: {x: 0, y: 163}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224240187577628500
@@ -24621,7 +24665,7 @@ RectTransform:
   - {fileID: 224934933424720422}
   - {fileID: 224710089334139146}
   m_Father: {fileID: 4284261760996190}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
