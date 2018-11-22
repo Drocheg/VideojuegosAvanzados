@@ -920,7 +920,7 @@ MonoBehaviour:
   GameStateDelta: 5
   MaxMoves: 1024
   ExpectedEntities: 0
-  SnapshotTickRate: 20
+  SnapshotTickRate: 60
   MaxHP: 100
   SpawnTime: 4
   SpawnLocation: {fileID: 1203181107}
