@@ -20,6 +20,7 @@ public class LocalWorld : MonoBehaviour {
 	private float _previousTime, _nextTime, _currentTime;
 	private NetworkState _currentState;
 	private LocalEntity[] _entities;
+	private string[] _playerNames;
 
 	int _entitiesCounter, _entityTypes;
 	public int ExpectedEntities;
@@ -45,6 +46,8 @@ public class LocalWorld : MonoBehaviour {
 		_projectileSerialSize = ProjectileEntitySerialSize();
 		_networkManager = FindObjectOfType<LocalNetworkManager>();
 		_bulletPool = FindObjectOfType<SpritePool>();
+		_playerNames = new string[MaxEntities];
+
 	}
 
 	void Update() {
@@ -60,6 +63,11 @@ public class LocalWorld : MonoBehaviour {
 		if (Input.GetButtonUp("GameState")) {
 			GameStateGUI.text = "";
 		}
+	}
+
+	public void AddPlayerName(int playerId, string playerName)
+	{
+		if (playerId < MaxEntities) _playerNames[playerId] = playerName;
 	}
 
 	// Update is called once per frame
@@ -148,6 +156,7 @@ public class LocalWorld : MonoBehaviour {
 
 	public void RemoveEntity(uint id)
 	{
+		if (id < MaxEntities) _playerNames[id] = null;
 		LocalEntity removedEntity = _entities[id];
 		if (removedEntity != null)
 		{
@@ -330,13 +339,28 @@ public class LocalWorld : MonoBehaviour {
 			(uint) MaxEntities
 		);
 		_gameStateString = "";
-		for(int i = 0; i < state.TotalPlayers; i++) {
-			_gameStateString += string.Format(
-				"Player {0}\t{1}K\t{2}D\n",
-				state.Ids[i],
-				state.Kills[i],
-				state.Deaths[i]
+		for(int i = 0; i < state.TotalPlayers; i++)
+		{
+			uint playerId = state.Ids[i];
+			if (string.IsNullOrEmpty(_playerNames[playerId]))
+			{
+				_gameStateString += string.Format(
+					"Player {0}\t{1}K\t{2}D\n",
+					state.Ids[i],
+					state.Kills[i],
+					state.Deaths[i]
 				);
+			}
+			else
+			{
+				_gameStateString += string.Format(
+					"{0}\t{1}K\t{2}D\n",
+					_playerNames[playerId],
+					state.Kills[i],
+					state.Deaths[i]
+				);
+			}
+			
 		}
 	}
 }

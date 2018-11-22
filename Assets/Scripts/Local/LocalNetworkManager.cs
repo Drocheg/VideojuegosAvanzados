@@ -148,6 +148,7 @@ public class LocalNetworkManager : MonoBehaviour {
 			{
 				PlayerInfoCommand playerInfoCommand = PlayerInfoCommand.Deserialize(packet.bitReader, MaxPlayers);
 				Debug.Log("PlayerId: " + playerInfoCommand.playerId + "PlayerName: " + playerInfoCommand.Name);
+				_localWorld.AddPlayerName((int)playerInfoCommand.playerId, playerInfoCommand.Name);
 				break;
 			}
 		}
