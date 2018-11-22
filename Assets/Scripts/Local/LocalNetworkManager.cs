@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System;
+using Common;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -15,40 +16,46 @@ public class LocalNetworkManager : MonoBehaviour {
 	public Transform RemotePlayerPrefab;
 	public Transform MainPlayerFab;
 	private LocalWorld _localWorld;
-	private LocalProjectileManager _localProjectileManager;
 	private EndPoint _receiving_endpoint;
 	private EndPoint _sending_endpoint;
 	public float TimeoutEvents;
 	public float PacketLoss;
+	public float Latency;
+	public uint MaxPacketsToSend;
 	private int _commandsCount;
 	public GameObject Player;
+	public string playerName;
 	
 	// Use this for initialization
 	void Start () {
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
-		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss, MaxPacketsToSend, Latency);
 		_sending_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort);
 		_receiving_endpoint = new IPEndPoint(IPAddress.Parse(TestRemoteIp), TestRemotePort+1);
 		_networkAPI.AddUnreliableChannel(0, _receiving_endpoint, _sending_endpoint);
 
 		_networkAPI.AddTimeoutReliableChannel(1, _receiving_endpoint, _sending_endpoint, TimeoutEvents);
 		_networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
-		// _networkAPI.AddUnreliableChannel(2, _receiving_endpoint, _sending_endpoint);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
-		_localProjectileManager = GameObject.FindObjectOfType<LocalProjectileManager>();
-
 		SendReliable(new JoinCommand().Serialize);
-
+		
+		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
+		if(MenuVariables.MenuPort != 0) TestRemotePort = MenuVariables.MenuPort;
+		if(!string.IsNullOrEmpty(MenuVariables.MenuIP)) TestRemoteIp	= MenuVariables.MenuIP;
+		Debug.Log("MenuIP: " + MenuVariables.MenuIP);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
 		List<Packet> channelLess;
 		var packets = _networkAPI.Receive(out channelLess);
-		_networkAPI.UpdateSendQueues();
-
+		updateSendQueuesOrDisconnect();
+		
+		if (Input.GetButtonDown("k"))
+		{
+			disconnect();
+		}
 
 		foreach (var packet in packets) {
 			switch(packet.channelId) {
@@ -65,7 +72,9 @@ public class LocalNetworkManager : MonoBehaviour {
 					break;
 				}
 				case 2: {
-					// _localProjectileManager.NewSnapshot(packet.bitReader);
+					Debug.Log("Using unreliable event channel");
+					// UnreliableEnventChannel
+					ParseCommand(packet);
 					break;
 				}
 			}
@@ -78,46 +87,110 @@ public class LocalNetworkManager : MonoBehaviour {
 			case NetworkCommand.SHOOT_COMMAND: 
 				_localWorld.BulletCollision(packet.bitReader);
 				break;
+			case NetworkCommand.PROJECTILE_SHOOT_COMMAND: {
+				Debug.Log("Projectile arrived");
+				_localWorld.NewProjectileShootCommand(packet.bitReader);
+				break;
+			}
+			case NetworkCommand.PROJECTILE_EXPLODE_COMMAND: {
+				_localWorld.ProjectileExplosion(packet.bitReader);
+				break;
+			}
 			case NetworkCommand.JOIN_RESPONSE_COMMAND:
 				JoinResponseCommand joinResponseCommand = JoinResponseCommand.Deserialize(packet.bitReader, MaxPlayers);
 				uint currentId = joinResponseCommand.playerId;
 				Debug.Log("JOIN RESPONSE my ID: " + currentId + "From endpoint: " + packet.endPoint);
 				//Transform localPlayerInstance = Instantiate(MainPlayerFab, new Vector3(currentId*3, 0, 0), Quaternion.identity).GetChild(0); // TODO initial position.
 				//LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
-				//lce.Id = (int)currentId;
-				//lce.Init();
 				LocalCharacterEntity lce = Player.GetComponent<LocalCharacterEntity>();
-				//_localWorld.RemoveReference(lce.Id);
 				lce.Id = (int)currentId;
-				//_localWorld.AddReference((int)currentId, lce);
 				lce.Init();
-				
-				//Player = lce.gameObject;
 				break;
 			case NetworkCommand.JOIN_PLAYER_COMMAND:
 				JoinPlayerCommand joinPlayerCommand = JoinPlayerCommand.Deserialize(packet.bitReader, MaxPlayers);
-			//	Player.GetComponent<LocalCharacterEntity>().Id = (int) joinPlayerCommand.playerId;
-				currentId = joinPlayerCommand.playerId;
-				Debug.Log("JOIN PLAYER with ID: " + currentId + "From endpoint: " + packet.endPoint);
-				Transform localPlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(currentId*3, 0, 0), Quaternion.identity); // TODO initial position.
-				lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
-				lce.Id = (int)currentId;
-				lce.Init();
-				
+				addPlayer(joinPlayerCommand.playerId);
+				Debug.Log("JOIN PLAYER with ID: " + joinPlayerCommand.playerId + "From endpoint: " + packet.endPoint);
 				break;
+			case NetworkCommand.DISCONNECT_COMMAND:
+				Debug.Log("Receive DISCONNECT COMMAND");
+				DisconnectCommand disconnectCommand = DisconnectCommand.Deserialize(packet.bitReader, MaxPlayers);
+				lce = Player.GetComponent<LocalCharacterEntity>();
+				int playerId = lce.Id;
+				if (playerId == disconnectCommand.playerId)
+				{
+					// Disconnect the player
+					Debug.Log("YOU HAVE BEEN DISCONECTED"); //TODO load menu scene
+					_networkAPI.Close();
+				}
+				else
+				{
+					// A player has been disconnected from the game
+					Debug.Log("PLAYER " + disconnectCommand.playerId + " HAS DISCONECTED");
+					_localWorld.RemoveEntity(disconnectCommand.playerId);
+				}
+				break;
+			case NetworkCommand.GAME_STATE_COMMAND: {
+				Debug.Log("Game state arrived");
+				_localWorld.UpdateGameState(packet.bitReader);
+				break;
+			}
 		}
 	}
 
-	public void SendReliable(Serialize serial) {
-		_networkAPI.Send(1, _sending_endpoint, serial);
+	private void addPlayer(uint playerId)
+	{
+		if (_localWorld.GetCharacterEntity(playerId) == null)
+		{
+			Transform localPlayerInstance = Instantiate(RemotePlayerPrefab, new Vector3(playerId*3, 0, 0), Quaternion.identity); // TODO initial position.
+			LocalCharacterEntity lce = localPlayerInstance.gameObject.GetComponent<LocalCharacterEntity>();
+			lce.Id = (int)playerId;
+			lce.Init();
+		}
+	}
+
+	public void SendReliable(Serialize serial)
+	{
+		sendOrDisconnect(1, _sending_endpoint, serial);
+		
+	}
+
+	private void sendOrDisconnect(uint channel, EndPoint endPoint, Serialize serial)
+	{
+		if (!_networkAPI.Send(channel, endPoint, serial))
+		{
+			Debug.Log("Channel does not exist or full. Disconnecting");
+			disconnect();
+		}
+	}
+
+	private void updateSendQueuesOrDisconnect()
+	{
+		if (!_networkAPI.UpdateSendQueues())
+		{
+			Debug.Log("Sending queue is full. Disconnecting");
+			disconnect();
+		}
 	}
 
 	public void SendUnreliable(Serialize serial) {
-		// _networkAPI.Send(2, _sending_endpoint, serial);
+		sendOrDisconnect(2, _sending_endpoint, serial);
 	}
 
 	void OnDisable() 
 	{
+		_networkAPI.Close();
+	}
+
+	private void disconnect()
+	{
+		
+		_networkAPI.ClearSendQueue();
+		for (int i = 0; i < 10; i++)
+		{
+			SendUnreliable(new DisconnectCommand(0, MaxPlayers).Serialize);
+		}
+		_networkAPI.UpdateSendQueues();
+		System.Threading.Thread.Sleep(1000);
 		_networkAPI.Close();
 	}
 }

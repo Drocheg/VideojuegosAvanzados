@@ -33,7 +33,7 @@ public class ShootManager : IGenericWeaponManager {
 		_bloodPool = particlePools[1];
 		_aimManager = GetComponent<AimManager>();
 		_weaponManager = GetComponent<WeaponManager>();
-		_mask = LayerMask.GetMask("Default", "Zombie", "Door");
+		_mask = LayerMask.GetMask("Default", "CharacterCollision");
 		_reloadManager = GetComponent<ReloadManager>();
 		_audioSource = GetComponent<AudioSource>();
 	}
@@ -43,7 +43,7 @@ public class ShootManager : IGenericWeaponManager {
 	void LateUpdate () {
 		_timeSinceLastShot += Time.deltaTime;
 		_aimManager.UpdateAim();
-		if (Input.GetButton("Shoot") && !_reloadManager.IsReloading()) {
+		if (Input.GetButton("Shoot")) {
 			if (_timeSinceLastShot >= ShootingTimeout) {
 				Shoot();
 			}
@@ -84,7 +84,7 @@ public class ShootManager : IGenericWeaponManager {
 			if (hit.collider.tag == "CharacterCollider") {
 				// Make other player take damage
 				var limbController = hit.collider.GetComponent<LimbManager>();
-				id = limbController.HealthManager.GetComponent<CharacterEntity>().GetId();
+				id = limbController.HealthManager.GetComponent<Entity>().GetId();
 				damage = limbController.TakeDamage(DamageMultiplier);
 				particlePool = _bloodPool;
 			} else {
@@ -129,7 +129,7 @@ public class ShootManager : IGenericWeaponManager {
 			GunCamera.fieldOfView = _oldFOV;
 		_playerAnimator.SetLayerWeight(AnimationLayer, 0);
 		_weaponManager.TurnOffGUI();
-		_reloadManager.StopReload();
+		// _reloadManager.StopReload();
 		_aimManager.ResetAiming();
 		GunCamera.transform.Rotate(GunCameraAdjustment, -GunCameraAdjustmentAngle);
 	}

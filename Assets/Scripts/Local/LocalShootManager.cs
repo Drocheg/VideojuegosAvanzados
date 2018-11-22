@@ -17,7 +17,7 @@ public class LocalShootManager : ShootManager {
 	}
 
 	protected override void RegisterDamage() {
-
+		
 	}
 	
 	// Update is called once per frame

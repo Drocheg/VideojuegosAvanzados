@@ -20,6 +20,9 @@ public class TestNetworkApi
     private uint MAX_CHANNELS = 4;
     private int SPINLOCK_TIME = 1;
     private float PacketLoss = 0;
+    private uint MAX_PACKETS_TO_SEND = 100000;
+    private uint LATENCY = 0;
+
 
     [TestFixtureSetUp]
     public void Init()
@@ -41,7 +44,7 @@ public class TestNetworkApi
     [SetUp]
     public void RunBeforeAnyTests()
     {
-        networkApi.Init(port, SPINLOCK_TIME, MAX_CHANNELS, MAX_SEQ, PacketLoss);
+        networkApi.Init(port, SPINLOCK_TIME, MAX_CHANNELS, MAX_SEQ, PacketLoss, MAX_PACKETS_TO_SEND, LATENCY);
     }
     
     [TearDown]

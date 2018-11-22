@@ -5,6 +5,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+public class Utility {
+    public static int CountBits(int MaxNumber) {
+        int count = 0;
+        uint num = (uint) MaxNumber;
+        while (num > 0) {
+            count++;
+            num >>= 1;
+        }
+        return count - 1;
+    }
+
+    public static int CountBitsFloat(float min, float max, float step) {
+        return (int) Utility.CountBits((int) ((max - min) / step)) + 1;
+    }
+
+    public static int CountBitsInt(int min, int max) {
+        return Utility.CountBits(max - min) + 1;
+    }
+}
 
 public class BitReader {
     MemoryStream memoryStream;
@@ -72,19 +91,25 @@ public class BitReader {
         return (bits & mask) >> from;
     }
 
+    public void DiscardBits(int count) {
+        for (int i = 0; i < count; i++) {
+            ReadBit();
+        }
+    }
+
     public int ReadInt(int min, int max)
     {
 		// 
-        return (int) ReadBits((int) Math.Log((double) (max - min), 2.0) + 1);
+        return (int) ReadBits(Utility.CountBitsInt(min, max));
     }
 
-    public float ReadFloat(float _min, float _max, float _step)
+    public float ReadFloat(float min, float max, float step)
     {
-        int floatBits = (int) (Math.Log((_max - _min) / _step, 2.0) + 1);
+        int floatBits = Utility.CountBitsFloat(min, max, step);
         ulong longVal = ReadBits(floatBits);
-        float ret = longVal * _step + _min;
+        float ret = longVal * step + min;
         // Debug.Log("min: " + _min + "max: " + _max + "step: " + _step + "bits: " + floatBits + "logVall: " + longVal + "ret: " + ret);
-        if (ret < _min || ret > _max)
+        if (ret < min || ret > max)
         {
             throw new Exception("Read a float not in between min and max.");
         }

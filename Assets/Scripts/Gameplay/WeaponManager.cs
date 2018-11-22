@@ -6,8 +6,8 @@ public class WeaponManager : MonoBehaviour {
 	public int InitialBullets;
 	public int BulletClipSize;
 
-	public TextMeshProUGUI RemainingBulletsUI, ClipBulletsUI;
-	public Canvas BulletsCanvas;
+	// public TextMeshProUGUI RemainingBulletsUI, ClipBulletsUI;
+	// public Canvas BulletsCanvas;
 	private int _bulletsLoaded;
 	private int _bulletsRemaining;
 
@@ -26,8 +26,8 @@ public class WeaponManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		RemainingBulletsUI.text = _bulletsRemaining.ToString();
-		ClipBulletsUI.text = _bulletsLoaded.ToString();
+		// RemainingBulletsUI.text = _bulletsRemaining.ToString();
+		// ClipBulletsUI.text = _bulletsLoaded.ToString();
 	}
 
 	public void ReloadBullets() 
@@ -41,11 +41,7 @@ public class WeaponManager : MonoBehaviour {
 
 	public bool ShootIfAble()
 	{
-		if (_bulletsLoaded > 0) {
-			_bulletsLoaded--;
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 	public bool CanReload()
@@ -59,11 +55,11 @@ public class WeaponManager : MonoBehaviour {
 
 	public void TurnOffGUI()
 	{
-		BulletsCanvas.enabled = false;
+		// BulletsCanvas.enabled = false;
 	}
 
 	public void TurnOnGUI() 
 	{
-		BulletsCanvas.enabled = true;
+		// BulletsCanvas.enabled = true;
 	}
 }

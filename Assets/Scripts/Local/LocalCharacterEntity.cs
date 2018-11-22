@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocalCharacterEntity : CharacterEntity, ILocal {
+public class LocalCharacterEntity : LocalEntity {
 	public int Id;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	public Vector3? _previousPosition, _nextPosition;
@@ -14,13 +14,13 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 	public bool IsLocalPlayer;
 	private LocalWorld _localWorld;
 	private HealthManager _healthManager;
-
+	private NetworkState _currentState;
 	public class Vector3DeltaTime
 	{
 		public Vector3 pos;
 		public Vector2 animation;
 		public float rot;
-		public int lastProcessedInput;
+		public ulong lastProcessedInput;
 	}
 
 
@@ -32,6 +32,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
 		_healthManager = GetComponent<HealthManager>();
+		//_localWorld.AddReference(Id, this);
 		StartCoroutine(DelayAddReference());
 	}
 
@@ -40,20 +41,47 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		_localWorld.AddReference(Id, this);
 	}
 
-	public bool DequeNextPosition(out Vector3? deqPosition, out Vector2? animation, out float rot, out int lastProcessedInput)
+	public override bool NextInterval()
 	{
-		if (_queuedPositions.Count > 0){
-			var wrapper = _queuedPositions.Dequeue();
-			deqPosition = wrapper.pos;
-			animation = wrapper.animation;
-			rot = wrapper.rot;
-			lastProcessedInput = wrapper.lastProcessedInput;
-			return true;
+		switch(_currentState){
+			case NetworkState.INITIAL: {
+				if (_queuedPositions.Count > _localWorld.MinQueuedPositions) {
+					var wrapper1 = _queuedPositions.Dequeue();
+					var wrapper2 = _queuedPositions.Dequeue();
+					_previousPosition = wrapper1.pos;
+					_previousAnimation = wrapper1.animation;
+					_previousRotation = wrapper1.rot;
+					_nextPosition = wrapper2.pos;
+					_nextAnimation = wrapper2.animation;
+					_nextRotation = wrapper2.rot;
+					var LastProcessedInput = wrapper1.lastProcessedInput;
+					if (IsLocalPlayer && _nextPosition != null ) {
+						_localPlayer.AdjustPositionFromSnapshot(_nextPosition.Value, LastProcessedInput);
+					}
+					_currentState = NetworkState.NORMAL;
+					return true;
+				}
+				return false;
+			}
+			case NetworkState.NORMAL: {
+				if (_queuedPositions.Count > 0) {
+					var wrapper = _queuedPositions.Dequeue();
+					_previousPosition = _nextPosition;
+					_nextPosition = wrapper.pos;
+					_previousAnimation = _nextAnimation;
+					_nextAnimation = wrapper.animation;
+					_previousRotation = _nextRotation;
+					_nextRotation = wrapper.rot;
+					var LastProcessedInput = wrapper.lastProcessedInput;
+					if (IsLocalPlayer && _nextPosition != null ) {
+						_localPlayer.AdjustPositionFromSnapshot(_nextPosition.Value, LastProcessedInput);
+					}
+					return true;
+				}
+				_currentState = NetworkState.INITIAL;
+				return false;
+			}
 		}
-		deqPosition = null;
-		animation = null;
-		rot = 0;
-		lastProcessedInput = -1;
 		return false;
 	}
 
@@ -65,19 +93,20 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		_chest = _animator.GetBoneTransform(HumanBodyBones.Chest);
 	}
 
-	public void UpdateEntity(float lerp) {
+	public override void UpdateEntity(float lerp) {
 		if((!IsLocalPlayer || !_localPlayer.Prediction) && _previousPosition != null && _nextPosition != null) {
 			transform.position = Vector3.Lerp(_previousPosition.Value, _nextPosition.Value, lerp);
 			LerpAnimation(_previousAnimation.Value, _nextAnimation.Value, lerp);
 			if (!IsLocalPlayer) {
 				var euler = transform.eulerAngles;
-				euler.y = Mathf.Lerp(_previousRotation, _nextRotation, lerp);
-				transform.eulerAngles = euler;
+				var nextRot = Quaternion.Euler(euler.x, _nextRotation, euler.z);
+				var prevRot = Quaternion.Euler(euler.x, _previousRotation, euler.z);
+				transform.rotation = Quaternion.Slerp(prevRot, nextRot, lerp);
 			}
 		}
 	}
 
-	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, float rot, int lastProcessedInput)
+	public void QueueNextPosition(Vector3 nextPos, Vector2 anim, float rot, ulong lastProcessedInput)
 	{
 		while (_queuedPositions.Count >= MaxQueuedPositions) {
 			_queuedPositions.Dequeue();
@@ -85,7 +114,7 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		_queuedPositions.Enqueue(new Vector3DeltaTime() { pos = nextPos, animation = anim, rot = rot, lastProcessedInput = lastProcessedInput});
 	}
 
-	public void Deserialize(BitReader reader) {
+	public override void Deserialize(BitReader reader) {
 		Vector3 pos;
 		pos.x = reader.ReadFloat(_localWorld.MinPosX, _localWorld.MaxPosX, _localWorld.Step);
 		pos.y = reader.ReadFloat(_localWorld.MinPosY, _localWorld.MaxPosY, _localWorld.Step);
@@ -93,14 +122,18 @@ public class LocalCharacterEntity : CharacterEntity, ILocal {
 		Vector2 anim;
 		anim.x = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
 		anim.y = reader.ReadFloat( -1, 1, _localWorld.AnimationStep);
-		float rot = reader.ReadFloat(0, 360, _localWorld.RotationStep);
-		int lastProcessedInput = reader.ReadInt(0, _localPlayer.MaxMoves);
+		float rot = reader.ReadFloat(-1, 360, _localWorld.RotationStep);
+		ulong lastProcessedInput = (ulong)reader.ReadInt(0, (int) _localPlayer.MaxMoves);
 		_healthManager.SetHP(reader.ReadFloat(0, _localWorld.MaxHP, 0.1f));
 		QueueNextPosition(pos, anim, rot, lastProcessedInput);
-	} 
-
+	}
 	public override int GetId() {
 		return Id;
+	}
+
+	public override EntityType GetEntityType()
+	{
+		return EntityType.CHARACTER;
 	}
 }
 

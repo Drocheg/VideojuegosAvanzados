@@ -7,6 +7,18 @@ using UnityEngine;
 
 public delegate void Serialize(BitWriter writer);
 
+public class WrapperPacket
+{
+	public Packet p;
+	public float t;
+
+	public WrapperPacket(Packet p, float t)
+	{
+		this.p = p;
+		this.t = t;
+	}
+}
+
 public class NetworkAPI {
 	private static NetworkAPI _instance;
 	
@@ -23,32 +35,36 @@ public class NetworkAPI {
 	private NetworkAPI(){}
 	
 
-	private Queue<Packet> readQueue;
+	private Queue<WrapperPacket> readQueue;
 	private Queue<Packet> sendQueue;
 	private Dictionary<EndPoint, Dictionary<uint, NetworkChannel>> channelsMap; //TODO check if two EndPoint are equals
 	private float _packetLoss;
+	private float _latency;
 	
 	int _spinLockSleepTime;
 	// uint _totalChannels;
 	uint _channelsPerHost;
 	ulong _maxSeqPossible;
 	Thread _sendThread, _recvThread;
+	uint _maxPacketsToSend;
 
-	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible, float packetLoss) {
+	public void Init(int localPort, int spinLockTime, uint channelsPerHost, ulong maxSeqPossible, float packetLoss, uint maxPacketsToSend, float latency) {
 		_udpClient = new UdpClient(localPort);
 		_udpSendingClient = new UdpClient(localPort+1);
 		_spinLockSleepTime = spinLockTime;
 		_channelsPerHost = channelsPerHost;
 		_maxSeqPossible = maxSeqPossible;
-		readQueue = new Queue<Packet>();
+		readQueue = new Queue<WrapperPacket>();
 		sendQueue = new Queue<Packet>();
 		_Random = new System.Random();
 		_packetLoss = packetLoss;
+		_latency = latency;
 		channelsMap = new Dictionary<EndPoint, Dictionary<uint, NetworkChannel>>();
 		_sendThread = new Thread(new ThreadStart(SendThread));
 		_recvThread = new Thread(new ThreadStart(RecvThread));
 		_sendThread.Start();
 		_recvThread.Start();
+		_maxPacketsToSend = maxPacketsToSend;
 	}
 
 	public void Close()
@@ -97,47 +113,39 @@ public class NetworkAPI {
 			switch (type)
 			{
 				case ChanelType.UNRELIABLE:
-					newChannel = new UnreliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible);
+					newChannel = new UnreliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible, _maxPacketsToSend);
 					break;
 				case ChanelType.RELIABLE:
 				case ChanelType.TIMED:
-					newChannel = new ReliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible, timeout);
+					newChannel = new ReliableNetworkChannel(id, type, receiving_endpoint, sending_endpoint, _channelsPerHost, _maxSeqPossible, timeout, _maxPacketsToSend);
 					break;
 			}
 			channelsSending.Add(id, newChannel);
 			channelsReceiving.Add(id, newChannel);
 			return true;
 		}
-		//if (channelsReceiving.ContainsKey(id) && channelsSending.ContainsKey(id))
-		//{
-		//	NetworkChannel nc;
-		//	channelsReceiving.TryGetValue(id, out nc);
-		//	if(nc != null) nc.clear();
-		//	channelsSending.TryGetValue(id, out nc);
-		//	if(nc != null) nc.clear();
-		//}
+		
 		
 		return false;
 	}
 
-	public bool Send(uint channel, EndPoint enpPoint, Serialize serial) 
+	public bool Send(uint channel, EndPoint endPoint, Serialize serial) 
 	{
 		NetworkChannel networkChannel;
-		if (!getChannel(channel, enpPoint, out networkChannel)) return false;
-		networkChannel.SendPacket(serial);
-		return true;
+		if (!getChannel(channel, endPoint, out networkChannel)) return false;
+		return networkChannel.SendPacket(serial);
 	}
 
-	public bool getChannel(uint channel, EndPoint enpPoint, out NetworkChannel networkChannel) // TODO only public for tests
+	public bool getChannel(uint channel, EndPoint endPoint, out NetworkChannel networkChannel) // TODO only public for tests
 	{
 		networkChannel = null;
 		Dictionary<uint, NetworkChannel> channels;
-		if (!channelsMap.TryGetValue(enpPoint, out channels)) return false;
+		if (!channelsMap.TryGetValue(endPoint, out channels)) return false;
 		if (!channels.TryGetValue(channel, out networkChannel)) return false;
 		return true;
 	}
 
-	public void UpdateSendQueues()
+	public bool UpdateSendQueues()
 	{
 		var packetList = new List<Packet>();
 		foreach (var channels in channelsMap.Values)
@@ -153,15 +161,24 @@ public class NetworkAPI {
 			foreach (var packet in packetList)
 			{
 				sendQueue.Enqueue(packet);
+				if (sendQueue.Count > _maxPacketsToSend)
+				{
+					return false;
+				}
 			}
 		}
+		return true;
 	}
 
 	public List<Packet> Receive(out List<Packet> channelLessPacketList) {
 		channelLessPacketList = new List<Packet>();
 		lock(readQueue) {
-			while (readQueue.Count > 0) {
-				var packet = readQueue.Dequeue();
+			while (true)
+			{
+				if(readQueue.Count <= 0) break;
+				if (readQueue.Peek().t + _latency < Time.realtimeSinceStartup) break;
+				var wrapperPacket = readQueue.Dequeue();
+				var packet = wrapperPacket.p;
 				NetworkChannel channel;
 				if (!getChannel(packet.channelId, packet.endPoint, out channel))
 				{
@@ -194,8 +211,8 @@ public class NetworkAPI {
 			if (bytes > 0) {
 				var packet = Packet.ReadPacket(buffer, (int) _channelsPerHost, (int) _maxSeqPossible, remoteEndPoint);
 				lock(readQueue) {
-					Debug.Log("RECV THREAD: " + readQueue.Count);
-					readQueue.Enqueue(packet);
+					// Debug.Log("RECV THREAD: " + readQueue.Count);
+					readQueue.Enqueue(new WrapperPacket(packet, Time.realtimeSinceStartup));
 				}
 			}
 		}
@@ -207,7 +224,6 @@ public class NetworkAPI {
 		{
 			Packet packet = null;
 			lock (sendQueue){
-				// Debug.Log("SEND THREAD: " + sendQueue.Count);
 				if (sendQueue.Count > 0)
 				{
 					packet = sendQueue.Dequeue();
@@ -223,5 +239,35 @@ public class NetworkAPI {
 			}
 		}
 	}
+
+	public void RemoveChannels(EndPoint endPoint)
+	{
+		channelsMap.Remove(endPoint);
+	}
+	
+	public bool ClearChannel(EndPoint sendingEndpoint, uint channelId)
+	{
+		NetworkChannel networkChannel;
+		if (!getChannel(channelId, sendingEndpoint, out networkChannel)) return false;
+		networkChannel.clear();
+		return true;
+	}
+
+	public void ClearChannels(EndPoint sendingEndpoint)
+	{
+		for (uint i = 0; i < _channelsPerHost; i++)
+		{
+			ClearChannel(sendingEndpoint, i);
+		}
+	}
+
+	public void ClearSendQueue()
+	{
+		lock (sendQueue)
+		{
+			sendQueue.Clear();
+		}
+	}
+
 
 }

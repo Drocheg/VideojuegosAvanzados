@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AuthCharacterEntity : CharacterEntity, IAuth {
+public class AuthCharacterEntity : AuthEntity {
 	public int Id;
 	private Animator _animator;
 	private CharacterController _characterController;
@@ -27,21 +27,14 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 	
 	public bool IsLocalPlayer;
 	public uint lastProcessedInput;
-	// Update is called once per frame
-	// public void UpdateEntity (float deltaTime) {
-	// 	if (!IsLocalPlayer && CharacterIsMoving) {
-	// 		transform.Translate(transform.forward * deltaTime * CurrentMovement.x);
-	// 		transform.Translate(transform.right * deltaTime * CurrentMovement.y);
-	// 	}
-	// }
 
-	public void Serialize(BitWriter writer) {
+	public override void Serialize(BitWriter writer) {
 		writer.WriteFloat(transform.position.x, _world.MinPosX, _world.MaxPosX, _world.Step);
 		writer.WriteFloat(transform.position.y, _world.MinPosY, _world.MaxPosY, _world.Step);
 		writer.WriteFloat(transform.position.z, _world.MinPosZ, _world.MaxPosZ, _world.Step);
 		writer.WriteFloat(_animator.GetFloat("Strafe"), -1, 1, _world.AnimationStep);
 		writer.WriteFloat(_animator.GetFloat("Run"), -1, 1, _world.AnimationStep);
-		writer.WriteFloat(transform.eulerAngles.y, 0, 360, _world.RotationStep);
+		writer.WriteFloat(transform.eulerAngles.y, -1, 360, _world.RotationStep);
 		writer.WriteInt(lastProcessedInput, 0, (uint) _world.MaxMoves);
 		writer.WriteFloat(Mathf.Max(_healthManager._hp, 0), 0, _world.MaxHP, 0.1f);
 	}
@@ -58,4 +51,9 @@ public class AuthCharacterEntity : CharacterEntity, IAuth {
 	}
 
 	public override int GetId(){return Id;}
+
+	public override EntityType GetEntityType()
+	{
+		return EntityType.CHARACTER;
+	}
 }

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class JoinPlayerCommand
 {
 	public uint playerId;
@@ -7,6 +9,8 @@ public class JoinPlayerCommand
 	{
 		this.playerId = playerId;
 		this.maxPlayers = maxPlayers;
+		
+		Debug.Log("Creating Join Player Command playerId: " + playerId);
 	}
 
 	public void Serialize(BitWriter writer) {

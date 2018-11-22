@@ -22,7 +22,7 @@ public class AimManager : MonoBehaviour {
 		_mainCameraMaxFov = MainCamera.fieldOfView;
 		_gunCameraMinFov = _gunCameraMaxFov * AimingFovMultiplier;
 		_mainCameraMinFov = _mainCameraMaxFov * AimingFovMultiplier;
-		_reloadManager = GetComponent<ReloadManager>();
+		// _reloadManager = GetComponent<ReloadManager>();
 		_shootManager = GetComponent<ShootManager>();
 		_playerManager = _shootManager.PlayerManager;
 	}
@@ -33,11 +33,11 @@ public class AimManager : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void LateUpdate () {
-		if (_reloadManager.IsReloading()) {
-			_increment = +FrameIncrement;
-			Crosshairs.enabled = false;
-			_aiming = false;
-		} else {
+		// if (_reloadManager.IsReloading()) {
+		// 	_increment = +FrameIncrement;
+		// 	Crosshairs.enabled = false;
+		// 	_aiming = false;
+		// } else {
 			if (!_aiming) {
 				if (CheckIfAimingInput()) {
 					// Start aiming
@@ -53,7 +53,7 @@ public class AimManager : MonoBehaviour {
 					_aiming = false;
 				}
 			}
-		}
+		// }
 
 		var gFov = Mathf.Clamp(GunCamera.fieldOfView + _increment, _gunCameraMinFov, _gunCameraMaxFov);
 		var mFov = Mathf.Clamp(MainCamera.fieldOfView + _increment, _mainCameraMinFov, _mainCameraMaxFov);

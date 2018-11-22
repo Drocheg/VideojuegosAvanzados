@@ -6,6 +6,7 @@ using System.Net;
 public abstract class NetworkChannel : INetworkChannel {
 	
 	public readonly uint id;
+	public readonly uint MaxPacketsToSend;
 	public readonly EndPoint ReceivingEndPoint;
 	public readonly EndPoint SendingEndPoint;
 	protected ChanelType type;
@@ -16,10 +17,11 @@ public abstract class NetworkChannel : INetworkChannel {
 	protected readonly ulong maxSeqPossible;
 	protected readonly uint totalChannels;
 
-	protected NetworkChannel(uint id, ChanelType type, EndPoint receiving_endpoint, EndPoint sending_endpoint, uint totalChannels, ulong maxSeqPossible)
+	protected NetworkChannel(uint id, ChanelType type, EndPoint receiving_endpoint, EndPoint sending_endpoint, uint totalChannels, ulong maxSeqPossible, uint maxPacketsToSend)
 	{
 		this.type = type;
 		this.id = id;
+		MaxPacketsToSend = maxPacketsToSend;
 		ReceivingEndPoint = receiving_endpoint;
 		SendingEndPoint = sending_endpoint;
 		this.maxSeqPossible = maxSeqPossible;
@@ -29,7 +31,7 @@ public abstract class NetworkChannel : INetworkChannel {
 		recvQueue = new Queue<Packet>();
 	}
 
-	public abstract void SendPacket(Serialize serializable);
+	public abstract bool SendPacket(Serialize serializable);
 
 	public abstract void EnqueRecvPacket(Packet packet);
 	
@@ -62,7 +64,6 @@ public abstract class NetworkChannel : INetworkChannel {
 	{
 		return MapToModule(first, second, max) == max / 2;
 	}
-
 
 	protected ulong incSeq()
 	{

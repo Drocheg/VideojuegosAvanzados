@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Common;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -40,12 +42,16 @@ public class StartHosting : MonoBehaviour {
 				if (_buttonPressed) {
 					_state = ConnectionState.WAITING_CONNECTION;
 					_button.interactable = false;
-					_button.GetComponentInChildren<Text>().text = "Listening";
-					StartCoroutine(WaitTillConnect());
+					_button.GetComponentInChildren<Text>().text = "Started";
+					MenuVariables.MenuName = PlayerName.text;
+					MenuVariables.MenuPort = Int32.Parse(Port.text);
+					SceneManager.LoadScene("scenes/ServerCube");
+					//_button.GetComponentInChildren<Text>().text = "Listening";
+					//StartCoroutine(WaitTillConnect()); // TODO could be changed to wait for players.
 				}
 				break;
 			}
-			case ConnectionState.WAITING_CONNECTION: {
+/*			case ConnectionState.WAITING_CONNECTION: {
 				if (_gameIsReadyToStart) {
 					_button.interactable = true;
 					_button.GetComponentInChildren<Text>().text = "Start";
@@ -62,11 +68,12 @@ public class StartHosting : MonoBehaviour {
 				}
 				break;
 			}
+*/
 		}	
 	}
 
 	IEnumerator WaitTillConnect() {
-		yield return new WaitForSeconds(5);
+			yield return new WaitForSeconds(5);
 		_gameIsReadyToStart = true;
 	}
 }

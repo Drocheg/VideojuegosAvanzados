@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public enum NetworkState {
 	INITIAL,
@@ -17,24 +18,48 @@ public class LocalWorld : MonoBehaviour {
 	private Queue<float> _queuedTimes;
 	public int MinQueuedPositions, MaxQueuedPositions, TargetQueuedPositions;
 	private float _previousTime, _nextTime, _currentTime;
-	private float _timestamp;
 	private NetworkState _currentState;
-	private LocalCharacterEntity[] entities;
+	private LocalEntity[] _entities;
 
-	int _entitiesCounter;
+	int _entitiesCounter, _entityTypes;
 	public int ExpectedEntities;
 	private LocalPlayer _localPlayer;
+	public LocalProjectileEntity LocalProjectilePrefab;
+	private int _characterSerialSize, _projectileSerialSize;
+	private LocalNetworkManager _networkManager;
+	public uint MaxDeaths, MaxKills;
+	public TextMeshProUGUI GameStateGUI, TimerGUI;
+	string _gameStateString = "";
 	// Use this for initialization
 	void Start() {
-		entities = new LocalCharacterEntity[MaxEntities];
+		_entities = new LocalEntity[MaxEntities];
 		_queuedTimes = new Queue<float>();
 		_entitiesCounter = 0;
 		var pools = GetComponents<ParticlePool>();
 		_sparksPool = pools[0];
 		_bloodPool = pools[1];
 		_localPlayer = GameObject.FindObjectOfType<LocalPlayer>();
+		_entityTypes = System.Enum.GetValues(typeof(EntityType)).Length;
+		_characterSerialSize = CharacterEntitySerialSize();
+		_projectileSerialSize = ProjectileEntitySerialSize();
+		_networkManager = FindObjectOfType<LocalNetworkManager>();
 	}
 	
+	void Update() {
+		int totalSeconds = (int) _currentTime;
+		int seconds = totalSeconds % 60;
+		int minutes = totalSeconds / 60;
+		string time = minutes + ":" + seconds;
+		TimerGUI.text = time;
+
+		if (Input.GetButtonDown("GameState")) {
+			GameStateGUI.text = _gameStateString;
+		}	
+		if (Input.GetButtonUp("GameState")) {
+			GameStateGUI.text = "";
+		}
+	}
+
 	// Update is called once per frame
 	void LateUpdate () {
 		// Read packets from NetworkAPI
@@ -49,11 +74,10 @@ public class LocalWorld : MonoBehaviour {
 					_previousTime = _queuedTimes.Dequeue();
 					_nextTime = _queuedTimes.Dequeue();
 					_currentTime = _previousTime;
-					foreach(var e in entities) {
+					foreach(var e in _entities) {
 						if (e != null) {
-							int lastProcessedInput;
-							e.DequeNextPosition(out e._previousPosition, out e._previousAnimation, out e._previousRotation, out lastProcessedInput);
-							e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
+							// Interpol entity.
+							e.NextInterval();
 							e.UpdateEntity(0);
 						}
 					}
@@ -63,23 +87,18 @@ public class LocalWorld : MonoBehaviour {
 				break;
 			}
 			case NetworkState.NORMAL: {
-				var timeMultiplier = _queuedTimes.Count > TargetQueuedPositions ? 1.1f : 0.9f;
+				var timeMultiplier = _queuedTimes.Count > TargetQueuedPositions ? 1.1f : 1f;
 				// Debug.Log("TimeM: " + timeMultiplier);
+				Debug.Log("time multiplier " + timeMultiplier);
 				_currentTime += Time.deltaTime * timeMultiplier ;
 				if (_currentTime > _nextTime) {
 					if (_queuedTimes.Count > 0) {
 						_previousTime = _nextTime;
 						_nextTime = _queuedTimes.Dequeue();
-						foreach(var e in entities) {
+						foreach(var e in _entities) {
+							// Interpol entity
 							if (e != null) {
-								e._previousPosition = e._nextPosition;
-								e._previousAnimation = e._nextAnimation;
-								e._previousRotation = e._nextRotation;
-								int lastProcessedInput;
-								e.DequeNextPosition(out e._nextPosition, out e._nextAnimation, out e._nextRotation, out lastProcessedInput);
-								if (e.IsLocalPlayer) {
-									_localPlayer.AdjustPositionFromSnapshot(e._nextPosition.Value, lastProcessedInput);
-								}
+								e.NextInterval();
 							}
 						}
 						
@@ -90,7 +109,7 @@ public class LocalWorld : MonoBehaviour {
 							break;
 						}
 					} else {
-						foreach(var e in entities) {
+						foreach(var e in _entities) {
 							if (e != null ) {
 								e.UpdateEntity(1);
 							}
@@ -101,7 +120,7 @@ public class LocalWorld : MonoBehaviour {
 					}
 				}
 				var d = (_currentTime - _previousTime) / (_nextTime - _previousTime);
-				foreach(var e in entities) {
+				foreach(var e in _entities) {
 					if (e != null) {
 						e.UpdateEntity(d);
 					}
@@ -114,15 +133,30 @@ public class LocalWorld : MonoBehaviour {
 		}
 	}
 
+	public LocalEntity GetCharacterEntity(uint id)
+	{
+		return _entities[id];
+	}
+
 	public void AddReference(int id, LocalCharacterEntity local)
 	{
 		_entitiesCounter++;
-		entities[id] = local;
+		_entities[id] = local;
 	}
 
-	public void RemoveReference(int id)
+	public void RemoveEntity(uint id)
 	{
-		entities[id] = null;
+		LocalEntity removedEntity = _entities[id];
+		if (removedEntity != null)
+		{
+			Destroy(removedEntity.gameObject);
+			RemoveReference(id);
+		}
+	}
+	
+	public void RemoveReference(uint id)
+	{
+		_entities[id] = null;
 		_entitiesCounter--;
 	}
 
@@ -133,14 +167,107 @@ public class LocalWorld : MonoBehaviour {
 		}
 		QueueNextSnapshot(reader.ReadFloat(0, MaxTime, TimePrecision));
 		
-		foreach(var e in entities) {
+		foreach(var e in _entities) {
 			var b = reader.ReadBit();
 			if (b) {
-				Debug.Log("Snapshot para id: " + e.Id);
-				Debug.Assert(e != null);
-				e.Deserialize(reader);
+				int entityType = reader.ReadInt(0, _entityTypes);
+				if (e == null) {
+					Debug.Log("Update received for unknown entity");
+					var bitsToDiscard = 0;
+					switch(entityType) {
+						case (int)EntityType.CHARACTER: {
+							bitsToDiscard = _characterSerialSize;
+							Debug.Log("Discarding character bits: " + bitsToDiscard);
+							break;
+						}
+						case (int)EntityType.PROJECTILE: {
+							bitsToDiscard = _projectileSerialSize;
+							Debug.Log("Discarding projectile bits: " + bitsToDiscard);
+							break;
+						}
+						default:
+							Debug.Log("Unknown entity, discarding 0 bits");
+							break;
+					}
+					reader.DiscardBits(bitsToDiscard);
+				} else {
+					Debug.Assert(e != null);
+					e.Deserialize(reader);
+				}
 			} 
 		}
+	}
+
+	public void NewProjectileShootCommand(BitReader reader) {
+		var command = ProjectileShootCommand.Deserialize(
+			reader, 
+			MaxEntities, 
+			MinPosX, 
+			MinPosY, 
+			MinPosZ, 
+			MaxPosX, 
+			MaxPosY, 
+			MaxPosZ, 
+			Step
+		);
+		
+		if (command._id < 0 || command._id >= MaxEntities) {
+			Debug.LogWarning("Recevied projectile shoot command with invalid id.");
+			return;
+		}
+
+		var projectile = Instantiate(LocalProjectilePrefab);
+		projectile.Id = command._id;
+		_entities[projectile.Id] = projectile;
+		var pos = new Vector3(command._x, command._y, command._z);
+		projectile.transform.position = pos;
+	}
+
+	public void ProjectileExplosion(BitReader reader) {
+		var command = ProjectileExplodeCommand.Deserialize(
+			reader, 
+			MaxEntities,
+			Step,
+			Step, 
+			new Vector3(MinPosX, MinPosY, MinPosZ), 
+			new Vector3(MaxPosX, MaxPosY, MaxPosZ),
+			new Vector3(MinPosX, MinPosY, MinPosZ), 
+			new Vector3(MaxPosX, MaxPosY, MaxPosZ)
+		);
+		Debug.Log("Command " + command);
+		if (command.id < 0 || command.id >= MaxEntities) {
+			Debug.LogWarning("Received explosion with invalid id.");
+			return;
+		}
+		var projectile = _entities[command.id];
+		var p = projectile.GetComponent<Projectile>();
+		if (p == null) {
+			Debug.LogWarning("Tried to explode but there was no projectile.");
+		} else {
+			_entities[command.id] = null;
+			p.Explode();
+		}
+	}
+
+	int CharacterEntitySerialSize() {
+		int count = 0;
+		count += Utility.CountBitsFloat(MinPosX, MaxPosX, Step);
+		count += Utility.CountBitsFloat(MinPosY, MaxPosY, Step);
+		count += Utility.CountBitsFloat(MinPosZ, MaxPosZ, Step);
+		count += Utility.CountBitsFloat(-1, 1, AnimationStep);
+		count += Utility.CountBitsFloat(-1, 1, AnimationStep);
+		count += Utility.CountBitsFloat(-1, 360, RotationStep);
+		count += Utility.CountBitsInt(0, (int)_localPlayer.MaxMoves);
+		count += Utility.CountBitsFloat(0, MaxHP, 0.1f);
+		return count;
+	}
+
+	int ProjectileEntitySerialSize() {
+		int count = 0;
+		count += Utility.CountBitsFloat(MinPosX, MaxPosX, Step);
+		count += Utility.CountBitsFloat(MinPosY, MaxPosY, Step);
+		count += Utility.CountBitsFloat(MinPosZ, MaxPosZ, Step);
+		return count;
 	}
 
 	void QueueNextSnapshot(float timestamp) {
@@ -166,5 +293,45 @@ public class LocalWorld : MonoBehaviour {
 		}
 		ps.transform.SetPositionAndRotation(commPos, Quaternion.LookRotation(commNor));
 		ps.Play();
+	}
+
+	public void ShootProjectile(Vector3 pos, Vector3 dir) {
+		var command = new ProjectileShootCommand(
+				0, 
+				MaxEntities,
+				pos.x,
+				pos.y,
+				pos.z,
+				dir.x,
+				dir.y,
+				dir.z,
+				MinPosX,
+				MaxPosX,
+				MinPosY,
+				MaxPosY,
+				MinPosZ,
+				MaxPosZ, 
+				Step);
+
+		_networkManager.SendReliable(command.Serialize);
+	}
+
+	public void UpdateGameState(BitReader reader) {
+		var state = GameState.Deserialize(
+			reader,
+			_networkManager.MaxPlayers,
+			MaxDeaths,
+			MaxKills,
+			(uint) MaxEntities
+		);
+		_gameStateString = "";
+		for(int i = 0; i < state.TotalPlayers; i++) {
+			_gameStateString += string.Format(
+				"Player {0}\t{1}K\t{2}D\n", 
+				state.Ids[i], 
+				state.Kills[i], 
+				state.Deaths[i]
+				);
+		}
 	}
 }

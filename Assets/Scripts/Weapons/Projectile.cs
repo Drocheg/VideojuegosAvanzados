@@ -14,19 +14,29 @@ public class Projectile : MonoBehaviour {
 	private Renderer _renderer;
 	private AuthWorld _authWorld;
 	private AuthProjectileEntity _authProjectile;
+
+	public float ExplosionTime;
 	// Use this for initialization
 	void Start () {
 		_rb = GetComponent<Rigidbody>();
 		_renderer = GetComponent<Renderer>();
+		_authProjectile = GetComponent<AuthProjectileEntity>();
+		_authWorld = GameObject.FindObjectOfType<AuthWorld>();
+	}
+
+	public void Reset() {
 		if (IsAuth) {
-			_authProjectile = GetComponent<AuthProjectileEntity>();
-			_authWorld = GameObject.FindObjectOfType<AuthWorld>();
+			_renderer.enabled = true;
+			_rb.isKinematic = false;
+			_hasExploded = false;
+			_explode = false;
+			StartCoroutine(ExplosionDelay());
 		}
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
+	IEnumerator ExplosionDelay() {
+		yield return new WaitForSeconds(ExplosionTime);
+		Explode();
 	}
 
 	void LateUpdate() {
@@ -44,7 +54,7 @@ public class Projectile : MonoBehaviour {
 
 	IEnumerator WaitAndDestroy() {
 		yield return new WaitForSeconds(DestroyDelay);
-		Destroy(gameObject);
+		ExplosionParticles.Stop();
 	}
 
 	public void Explode() {
