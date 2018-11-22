@@ -16,13 +16,12 @@ public class GameState {
 
 	public static GameState Deserialize(
 			BitReader reader,
-			uint TotalPlayers,
 			uint MaxTotalPlayers,
 			uint MaxDeaths,
 			uint MaxKills,
 			uint MaxEntities
 			) {
-		var totalPlayers = reader.ReadInt(0, (int) MaxTotalPlayers);
+		var totalPlayers = (uint)reader.ReadInt(0, (int) MaxTotalPlayers);
 		var deaths = new uint[totalPlayers];
 		var kills = new uint[totalPlayers];
 		var ids = new uint[totalPlayers];
@@ -32,7 +31,7 @@ public class GameState {
 			kills[i] = (uint) reader.ReadInt(0, (int) MaxKills);
 		}
 		return new GameState() {
-			TotalPlayers = TotalPlayers,
+			TotalPlayers = totalPlayers,
 			MaxTotalPlayers = MaxTotalPlayers,
 			MaxDeaths = MaxDeaths,
 			MaxEntities = MaxEntities,

@@ -7258,6 +7258,7 @@ MonoBehaviour:
   PacketLoss: 0
   MaxPacketsToSend: 100000
   Player: {fileID: 512930488}
+  playerName: 
 --- !u!1 &1193047986
 GameObject:
   m_ObjectHideFlags: 0
@@ -23139,6 +23140,12 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 42640f15a6598de41b1d38e021f17f3a, type: 2}
   m_IsPrefabAsset: 0
+--- !u!114 &1899862996 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114724707427642950, guid: 42640f15a6598de41b1d38e021f17f3a,
+    type: 2}
+  m_PrefabInternal: {fileID: 1899862995}
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 --- !u!1 &1916200136
 GameObject:
   m_ObjectHideFlags: 0
@@ -23686,6 +23693,9 @@ MonoBehaviour:
   ExpectedEntities: 0
   LocalProjectilePrefab: {fileID: 114174029438511432, guid: 1117c0d6f400e074a85cf01aeaf78f6e,
     type: 2}
+  MaxDeaths: 100
+  MaxKills: 100
+  GameStateGUI: {fileID: 1899862996}
 --- !u!114 &2010554598
 MonoBehaviour:
   m_ObjectHideFlags: 0

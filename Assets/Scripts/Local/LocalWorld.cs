@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public enum NetworkState {
 	INITIAL,
@@ -27,6 +28,9 @@ public class LocalWorld : MonoBehaviour {
 	public LocalProjectileEntity LocalProjectilePrefab;
 	private int _characterSerialSize, _projectileSerialSize;
 	private LocalNetworkManager _networkManager;
+	public uint MaxDeaths, MaxKills;
+	public TextMeshProUGUI GameStateGUI;
+	string _gameStateString = "";
 	// Use this for initialization
 	void Start() {
 		_entities = new LocalEntity[MaxEntities];
@@ -42,6 +46,15 @@ public class LocalWorld : MonoBehaviour {
 		_networkManager = FindObjectOfType<LocalNetworkManager>();
 	}
 	
+	void Update() {
+		if (Input.GetButtonDown("GameState")) {
+			GameStateGUI.text = _gameStateString;
+		}	
+		if (Input.GetButtonUp("GameState")) {
+			GameStateGUI.text = "";
+		}
+	}
+
 	// Update is called once per frame
 	void LateUpdate () {
 		// Read packets from NetworkAPI
@@ -295,5 +308,24 @@ public class LocalWorld : MonoBehaviour {
 				Step);
 
 		_networkManager.SendReliable(command.Serialize);
+	}
+
+	public void UpdateGameState(BitReader reader) {
+		var state = GameState.Deserialize(
+			reader,
+			_networkManager.MaxPlayers,
+			MaxDeaths,
+			MaxKills,
+			(uint) MaxEntities
+		);
+		_gameStateString = "";
+		for(int i = 0; i < state.TotalPlayers; i++) {
+			_gameStateString += string.Format(
+				"Player {0}\t{1}K\t{2}D\n", 
+				state.Ids[i], 
+				state.Kills[i], 
+				state.Deaths[i]
+				);
+		}
 	}
 }

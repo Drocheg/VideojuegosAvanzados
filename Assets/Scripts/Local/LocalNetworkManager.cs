@@ -128,6 +128,11 @@ public class LocalNetworkManager : MonoBehaviour {
 					_localWorld.RemoveEntity(disconnectCommand.playerId);
 				}
 				break;
+			case NetworkCommand.GAME_STATE_COMMAND: {
+				Debug.Log("Game state arrived");
+				_localWorld.UpdateGameState(packet.bitReader);
+				break;
+			}
 		}
 	}
 
