@@ -11,7 +11,8 @@ public class AuthWorld : MonoBehaviour {
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
 	public AuthProjectileEntity AuthProjectile;
 	public int MaxEntities, MaxProjectiles;
-	public float MaxTime, TimePrecision;
+	public uint MaxKills, MaxDeaths;
+	public float MaxTime, TimePrecision, GameStateDelta;
 	public ulong MaxMoves;
 	private float _timestamp;
 	private AuthNetworkManager _networkManager;
@@ -73,6 +74,36 @@ public class AuthWorld : MonoBehaviour {
 			if (_expectedEntities >= ExpectedEntities) {
 				_networkManager.SendAuthSnapshotUnreliable(TakeSnapshot);
 			}
+		}	
+	}
+
+	void CreateArraysFromGameStateList(List<PlayerGameState> list, out uint[] ids, out uint[] kills, out uint[] deaths) {
+		ids = new uint[list.Count];
+		kills = new uint[list.Count];
+		deaths = new uint[list.Count];
+		for(int i = 0; i < list.Count; i++) {
+			ids[i] = list[i].id;
+			kills[i] = list[i].kills;
+			deaths[i] = list[i].deaths;
+		}
+	}
+
+	IEnumerator GameStateLoop() {
+		while(true) {
+			yield return new WaitForSecondsRealtime(GameStateDelta);
+			uint[] ids, kills, deaths;
+			CreateArraysFromGameStateList(_playerStates, out ids, out kills, out deaths);
+			var comm = new GameState() {
+				Deaths = deaths,
+				Ids = ids,
+				Kills = kills,
+				MaxDeaths = MaxDeaths,
+				MaxKills = MaxKills,
+				MaxEntities = (uint) MaxEntities,
+				MaxTotalPlayers = _maxPlayers,
+				TotalPlayers = (uint) _playerStates.Count
+			};
+			_networkManager.SendAuthEventReliable(comm.Serialize);
 		}	
 	}
 
