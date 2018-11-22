@@ -161,7 +161,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		AuthCharacterEntity ace = remotePlayerInstance.gameObject.GetComponent<AuthCharacterEntity>();
 		ace.Id = currentId;
 		ace.Init();	
-		
+		_authWorld.AddPlayer((uint)ace.Id);
 		// Enviarle a los otros que se conecto uno nuevo
 		SendAuthEventReliable(new JoinPlayerCommand((uint)currentId, MaxHosts).Serialize);
 		
@@ -201,6 +201,7 @@ public class AuthNetworkManager : MonoBehaviour {
 		hosts[hostID] = null;
 		if (removedHost != null)
 		{
+			_authWorld.RemovePlayer((uint) hostID);
 			SendAuthEventReliable(new DisconnectCommand((uint)hostID, MaxHosts).Serialize);
 			for (int i = 0; i < 10; i++)
 			{

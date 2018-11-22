@@ -1,7 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
+public class PlayerGameState {
+	public uint id, kills, deaths;
+}
 
 public class AuthWorld : MonoBehaviour {
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
@@ -22,14 +26,14 @@ public class AuthWorld : MonoBehaviour {
 	public int ProjectileOffset;
 	private int _entityTypes;
 	public float ExplosionMagnitude;
-	 
+	private uint _maxPlayers;
+	private List<PlayerGameState> _playerStates;
+	public TextMeshProUGUI GameStateText;
+
 	// Use this for initialization
 	void Awake () {
 		_entities = new AuthEntity[MaxEntities];
 		_timestamp = 0; 
-	//	entities[0] = e0;
-	//	entities[1] = e1;
-	//	entities[2] = e2;
 		var pools = GetComponents<ParticlePool>();
 		_sparksPool = pools[0];
 		_bloodPool = pools[1];
@@ -41,6 +45,26 @@ public class AuthWorld : MonoBehaviour {
 	{
 		_entityTypes = System.Enum.GetValues(typeof (EntityType)).Length;
 		_networkManager = GameObject.FindObjectOfType<AuthNetworkManager>();
+		_maxPlayers = _networkManager.MaxHosts + 1;
+		_playerStates = new List<PlayerGameState>();
+		AddPlayer(0); // Add host as player.
+	}
+
+	public void AddPlayer(uint id) {
+		_playerStates.Add(new PlayerGameState(){
+			id = id,
+			kills = 0,
+			deaths = 0,
+		});
+	}
+
+	public void RemovePlayer(uint id) {
+		var playerState = _playerStates.Find(x => x.id == id);
+		if (playerState != null) {
+			_playerStates.Remove(playerState);
+		} else {
+			Debug.LogWarning("Tried to remove an unexistent player");
+		}
 	}
 
 	IEnumerator SnapshotLoop() {
@@ -55,6 +79,18 @@ public class AuthWorld : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		_timestamp += Time.deltaTime;
+
+		var state = "";
+
+		if (Input.GetButtonDown("GameState")) {
+			foreach(var playerState in _playerStates) {
+				state += string.Format("Player {0}\t{1}K\t{2}D\n", playerState.id, playerState.kills, playerState.deaths);
+			}
+			GameStateText.text = state;
+		}
+		if (Input.GetButtonUp("GameState")) {
+			GameStateText.text = "";
+		}
 	}
 
 	public void AddReference(int id, AuthCharacterEntity auth)
@@ -126,6 +162,16 @@ public class AuthWorld : MonoBehaviour {
 				healthManager.TakeDamage(comm._damage);
 				if (healthManager.Dead) {
 					// entity was killed. Revive it.
+					var killer = _playerStates.Find((x) => x.id == id);
+					Debug.Log("Killed");
+					if (killer != null) {
+						killer.kills++;
+						
+					}
+					var victim = _playerStates.Find((x) => x.id == comm._id);
+					if (victim != null) {
+						victim.deaths++;
+					}
 					Revive(healthManager);
 				}
 			} else {
