@@ -39,6 +39,8 @@ public class AuthNetworkManager : MonoBehaviour {
 
 	void Start()
 	{
+		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
+		if(MenuVariables.MenuPort != 0) LocalPort = MenuVariables.MenuPort;
 		takenIds = new bool[MaxHosts];
 		hosts = new RemoteHost[MaxHosts];
 		_hostCount = 0;
@@ -48,8 +50,6 @@ public class AuthNetworkManager : MonoBehaviour {
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss, MaxPacketsToSend, Latency);
 		AuthPlayer.Init();
 		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
-		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
-		if(MenuVariables.MenuPort != 0) LocalPort = MenuVariables.MenuPort;
 	}
 
 

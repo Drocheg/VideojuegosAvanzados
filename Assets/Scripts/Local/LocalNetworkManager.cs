@@ -31,6 +31,10 @@ public class LocalNetworkManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
+		if(MenuVariables.MenuPort != 0) TestRemotePort = MenuVariables.MenuPort;
+		if(!string.IsNullOrEmpty(MenuVariables.MenuIP)) TestRemoteIp	= MenuVariables.MenuIP;
+		
 		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
 		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHosts, MaxSeqPossible, PacketLoss, MaxPacketsToSend, Latency);
@@ -43,11 +47,6 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.AddTimeoutReliableChannel(3, _receiving_endpoint, _sending_endpoint, TimedChannelTimout);
 		_localWorld = GameObject.FindObjectOfType<LocalWorld>();
 		SendReliable(new JoinCommand().Serialize);
-		
-
-		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
-		if(MenuVariables.MenuPort != 0) TestRemotePort = MenuVariables.MenuPort;
-		if(!string.IsNullOrEmpty(MenuVariables.MenuIP)) TestRemoteIp	= MenuVariables.MenuIP;
 		Debug.Log("MenuIP: " + MenuVariables.MenuIP);
 		SendReliable(new PlayerInfoCommand(playerName, 0, MaxPlayers).Serialize);
 	}
