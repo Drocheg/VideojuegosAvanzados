@@ -869,6 +869,7 @@ GameObject:
   - component: {fileID: 1304344873}
   - component: {fileID: 1304344875}
   - component: {fileID: 1304344874}
+  - component: {fileID: 1304344876}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -909,10 +910,8 @@ MonoBehaviour:
   Step: 0.01
   RotationStep: 1
   AnimationStep: 0.1
-  AuthProjectile: {fileID: 114804668641806502, guid: 802e418516e320745a49d1a78b983a23,
-    type: 2}
   MaxEntities: 10
-  MaxProjectiles: 10
+  MaxProjectiles: 5
   MaxKills: 100
   MaxDeaths: 100
   MaxTime: 10000
@@ -956,6 +955,18 @@ MonoBehaviour:
   ParticleSystemCount: 10
   ParticleSystemPrefab: {fileID: 198750189035362808, guid: 962a6f241583c454789e9c35883e64ae,
     type: 2}
+--- !u!114 &1304344876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1304344871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e096f513cf2fe7e4bac9e92459f8815e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Prefab: {fileID: 114804668641806502, guid: 802e418516e320745a49d1a78b983a23, type: 2}
 --- !u!1001 &1331360681
 Prefab:
   m_ObjectHideFlags: 0
@@ -1040,6 +1051,11 @@ Prefab:
       propertyPath: BulletsCanvas
       value: 
       objectReference: {fileID: 1508585261}
+    - target: {fileID: 114207538743343062, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: ShootingTimeout
+      value: 0.3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef, type: 2}
   m_IsPrefabAsset: 0

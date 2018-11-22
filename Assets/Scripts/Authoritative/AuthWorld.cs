@@ -9,7 +9,7 @@ public class PlayerGameState {
 
 public class AuthWorld : MonoBehaviour {
 	public float MinPosX, MaxPosX, MinPosY, MaxPosY, MinPosZ, MaxPosZ, Step, RotationStep, AnimationStep;
-	public AuthProjectileEntity AuthProjectile;
+	private AuthProjectilePool _projectiles;
 	public int MaxEntities, MaxProjectiles;
 	public uint MaxKills, MaxDeaths;
 	public float MaxTime, TimePrecision, GameStateDelta;
@@ -36,6 +36,7 @@ public class AuthWorld : MonoBehaviour {
 		_entities = new AuthEntity[MaxEntities];
 		_timestamp = 0; 
 		var pools = GetComponents<ParticlePool>();
+		_projectiles = GetComponent<AuthProjectilePool>();
 		_sparksPool = pools[0];
 		_bloodPool = pools[1];
 		_snapshotDelta = 1 / SnapshotTickRate;
@@ -228,8 +229,8 @@ public class AuthWorld : MonoBehaviour {
 			Debug.LogWarning("Projectile id out of boundaries.");
 			return;
 		}
-		Debug.Log("Erasing projectile " + projectile.GetId());
 		_entities[projectile.GetId()] = null;
+		_projectiles.Release(projectile);
 		// send Explosion command.
 		var command = new ProjectileExplodeCommand() {
 			pos = projectile.transform.position,
@@ -271,6 +272,10 @@ public class AuthWorld : MonoBehaviour {
 	}
 
 	public void NewProjectile(int shooterId, Vector3 pos, Vector3 dir) {
+		var projectile = _projectiles.GetProjectile();
+		if (projectile == null) {
+			return;
+		}
 		var command = new ProjectileShootCommand(
 				0, 
 				MaxEntities,
@@ -289,7 +294,6 @@ public class AuthWorld : MonoBehaviour {
 				Step);
 		for(int i = 0; i < _entities.Length; i++) {
 			if (_entities[i] == null) {
-				var projectile = Instantiate(AuthProjectile);
 				projectile.Id = i;
 				projectile.ShooterId = shooterId;
 				projectile.SetPositionAndForce(pos, dir);

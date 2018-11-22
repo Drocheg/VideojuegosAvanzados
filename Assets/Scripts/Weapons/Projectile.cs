@@ -20,9 +20,16 @@ public class Projectile : MonoBehaviour {
 	void Start () {
 		_rb = GetComponent<Rigidbody>();
 		_renderer = GetComponent<Renderer>();
+		_authProjectile = GetComponent<AuthProjectileEntity>();
+		_authWorld = GameObject.FindObjectOfType<AuthWorld>();
+	}
+
+	public void Reset() {
 		if (IsAuth) {
-			_authProjectile = GetComponent<AuthProjectileEntity>();
-			_authWorld = GameObject.FindObjectOfType<AuthWorld>();
+			_renderer.enabled = true;
+			_rb.isKinematic = false;
+			_hasExploded = false;
+			_explode = false;
 			StartCoroutine(ExplosionDelay());
 		}
 	}
@@ -47,7 +54,7 @@ public class Projectile : MonoBehaviour {
 
 	IEnumerator WaitAndDestroy() {
 		yield return new WaitForSeconds(DestroyDelay);
-		Destroy(gameObject);
+		ExplosionParticles.Stop();
 	}
 
 	public void Explode() {

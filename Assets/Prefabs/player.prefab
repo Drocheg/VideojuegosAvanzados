@@ -4093,9 +4093,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialBullets: 100
   BulletClipSize: 4
-  RemainingBulletsUI: {fileID: 0}
-  ClipBulletsUI: {fileID: 0}
-  BulletsCanvas: {fileID: 0}
 --- !u!114 &114596234672412916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4210,9 +4207,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialBullets: 100
   BulletClipSize: 10
-  RemainingBulletsUI: {fileID: 0}
-  ClipBulletsUI: {fileID: 0}
-  BulletsCanvas: {fileID: 0}
 --- !u!114 &114808329510534150
 MonoBehaviour:
   m_ObjectHideFlags: 1
