@@ -6,8 +6,10 @@ using Common;
 using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 
-public class AuthNetworkManager : MonoBehaviour {
-	public class RemoteHost {
+public class AuthNetworkManager : MonoBehaviour
+{
+	public class RemoteHost
+	{
 		public EndPoint _receiving_endpoint;
 		public EndPoint _sending_endpoint;
 		public uint UnreliableSnapshotChannel, ReliableChannel, UnreliableEventChannel, TimedChannel;
@@ -39,20 +41,26 @@ public class AuthNetworkManager : MonoBehaviour {
 
 	void Start()
 	{
-		if(!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName	= MenuVariables.MenuName;
-		if(MenuVariables.MenuPort != 0) LocalPort = MenuVariables.MenuPort;
+		if (!string.IsNullOrEmpty(MenuVariables.MenuName)) playerName = MenuVariables.MenuName;
+		if (MenuVariables.MenuPort != 0) LocalPort = MenuVariables.MenuPort;
 		takenIds = new bool[MaxHosts];
 		hosts = new RemoteHost[MaxHosts];
 		_hostCount = 0;
 		takenIds[0] = true; // TODO delete this when host stop being a player.
-		_commandsCount = System.Enum.GetValues(typeof (NetworkCommand)).Length;
+		_commandsCount = System.Enum.GetValues(typeof(NetworkCommand)).Length;
 		_networkAPI = NetworkAPI.GetInstance();
-		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss, MaxPacketsToSend, Latency);
+		_networkAPI.Init(LocalPort, SpinLockTime, ChannelsPerHost, MaxSeqPossible, PacketLoss, MaxPacketsToSend,
+			Latency);
 		AuthPlayer.Init();
-		_authWorld  = GameObject.FindObjectOfType<AuthWorld>();
-		_authWorld.AddPlayerName(0, playerName);
+		_authWorld = GameObject.FindObjectOfType<AuthWorld>();
+		StartCoroutine(DelayAddPlayerName());
 	}
 
+	IEnumerator DelayAddPlayerName()
+	{
+		yield return new WaitForSeconds(2);
+		_authWorld.AddPlayerName(0, playerName);
+	}
 
 	void Update() {
 		List<Packet> channelLess;
