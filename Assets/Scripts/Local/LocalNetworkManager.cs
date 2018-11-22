@@ -5,6 +5,8 @@ using System;
 using Common;
 using JetBrains.Annotations;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class LocalNetworkManager : MonoBehaviour {
 	public int LocalPort, SpinLockTime;
@@ -25,6 +27,7 @@ public class LocalNetworkManager : MonoBehaviour {
 	private int _commandsCount;
 	public GameObject Player;
 	public string playerName;
+	public TextMeshProUGUI _disconnectMessage;
 
 	// Use this for initialization
 	void Start () {
@@ -188,7 +191,7 @@ public class LocalNetworkManager : MonoBehaviour {
 
 	private void disconnect()
 	{
-
+		_disconnectMessage.enabled = true;
 		_networkAPI.ClearSendQueue();
 		for (int i = 0; i < 10; i++)
 		{
@@ -197,5 +200,7 @@ public class LocalNetworkManager : MonoBehaviour {
 		_networkAPI.UpdateSendQueues();
 		System.Threading.Thread.Sleep(1000);
 		_networkAPI.Close();
+
+		SceneManager.LoadScene("MainMenu");
 	}
 }
