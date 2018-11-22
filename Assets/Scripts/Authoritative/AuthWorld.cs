@@ -99,9 +99,11 @@ public class AuthWorld : MonoBehaviour {
 	IEnumerator ReviveEntity(HealthManager entity) {
 		yield return new WaitForSeconds(SpawnTime);
 
-		entity.SetHP(MaxHP);
-		entity.transform.SetPositionAndRotation(SpawnLocation.position, SpawnLocation.rotation);
-
+		if (entity != null)
+		{
+			entity.SetHP(MaxHP);
+			entity.transform.SetPositionAndRotation(SpawnLocation.position, SpawnLocation.rotation);	
+		}
 	}
 
 	public void Revive(HealthManager entity) {
