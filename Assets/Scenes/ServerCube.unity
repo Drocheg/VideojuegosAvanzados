@@ -1015,6 +1015,11 @@ Prefab:
       propertyPath: Crosshairs
       value: 
       objectReference: {fileID: 685897263}
+    - target: {fileID: 114914174838280064, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef,
+        type: 2}
+      propertyPath: m_JumpSpeed
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9531bf295bd5c644ea01fb1d8fe0f3ef, type: 2}
   m_IsPrefabAsset: 0
